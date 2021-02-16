@@ -1,0 +1,22 @@
+﻿<ribbon:RibbonTab x:Class="STA.Modules.CaricoSisma.Views.ModuloCaricoSismaRibbonTab"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:ribbon="clr-namespace:Microsoft.Windows.Controls.Ribbon;assembly=RibbonControlsLibrary"
+             mc:Ignorable="d" 
+                  Header="Carico Sismico"
+>
+    <ribbon:RibbonGroup Header="GestioneFile">
+        <ribbon:RibbonButton Label="Salva" LargeImageSource="Images\floppy-drive-5.png" Width="100"/>
+        <ribbon:RibbonButton Label="Carica" LargeImageSource="Images\Folder_blue.png" Width="100"/>
+        
+    </ribbon:RibbonGroup>
+    
+    <ribbon:RibbonGroup Header="Esportazioni">
+        <ribbon:RibbonButton Label="Per Robot" LargeImageSource="Images\esop.ico" Width="100"/>
+        <ribbon:RibbonButton Label="Per ETABS/SAP" LargeImageSource="Images\etabs.png" Width="100" Command="{Binding SalvaPerEtabsComando}"/>
+    </ribbon:RibbonGroup>
+    
+
+</ribbon:RibbonTab>

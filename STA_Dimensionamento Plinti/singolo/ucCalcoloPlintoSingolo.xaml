@@ -1,0 +1,21 @@
+﻿<UserControl x:Class="STA_Dimensionamento_Plinti.ucCalcoloPlintoSingolo"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:myPropControl="clr-namespace:STA_Dimensionamento_Plinti"
+             mc:Ignorable="d" 
+             d:DesignHeight="800" d:DesignWidth="430">
+    <Grid Name="Principale">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="30" Name="Titolo"/>
+            <RowDefinition Height="auto" Name="ProprietàPlinto"/>
+            <RowDefinition Height="auto" Name="Combinazioni"/>
+            <RowDefinition Height="auto" Name="risultati"/>
+        </Grid.RowDefinitions>
+        <Label Name="titolo" Content="Plinto da verificare" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Background="PaleGreen"></Label>
+        <myPropControl:ucPropPlintoSuperficiale x:Name="controlloPlinto"  Grid.Row="1"></myPropControl:ucPropPlintoSuperficiale>
+        <myPropControl:ucCombinazioni Grid.Row="2" x:Name="controlloCombinazioni"></myPropControl:ucCombinazioni>
+  
+    </Grid>
+</UserControl>

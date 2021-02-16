@@ -1,0 +1,103 @@
+﻿<UserControl x:Class="STA.Prefabbricato.Interfaccia.Moduli.GestioneTrefolatura.Views.ModuloGestioneTrefolaturaWorkSpaceView"
+             xmlns:trefolatura="clr-namespace:STA.Prefabbricato.Trefolatura.Views;assembly=STA.Prefabbricato.Trefolatura"
+             xmlns:trefoloViewModel="clr-namespace:STA.Prefabbricato.Trefolatura.ViewModels;assembly=STA.Prefabbricato.Trefolatura"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             
+             mc:Ignorable="d"
+             DataContext="{Binding}"
+             >
+
+<UserControl.Resources>
+        <DataTemplate x:Key="Item_Trefolo" DataType="{x:Type trefoloViewModel:ClasseGestioneTrefoloViewModel}">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="{Binding ID}" Width="50"></TextBlock>
+                <Separator Margin="2"></Separator>
+                <Label Content="X [cm]:" HorizontalContentAlignment="Right"></Label>
+                <TextBox Text="{Binding X}" Width="50"></TextBox>
+
+                <Separator Margin="2"></Separator>
+                <Label Content="Y [cm]:" HorizontalContentAlignment="Right"></Label>
+                <TextBox Text="{Binding Y}" Width="50"></TextBox>
+
+                <Separator Margin="2"></Separator>
+                <Label Content="Area [cmq]:" HorizontalContentAlignment="Right"></Label>
+                <TextBox Text="{Binding Area}" Width="50"></TextBox>
+            </StackPanel>
+        </DataTemplate>
+
+
+    </UserControl.Resources>
+
+    <Grid Name="mainGrid">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="30"/>
+            <RowDefinition/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <ToolBarTray>
+            <ToolBar>
+                <Label Content="Gestione Trefolatura:"></Label>
+                <TextBox Text="{Binding ID, Mode=OneWay}" IsReadOnly="True" IsEnabled="False" Width="50" HorizontalContentAlignment="Center" Margin="2"></TextBox>
+                <Separator Margin="2"></Separator>
+                <Label Content="Tiro Iniziale [daN/cmq]"></Label>
+                <TextBox Text="{Binding TiroIniziale}" Width="50" HorizontalContentAlignment="Center" Margin="2"></TextBox>
+            </ToolBar>
+        </ToolBarTray>
+        <GroupBox Grid.Row="1"  Margin="2">
+            <GroupBox.Header>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="Trefoli Presenti" Margin="5"></TextBlock>
+                    <TextBox IsReadOnly="True" Text="{Binding NumeroTrefoliPresenti, Mode=OneWay}" Width="30" Margin="5"></TextBox>
+                    <Separator Width="10" Margin="5"></Separator>
+                    <Button Content="Aggiungi Tref." Margin="5" Command="{Binding AggiungiTrefoloComando}"></Button>
+                    <Button Content="Elimina Tref." Margin="5" Command="{Binding EliminaTrefoloComando}" CommandParameter="{Binding ElementName=ElencoTrefoli, Path=SelectedItem}"></Button>
+                </StackPanel>
+            </GroupBox.Header>
+            <ListView Background="Beige" Name="ElencoTrefoli" ItemsSource="{Binding TrefoliVM}" ItemTemplate="{StaticResource Item_Trefolo}">
+
+            </ListView>
+        </GroupBox>
+        <GroupBox Header="Proprietà Trefolatura" Grid.Row="2" Margin="2">
+            <ScrollViewer ScrollViewer.VerticalScrollBarVisibility="Auto">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition></ColumnDefinition>
+                    <ColumnDefinition></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="25"></RowDefinition>
+                    <RowDefinition Height="25"></RowDefinition>
+                    <RowDefinition Height="25"></RowDefinition>
+                    <RowDefinition Height="25"></RowDefinition>
+                    <RowDefinition Height="25"></RowDefinition>
+                    <RowDefinition Height="25"></RowDefinition>
+                    <RowDefinition Height="25"></RowDefinition>
+                    <RowDefinition Height="25"></RowDefinition>
+                </Grid.RowDefinitions>
+                
+                    <Label Content="Numero Trefoli:" HorizontalContentAlignment="Right"></Label>
+                    <TextBox Grid.Column="1" IsReadOnly="True" Text="{Binding NumeroTrefoliPresenti, Mode=OneWay}" Margin="2" Width="50"></TextBox>
+                
+                    <Label Grid.Row="1" Content="Area totale [cm]:" HorizontalContentAlignment="Right"></Label>
+                    <TextBox Grid.Row="1" Grid.Column="1" IsReadOnly="True" Text="{Binding AreaTotale, Mode=OneWay}" Margin="2" Width="50"></TextBox>
+                    <Label Content="N,0 [kN]" Grid.Row="2" HorizontalContentAlignment="Right"></Label>
+                    <TextBox IsReadOnly="True" Grid.Column="1" Grid.Row="2" Text="{Binding Nfase0, Mode=OneWay}" Margin="2" Width="50"></TextBox>
+                <Label Content="Baricentro:" Grid.Row="3" HorizontalContentAlignment="Right"></Label>
+                <Label Content="X [cm]" Grid.Row="4" HorizontalContentAlignment="Right"></Label>
+                <TextBox IsReadOnly="True" Grid.Column="1" Grid.Row="4" Text="{Binding Baricentro.X, Mode=OneWay}" Margin="2" Width="50"></TextBox>
+                <Label Content="Y [cm]" Grid.Row="5" HorizontalContentAlignment="Right"></Label>
+                <TextBox IsReadOnly="True" Grid.Column="1" Grid.Row="5" Text="{Binding Baricentro.Y, Mode=OneWay}" Margin="2" Width="50"></TextBox>
+                <Label Content="MX,0 [kNm]" Grid.Row="6" HorizontalContentAlignment="Right"></Label>
+                <TextBox IsReadOnly="True" Grid.Column="1" Grid.Row="6" Text="{Binding MXfase0, Mode=OneWay}" Margin="2" Width="50"></TextBox>
+                <Label Content="MY,0 [kNm]" Grid.Row="7" HorizontalContentAlignment="Right"></Label>
+                <TextBox IsReadOnly="True" Grid.Column="1" Grid.Row="7" Text="{Binding MYfase0, Mode=OneWay}" Margin="2" Width="50"></TextBox>
+
+            </Grid>
+            </ScrollViewer>
+        </GroupBox>
+    </Grid>
+
+</UserControl>

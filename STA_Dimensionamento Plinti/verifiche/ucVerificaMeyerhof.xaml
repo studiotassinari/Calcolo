@@ -1,0 +1,46 @@
+﻿<UserControl x:Class="STA_Dimensionamento_Plinti.verifiche.ucVerificaMeyerhof"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="500">
+	<UserControl.Resources>
+		<ResourceDictionary>
+			<ResourceDictionary.MergedDictionaries>
+				<ResourceDictionary Source="/STA_Dimensionamento Plinti;component/STA_ResourceDictionary.xaml"/>
+			</ResourceDictionary.MergedDictionaries>
+		</ResourceDictionary>
+	</UserControl.Resources>
+	<Border BorderBrush="#FFD62C2C">
+    <Grid Name="mainGrid" Margin="3" Background="#9BB4CDD8">
+    	<Grid.Resources>
+    		<ResourceDictionary>
+    			<ResourceDictionary.MergedDictionaries>
+    				<ResourceDictionary Source="/STA_Dimensionamento Plinti;component/STA_ResourceDictionary.xaml"/>
+    			</ResourceDictionary.MergedDictionaries>
+    		</ResourceDictionary>
+    	</Grid.Resources>
+       
+        
+            
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Name="colEx" Width="100"></ColumnDefinition>
+                <ColumnDefinition Name="colEy" Width="100"></ColumnDefinition>
+                <ColumnDefinition Name="colAreaEff" Width="100"></ColumnDefinition>
+                <ColumnDefinition Name="colPres" Width="100"></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+
+        <TextBlock Grid.Row="1" Grid.Column="0" Name="tbEx" Background="#1AEDE1E1"  Margin="1" Foreground="#FC000000" />
+
+
+            <TextBlock Grid.Row="1" Grid.Column="1" Name="tbEy"  Background="#1AEDE1E1"  Margin="1" Foreground="#FC000000"  />
+
+
+            <TextBlock Grid.Row="1" Grid.Column="2" Name="tbAreaPress" Background="#1AEDE1E1" Margin="1" Foreground="#FC000000"  />
+
+
+            <TextBlock Grid.Row="1" Grid.Column="4" Name="tbPress"  Background="#1AEDE1E1"  Margin="1" Foreground="#FC000000"  />
+    </Grid>
+         </Border>
+</UserControl>

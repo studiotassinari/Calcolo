@@ -1,0 +1,38 @@
+﻿<UserControl
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:Custom="http://schemas.microsoft.com/wpf/2008/toolkit" x:Name="ucCombExtProp" x:Class="STA_Dimensionamento_Plinti.ucCombPropExt" 
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="300">
+	<UserControl.Resources>
+		<ResourceDictionary>
+			<ResourceDictionary.MergedDictionaries>
+				<ResourceDictionary />
+			</ResourceDictionary.MergedDictionaries>
+		</ResourceDictionary>
+	</UserControl.Resources>
+    <Grid x:Name="mainGrid">
+    	<Grid.Background>
+    		<SolidColorBrush Color="#2B73B9D8"/>
+    	</Grid.Background>
+    	<Expander Header="Nome Nodo" Margin="0" d:LayoutOverrides="Width" FontFamily="Lucida Sans Unicode" IsExpanded="True" Name="expNodo">
+    		<Expander.Resources>
+    			<ResourceDictionary>
+    				<ResourceDictionary.MergedDictionaries>
+    					<ResourceDictionary/>
+    				</ResourceDictionary.MergedDictionaries>
+    			</ResourceDictionary>
+    		</Expander.Resources>
+    		<Grid x:Name="nodoGrid" Background="#2BCFDAE0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition></ColumnDefinition>
+                    
+                </Grid.ColumnDefinitions>
+                <StackPanel Name="spCombos" Grid.Row="0"></StackPanel>
+            </Grid>
+    	</Expander>
+            
+    </Grid>
+</UserControl>

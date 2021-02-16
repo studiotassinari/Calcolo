@@ -1,0 +1,85 @@
+﻿<UserControl x:Class="STA_Dimensionamento_Plinti.progetto.ucProgettoPlintoNew"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:myPropControlGen="clr-namespace:STA_Dimensionamento_Plinti.generali"
+             xmlns:myPropControl="clr-namespace:STA_Dimensionamento_Plinti"
+             xmlns:controlliVerifiche="clr-namespace:STA_Dimensionamento_Plinti.verifiche"
+			 xmlns:controlliProgetto="clr-namespace:STA_Dimensionamento_Plinti.progetto"
+             mc:Ignorable="d" 
+             d:DesignHeight="381" d:DesignWidth="692" MinWidth="800" MinHeight="600">
+    <Grid Name="mainGrid">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="30"></RowDefinition>
+            <RowDefinition Height="10"></RowDefinition>
+            <RowDefinition ></RowDefinition>
+            <RowDefinition Height="30"></RowDefinition>
+        </Grid.RowDefinitions>
+        <Grid Name="menu" Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition></ColumnDefinition>
+                <ColumnDefinition></ColumnDefinition>
+                <ColumnDefinition></ColumnDefinition>
+                <ColumnDefinition></ColumnDefinition>
+                <ColumnDefinition></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <Button Grid.Column="0" Name="btApri" Content="Apri da File" Click="btApri_Click"></Button>
+            <Button Grid.Column="1" Name="btSalva" Content="Salva su File" Click="btSalva_Click"></Button>
+            <Button Grid.Column="2" Name="btApriRelazione" Content="Apri Relazione" Click="btApriRelazione_Click"></Button>
+            <Button Grid.Column="3" Name="btCalcola" Content="Calcola" Click="btCalcola_Click"></Button>
+            <Button Grid.Column="4" Name="btScriviRelazione" Content="Scrivi Relazione" Click="btScriviRelazione_Click"></Button>
+        </Grid>
+        <Separator Grid.Row="1" Background="Blue" BorderBrush="#FF0000D6"></Separator>
+        <TabControl Grid.Row="2" HorizontalAlignment="Stretch" Margin="0" Name="tabControlCont" VerticalAlignment="Stretch">
+            <TabItem Header="Plinti" Name="tabItemPlinti" FontFamily="Lucida Sans Unicode" FontSize="11">
+                <Grid Name="gridPlinti">
+                    <myPropControl:ucElencoPlinti x:Name="elencoPlinti" Margin="0,0,0,0"></myPropControl:ucElencoPlinti>
+                </Grid>
+            </TabItem>
+            <TabItem Header="Calcolo" Name="tabItemCalcolo" FontFamily="Lucida Sans Unicode" FontSize="12">
+                <Grid>
+
+
+                    <myPropControl:ucCombEsterne x:Name="controlloNodi"></myPropControl:ucCombEsterne>
+                </Grid>
+            </TabItem>
+            <TabItem FontFamily="Lucida Sans Unicode" FontSize="12" Header="Progetto Automatico">
+                <Grid Name="gridProgetto">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Name="prjMenu" Height="30"></RowDefinition>
+                        <RowDefinition Height="10"></RowDefinition>
+                        <RowDefinition Name="prjContenuto"></RowDefinition>
+                    </Grid.RowDefinitions>
+                    <Grid Name="menuProgetto">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition></ColumnDefinition>
+                            <ColumnDefinition></ColumnDefinition>
+                        </Grid.ColumnDefinitions>
+                    </Grid>
+                    <Separator Grid.Row="1"></Separator>
+                    <controlliVerifiche:ucReportRisultati Grid.Row="2" x:Name="controlloReport"></controlliVerifiche:ucReportRisultati> 
+                </Grid>
+            </TabItem>
+			<TabItem Header="Progetto Manuale">
+				<Grid Name="gridProgettoManuale">
+					<controlliProgetto:ucProgettoManuale x:Name="controlloProgettoManuale"></controlliProgetto:ucProgettoManuale>
+				</Grid>
+			</TabItem>
+        <TabItem Header="File TXT" Name="tabItemTXT" FontFamily="Lucida Sans Unicode" FontSize="13.333">
+                <Grid Name="gridTXT">
+                    <myPropControlGen:ucViewFile x:Name="controlloViewTxt"></myPropControlGen:ucViewFile>
+                </Grid>
+            </TabItem>
+        </TabControl>
+
+        <Grid Grid.Row="3">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition></ColumnDefinition>
+                <ColumnDefinition></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <Label Grid.Column="0"  Name="labelFile"></Label>
+            <Label Name="labelCheck" Grid.Column="1"></Label>
+        </Grid>
+    </Grid>
+</UserControl>

@@ -1,0 +1,52 @@
+﻿<ribbon:RibbonWindow x:Class="STA.Prefabbricato.Trave.Interfaccia.MainWindow"
+                     xmlns:prism="http://www.codeplex.com/prism"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:ribbon="clr-namespace:Microsoft.Windows.Controls.Ribbon;assembly=RibbonControlsLibrary"
+        Title="Studio Tassinari e Associati"
+		x:Name="RibbonWindow"
+		Width="800" Height="600">
+    
+    
+
+	<DockPanel x:Name="LayoutRoot">
+
+
+        <ribbon:Ribbon x:Name="Ribbon" DockPanel.Dock="Top"
+                       prism:RegionManager.RegionName="RibbonRegion">
+            <ribbon:Ribbon.ApplicationMenu>
+                <ribbon:RibbonApplicationMenu Label="STA" >
+                    <ribbon:RibbonApplicationMenuItem Header="Studio Tassinari e Associati"
+                                                      x:Name="MenuItem1"
+                                                      ImageSource="Images\LargeIcon.png"/>
+                </ribbon:RibbonApplicationMenu>
+            </ribbon:Ribbon.ApplicationMenu>
+
+            
+        </ribbon:Ribbon>
+        <Grid DockPanel.Dock="Left" MinWidth="100" >
+            <StackPanel Margin="5">
+                
+                <ItemsControl x:Name="TaskButtonRegion" prism:RegionManager.RegionName="SelectionRegion" HorizontalAlignment="Stretch" VerticalAlignment="Top" />
+            </StackPanel>
+        </Grid>
+        <Grid Margin="5">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <TabControl x:Name="WorkspaceRegion" prism:RegionManager.RegionName="WorkspaceRegion" Margin="5">
+                <TabControl.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ContentControl}}, Path=DataContext.ID}"></TextBlock>
+                            <Button Content="Close"></Button>
+                        </StackPanel>
+                    </DataTemplate>
+                    
+                </TabControl.ItemTemplate>
+            </TabControl>
+
+        </Grid>
+    </DockPanel>
+</ribbon:RibbonWindow>

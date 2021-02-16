@@ -1,0 +1,46 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="STA.Prefabbricato.Trefolatura.ClasseGestioneTrefolatura">
+    <Position X="0.75" Y="3.25" Width="3.5" />
+    <TypeIdentifier>
+      <HashCode>BAEAAAAABAAAgAAEAAhAABIAAAAAAAAAAAJAAAAEAAA=</HashCode>
+      <FileName>ClasseGestioneTrefolatura.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="STA.Prefabbricato.Trefolatura.ClasseGestioneElencoTrefolature">
+    <Position X="0.5" Y="0.5" Width="3.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAIAAAARAAQAAAAAAAAAA=</HashCode>
+      <FileName>ClasseGestioneTrefolatura.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="STA.Prefabbricato.Trefolatura.ClasseGestioneTrefolo">
+    <Position X="1.25" Y="8" Width="3.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAIAAAgAAAAAAAAAAAAAQAAQAAAAAAAQAEYAA=</HashCode>
+      <FileName>ClasseGestioneTrefolo.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="STA.Prefabbricato.Trefolatura.ViewModels.ClasseGestioneTrefolaturaViewModel">
+    <Position X="6" Y="3.5" Width="3.75" />
+    <TypeIdentifier>
+      <HashCode>AABACEAAAAAAgIAEAAgAAAAAACAABAAQCAAAAQAAAAE=</HashCode>
+      <FileName>ViewModels\ClasseGestioneTrefolaturaViewModel.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="STA.Prefabbricato.Trefolatura.ViewModels.ClasseGestioneTrefoloViewModel">
+    <Position X="6.25" Y="8" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>AAAACAAAAAAAgAAAAAABAAAAIAAAAAAIAAAAAQAAYAA=</HashCode>
+      <FileName>ViewModels\ClasseGestioneTrefoloViewModel.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="STA.Prefabbricato.Trefolatura.ViewModels.ClasseGestioneElencoTrefolatureViewModel">
+    <Position X="5" Y="0.5" Width="4" />
+    <TypeIdentifier>
+      <HashCode>AAAAAEAAAAAAAAIAAAAAAAQEIAAAABAAQAAAAAAAAAA=</HashCode>
+      <FileName>ViewModels\ClasseGestioneElencoTrefolatureViewModel.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

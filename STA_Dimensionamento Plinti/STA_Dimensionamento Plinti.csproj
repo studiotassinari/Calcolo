@@ -1,0 +1,356 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{2E0713AD-B87B-45C0-B79B-025C11701BFC}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>STA_Dimensionamento_Plinti</RootNamespace>
+    <AssemblyName>STA_Dimensionamento Plinti</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+    <OldToolsVersion>3.5</OldToolsVersion>
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
+    <IsWebBootstrapper>true</IsWebBootstrapper>
+    <Utf8Output>true</Utf8Output>
+    <ExpressionBlendVersion>4.0.20525.0</ExpressionBlendVersion>
+    <PublishUrl>\\server.studio.ingtassinari.it\inetpub\wwwroot\software\plinti\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Web</InstallFrom>
+    <UpdateEnabled>true</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <InstallUrl>http://server.studio.ingtassinari.it/software/plinti/</InstallUrl>
+    <ProductName>Plinti isolati</ProductName>
+    <PublisherName>Studio Tassinari e Associati</PublisherName>
+    <SuiteName>STA</SuiteName>
+    <CreateWebPageOnPublish>true</CreateWebPageOnPublish>
+    <WebPage>index.html</WebPage>
+    <ApplicationRevision>31</ApplicationRevision>
+    <ApplicationVersion>0.0.0.%2a</ApplicationVersion>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <PublishWizardCompleted>true</PublishWizardCompleted>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ManifestCertificateThumbprint>D966627D29AEC601800EB81EB23A6C0FE662C90B</ManifestCertificateThumbprint>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ManifestKeyFile>
+    </ManifestKeyFile>
+  </PropertyGroup>
+  <PropertyGroup>
+    <GenerateManifests>true</GenerateManifests>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignManifests>true</SignManifests>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>Resources\plinti3.ico</ApplicationIcon>
+  </PropertyGroup>
+  <PropertyGroup>
+    <TargetZone>LocalIntranet</TargetZone>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationManifest>Properties\app.manifest</ApplicationManifest>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.Office.Interop.Word, Version=14.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </Reference>
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+    <Reference Include="System" />
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Runtime.Serialization.Formatters.Soap" />
+    <Reference Include="System.Windows.Controls.DataVisualization.Toolkit" />
+    <Reference Include="System.Windows.Controls.Layout.Toolkit" />
+    <Reference Include="System.Xml.Linq">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data.DataSetExtensions">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data" />
+    <Reference Include="System.Deployment" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+    <Reference Include="UIAutomationProvider" />
+    <Reference Include="UIAutomationTypes" />
+    <Reference Include="WindowsBase" />
+    <Reference Include="WindowsFormsIntegration" />
+    <Reference Include="WPFToolkit" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Eventi.cs" />
+    <Compile Include="formProgettoPlintiProgExt.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="formProgettoPlintiProgExt.Designer.cs">
+      <DependentUpon>formProgettoPlintiProgExt.cs</DependentUpon>
+    </Compile>
+    <Compile Include="generali\Statici.cs" />
+    <Compile Include="generali\ucViewFile.xaml.cs">
+      <DependentUpon>ucViewFile.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="plinti\IPlinto.cs" />
+    <Compile Include="Main.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Main.Designer.cs">
+      <DependentUpon>Main.cs</DependentUpon>
+    </Compile>
+    <Compile Include="nodi\Nodo.cs" />
+    <Compile Include="pali\IPalo.cs" />
+    <Compile Include="pali\Palo.cs" />
+    <Compile Include="plinti\IUserControlPLinto.cs" />
+    <Compile Include="plinti\Plinto.cs" />
+    <Compile Include="plinti\ucPlinto.xaml.cs">
+      <DependentUpon>ucPlinto.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="plinti\ucPropPlintoSuPaliRettangolare.xaml.cs">
+      <DependentUpon>ucPropPlintoSuPaliRettangolare.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="plinti\ucPropPlintoSuPaliTriangolari.xaml.cs">
+      <DependentUpon>ucPropPlintoSuPaliTriangolari.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="plinti\ucVisualizzaNodiSuiPlinti.xaml.cs">
+      <DependentUpon>ucVisualizzaNodiSuiPlinti.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="progetto\ProgettoPlinti.cs" />
+    <Compile Include="progetto\ucProgettoManuale.xaml.cs">
+      <DependentUpon>ucProgettoManuale.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="singolo\plintoSingoloForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="singolo\plintoSingoloForm.Designer.cs">
+      <DependentUpon>plintoSingoloForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="progetto\ucProgettoPlintoNew.xaml.cs">
+      <DependentUpon>ucProgettoPlintoNew.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="singolo\ucCalcoloPlintoSingolo.xaml.cs">
+      <DependentUpon>ucCalcoloPlintoSingolo.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="nodi\ucCombEsterne.xaml.cs">
+      <DependentUpon>ucCombEsterne.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="nodi\ucCombinazioneProp.xaml.cs">
+      <DependentUpon>ucCombinazioneProp.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="singolo\ucCombinazioni.xaml.cs">
+      <DependentUpon>ucCombinazioni.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="nodi\ucCombPropExt.xaml.cs">
+      <DependentUpon>ucCombPropExt.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="plinti\ucElencoPlinti.xaml.cs">
+      <DependentUpon>ucElencoPlinti.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="plinti\ucPropPlintoSuperficiale.xaml.cs">
+      <DependentUpon>ucPropPlintoSuperficiale.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="verifiche\IVerificaPlinto.cs" />
+    <Compile Include="verifiche\ucReportRisultati.xaml.cs">
+      <DependentUpon>ucReportRisultati.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="verifiche\ucVerificaMeyerhof.xaml.cs">
+      <DependentUpon>ucVerificaMeyerhof.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="verifiche\ucVerificaPlintoSuPali.xaml.cs">
+      <DependentUpon>ucVerificaPlintoSuPali.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="verifiche\verificaMeyerhof.cs" />
+    <Compile Include="verifiche\verificaPlintoSuPali.cs" />
+    <EmbeddedResource Include="formProgettoPlintiProgExt.resx">
+      <DependentUpon>formProgettoPlintiProgExt.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Main.resx">
+      <DependentUpon>Main.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="singolo\plintoSingoloForm.resx">
+      <DependentUpon>plintoSingoloForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\licenses.licx" />
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <None Include="Diagramma classe.cd" />
+    <None Include="Properties\app.manifest" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+    <Compile Include="nodi\Reazioni.cs" />
+    <None Include="STA_Dimensionamento Plinti_TemporaryKey.pfx" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Include="generali\ucViewFile.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="plinti\ucPlinto.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="plinti\ucPropPlintoSuPaliTriangolari.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="plinti\ucPropPlintoSuperficiale.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="plinti\ucPropPlintoSuPaliRettangolare.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="plinti\ucVisualizzaNodiSuiPlinti.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="progetto\ucProgettoManuale.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="progetto\ucProgettoPlintoNew.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="singolo\ucCalcoloPlintoSingolo.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="STA_ResourceDictionary.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="nodi\ucCombEsterne.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="nodi\ucCombinazioneProp.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="singolo\ucCombinazioni.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="nodi\ucCombPropExt.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="plinti\ucElencoPlinti.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="verifiche\ucReportRisultati.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="verifiche\ucVerificaMeyerhof.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="verifiche\ucVerificaPlintoSuPali.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\folder.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\accept.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\plinti3.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
+      <Visible>False</Visible>
+      <ProductName>Windows Installer 3.1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="_old\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Resources\plinti3.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\STA_Prefabbricato\STA_Prefabbricato.csproj">
+      <Project>{6E9DB41B-3B59-4106-8941-E71BC1EBBFAA}</Project>
+      <Name>STA_Prefabbricato</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

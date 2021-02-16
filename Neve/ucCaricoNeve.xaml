@@ -1,0 +1,90 @@
+﻿<UserControl x:Class="STA.Carichi.Neve.ucCaricoNeve"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d"
+             xmlns:Neve="clr-namespace:STA.Carichi.Neve"
+             
+             DataContext="{Binding}">
+    <UserControl.Resources>
+        
+        <DataTemplate x:Key="ZonaNeveComboItem" DataType="{x:Type Neve:ZoneCaricoNeve}">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="{Binding Nome}" Width="150"></TextBlock>
+                <Separator Margin="2,2,2,2"></Separator>
+                <TextBlock Text="{Binding qskmin}" Width="50"></TextBlock>
+                <TextBlock Text="{Binding asmin}"></TextBlock>
+                
+            </StackPanel>
+            
+        </DataTemplate>
+
+        <DataTemplate x:Key="ClasseTopografiaComboItem" DataType="{x:Type Neve:ClasseTopografia}">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="{Binding Topografia}" Width="150"></TextBlock>
+                <Separator Margin="2,2,2,2"></Separator>
+                <TextBlock Text="{Binding Descrizione}" Width="750"></TextBlock>
+                <Separator Margin="2,2,2,2"></Separator>
+                <TextBlock Text="{Binding Ce}" Width="50"></TextBlock>
+            </StackPanel>
+
+        </DataTemplate>
+
+    </UserControl.Resources>
+    
+    
+    <Grid Name="mainGrid">
+        <StackPanel>
+            <GroupBox Header="Caratteristiche Zona" Margin="2,2,2,2">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="150"/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+                    <Label Grid.Column="0" Grid.Row="0" Content="Zona: " HorizontalContentAlignment="Right"></Label>
+                    <ComboBox  Grid.Column="1" Grid.Row="0" Name="comboBoxZone" ItemTemplate="{StaticResource ZonaNeveComboItem}" ItemsSource="{Binding ListaZone}" SelectedItem="{Binding ZonaScelta}" Margin="2,2,2,2"></ComboBox>
+                    <Label Grid.Column="0" Grid.Row="1" Content="Classe di Topgrafia: " HorizontalContentAlignment="Right"></Label>
+                    <ComboBox  Grid.Column="1" Grid.Row="1" Name="comboBoxClasseEsposizione" ItemTemplate="{StaticResource ClasseTopografiaComboItem}" SelectedItem="{Binding ClasseTopografiaScelta}" ItemsSource="{Binding ListaClassiTopografia}" Margin="2,2,2,2"></ComboBox>
+                    <Label Grid.Column="0" Grid.Row="2" Content="Altezza Topografia [m]: " HorizontalContentAlignment="Right"></Label>
+                    <TextBox Grid.Column="1" Grid.Row="2" Text="{Binding AltezzaTopografia}" Margin="2,2,2,2" Name="tbAltezzaTopografica"></TextBox>
+                    <Label Grid.Column="0" Grid.Row="3" Content="qsk,min [kN/mq]: " HorizontalContentAlignment="Right"></Label>
+                    <TextBox Grid.Column="1" Grid.Row="3" Text="{Binding ZonaScelta.qskmin}" IsReadOnly="True" Margin="2,2,2,2" Name="tbQsk"></TextBox>
+                    <Label Grid.Column="0" Grid.Row="4" Content="as,min [m]: " HorizontalContentAlignment="Right"></Label>
+                    <TextBox Grid.Column="1" Grid.Row="4" Text="{Binding ZonaScelta.asmin}" IsReadOnly="True" Margin="2,2,2,2" Name="tbAs"></TextBox>
+                    <Label Grid.Column="0" Grid.Row="5" Content="qsk [kN/mq]: " HorizontalContentAlignment="Right"></Label>
+                    <TextBox Grid.Column="1" Grid.Row="5" Text="{Binding Qsk, Mode=OneWay}" IsReadOnly="True" Margin="2,2,2,2" Name="tbqsk"></TextBox>
+
+                </Grid>
+                
+            </GroupBox>
+            <GroupBox Header="Caratteristiche falda" Margin="2,2,2,2">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="180
+                                          "/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+                    <Label Grid.Column="0" Grid.Row="0" Content="Pendenza falda del tetto [°]: " HorizontalContentAlignment="Right"></Label>
+                    <TextBox Grid.Column="1" Grid.Row="0" Text="{Binding InclinazioneFalda}" Margin="2,2,2,2"></TextBox>
+                    <Label Grid.Column="0" Grid.Row="1" Content="Coefficiente m1: " HorizontalContentAlignment="Right"/>
+                    <TextBox Grid.Column="1" Grid.Row="1" Text="{Binding CoefficienteM1, Mode=OneWay}" Margin="2,2,2,2" IsReadOnly="True"/>
+                    
+                </Grid>
+
+            </GroupBox>
+        </StackPanel>
+    </Grid>
+</UserControl>

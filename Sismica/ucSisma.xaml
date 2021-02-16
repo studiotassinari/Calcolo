@@ -1,0 +1,168 @@
+﻿<UserControl x:Class="STA.Carichi.Sisma.ucSisma"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d"
+             xmlns:Sisma="clr-namespace:STA.Carichi.Sisma"
+             d:DesignHeight="300" d:DesignWidth="1245"
+             DataContext="{Binding}">
+    
+    <UserControl.Resources>
+        
+        <DataTemplate x:Key="stileMostraTipoCostruzione" DataType="{x:Type Sisma:ClasseGestioneVitaNominale}">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="{Binding ID}" Width="50"></TextBlock>
+                <TextBlock Text="{Binding Descrizione}" Width="250" TextWrapping="Wrap" ></TextBlock>
+                <TextBlock Text="{Binding Vn}" Width="50"></TextBlock>
+            </StackPanel>
+        </DataTemplate>
+        
+        <DataTemplate x:Key="stileMostraClasseUso" DataType="{x:Type Sisma:ClasseGestioneClassiUso}">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="{Binding ID}" Width="50"></TextBlock>
+                <TextBlock Text="{Binding Descrizione}" Width="350"></TextBlock>
+                <TextBlock Text="Cu = "></TextBlock>
+                <TextBlock Text="{Binding Cu}"></TextBlock>
+            </StackPanel> 
+        </DataTemplate>
+        
+        <DataTemplate x:Key="stileMostraCategoriaSuolo" DataType="{x:Type Sisma:ClasseGestioneCategorieSottosuolo}">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="{Binding Categoria}" Width="50"></TextBlock>
+                <TextBlock Text="{Binding Descrizione}" Width="600" TextWrapping="Wrap"></TextBlock>
+            </StackPanel>
+        </DataTemplate>
+
+        <DataTemplate x:Key="stileMostraDistanzePunti" DataType="{x:Type Sisma:distanzePunti}">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="{Binding puntoEst.ID}" Width="100" HorizontalAlignment="Center"></TextBlock>
+                <TextBlock Text="{Binding puntoEst.X}" Width="100"></TextBlock>
+                <TextBlock Text="{Binding puntoEst.Y}" Width="100"></TextBlock>
+                <TextBlock Text="{Binding distanzaPunti}" Width="100"></TextBlock>
+            </StackPanel>
+        </DataTemplate>
+
+        <GridView x:Key="VisualizzazioneSpettri">
+            <GridViewColumn Header="SL" Width="50" DisplayMemberBinding="{Binding statoLimite}"></GridViewColumn>
+            <GridViewColumn Header="Pvr" Width="50" DisplayMemberBinding="{Binding numPvr}"></GridViewColumn>
+            <GridViewColumn Header="Tr" Width="50" DisplayMemberBinding="{Binding numTr, StringFormat=F3}"></GridViewColumn>
+            <GridViewColumn Header="Ag" Width="50" DisplayMemberBinding="{Binding numAgMedia, StringFormat=F3}"></GridViewColumn>
+            <GridViewColumn Header="Tc*" Width="50" DisplayMemberBinding="{Binding numTcStarMedia, StringFormat=F3}"></GridViewColumn>
+            <GridViewColumn Header="F0" Width="50" DisplayMemberBinding="{Binding numF0Media, StringFormat=F3}"></GridViewColumn>
+            <GridViewColumn Header="Ss" Width="50" DisplayMemberBinding="{Binding numSs, StringFormat=F3}"></GridViewColumn>
+            <GridViewColumn Header="Cc" Width="50" DisplayMemberBinding="{Binding numcC, StringFormat=F3}"></GridViewColumn>
+            <GridViewColumn Header="S" Width="50" DisplayMemberBinding="{Binding numS, StringFormat=F3}"></GridViewColumn>
+            <GridViewColumn Header="Tb" Width="50" DisplayMemberBinding="{Binding numTb, StringFormat=F3}"></GridViewColumn>
+            <GridViewColumn Header="Tc" Width="50" DisplayMemberBinding="{Binding numTc, StringFormat=F3}"></GridViewColumn>
+            <GridViewColumn Header="Td" Width="50" DisplayMemberBinding="{Binding numTd, StringFormat=F3}"></GridViewColumn>
+            
+        </GridView>
+        
+        <GridView x:Key="VisualizzazioneValoriSpettrali">
+            <GridViewColumn Header="T" Width="50" DisplayMemberBinding="{Binding periodo, StringFormat=F5}"></GridViewColumn>
+            <GridViewColumn Header="Se(T)" Width="50" DisplayMemberBinding="{Binding risposta, StringFormat=F5}"></GridViewColumn>
+        </GridView>
+        
+    </UserControl.Resources>
+    
+    <Grid Name="mainGrid">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition></ColumnDefinition>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        <StackPanel>
+            <GroupBox Header="Caratteristiche Geografiche" Margin="2,2,2,2">
+                <Grid Name="gridCoord">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                        
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+                    <Label Content="Latitudine"/>
+                    <TextBox Grid.Column="1" Margin="2,2,2,2" Text="{Binding posizione.X}" x:Name="tbLatitudine"></TextBox>
+                    <Label Grid.Row="1" Content="Longitudine"/>
+                    <TextBox Grid.Row="1" Grid.Column="1" Margin="2,2,2,2" Text="{Binding posizione.Y}" x:Name="tbLongitudine"></TextBox>
+                    <ListView Grid.Row="2" Grid.ColumnSpan="2" ItemsSource="{Binding elencoDistanze}" ItemTemplate="{StaticResource stileMostraDistanzePunti}"></ListView>
+                </Grid>
+
+            </GroupBox>
+            <GroupBox Header="Caratteristiche Opera">
+                <StackPanel>
+                <ComboBox Name="comboBoxTipoCostruzione" ItemsSource="{Binding ElencoViteNominali}" ItemTemplate="{StaticResource stileMostraTipoCostruzione}" SelectedItem="{Binding TipoCostruzione}" Margin="2,2,2,2">
+                    
+                </ComboBox>
+                    <ComboBox Name="comboBoxClasseUso" ItemsSource="{Binding ElencoClassiUso}" SelectedItem="{Binding ClasseUso}" Margin="2,2,2,2" ItemTemplate="{StaticResource stileMostraClasseUso}">
+                    
+                </ComboBox>
+                    <StackPanel Orientation="Horizontal">
+                        <Label Content="Periodo di Riferimento: "></Label>
+                        <TextBox IsReadOnly="True" Text="{Binding PeriodoRiferimento, Mode=OneWay}"></TextBox>
+                        <Label Content=" anni"></Label>
+                        </StackPanel>
+                    <ComboBox Name="comboBoxCategoriaSuolo" ItemsSource="{Binding ElencoCategorieSottosuolo}" SelectedItem="{Binding CategoriaSottosuolo}" ItemTemplate="{StaticResource stileMostraCategoriaSuolo}" Margin="2,2,2,2">
+                        
+                    </ComboBox>
+                    <Separator></Separator>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="Fattore di struttura: " Margin="5" TextAlignment="Center" VerticalAlignment="Center"></TextBlock>
+                        <TextBox Text="{Binding FattoreStruttura}" Margin="5"></TextBox>
+                    </StackPanel>
+                </StackPanel>
+            </GroupBox>
+            <WrapPanel Orientation="Horizontal">
+            <TextBox Name="tbIndirizzo" Width="300"></TextBox>
+                <Button Content="Aggiorna" Name="btAggiornaPosizione" Click="btAggiornaPosizione_Click"></Button>
+            </WrapPanel>
+            <WebBrowser Name="webBrowser1" Height="500" Navigating="webBrowser1_Navigating">
+                
+            </WebBrowser>
+
+        </StackPanel>
+        <GroupBox Grid.Column="1" Header="Caratteristiche Spettri" Margin="2">
+            <StackPanel>
+                <ListView Name="listViewSpettri" ItemsSource="{Binding spettri}" View="{StaticResource VisualizzazioneSpettri}" SelectionChanged="listViewSpettri_SelectionChanged">
+                    
+                </ListView>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="auto"></ColumnDefinition>
+                        <ColumnDefinition></ColumnDefinition>
+                    </Grid.ColumnDefinitions>
+                    <ListView Name="listViewValoriSpettrali" View="{StaticResource VisualizzazioneValoriSpettrali}" MaxHeight="300"></ListView>
+                    <Border Grid.Column="1" BorderThickness="3" BorderBrush="Gray" Margin="2" Height="500">
+                    <Grid Name="gridGrafico1" Grid.Column="1" Margin="10">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"></ColumnDefinition>
+                            <ColumnDefinition Name="column1" Width="*"></ColumnDefinition>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"></RowDefinition>
+                            <RowDefinition Name="row1" Height="*"></RowDefinition>
+                            <RowDefinition Height="Auto"></RowDefinition>
+                        </Grid.RowDefinitions>
+                        <TextBlock Margin="2" x:Name="tbTitle" Grid.Column="1" Grid.Row="0" RenderTransformOrigin="0.5,0.5" FontSize="14" FontWeight="Bold" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" TextAlignment="Center" Text="Title"/>
+                        <TextBlock x:Name="tbXLabel" Grid.Column="1" Grid.Row="2" Margin="2" RenderTransformOrigin="0.5,0.5" TextAlignment="Center" Text="X Axis"/>
+                        <TextBlock x:Name="tbYLabel" Grid.Column="0" Grid.Row="1" Margin="2" RenderTransformOrigin="0.5,05" TextAlignment="Center" Text="Y Axis">
+                            <TextBlock.LayoutTransform>
+                                <RotateTransform Angle="-90"/>
+                            </TextBlock.LayoutTransform>
+                        </TextBlock>
+                    <Grid Grid.Column="1" Name="gridGrafico" Margin="0,0,0,0" Background="Transparent" ClipToBounds="False" Grid.Row="1">
+                    </Grid>
+                        <Canvas Margin="2" Name="textCanvas" Grid.Column="1" Grid.Row="1">
+                            <Canvas x:Name="chartCanvas" ClipToBounds="True"/>
+                        </Canvas>
+                    </Grid>
+                    </Border>
+                </Grid>
+
+            </StackPanel>
+        </GroupBox>
+    </Grid>
+</UserControl>

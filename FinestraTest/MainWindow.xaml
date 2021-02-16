@@ -1,0 +1,14 @@
+﻿<Window x:Class="FinestraTest.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Prova" ResizeMode="NoResize" SizeToContent="WidthAndHeight">
+    <Grid>
+        <StackPanel>
+            <Button Content="Vento" Name="btVento" Click="btVento_Click"></Button>
+            <Button Content="Neve" Name="btNeve" Click="btNeve_Click" />
+            <Button Content="Sismica" Name="btSismica" Click="btSismica_Click" />
+            <Button Content="Materiali" Name="btMateriali" Click="btMateriali_Click"></Button>
+            <Button Content="Trave Pref." Name="btTravePref" Click="btTravePref_Click"></Button>
+        </StackPanel>
+    </Grid>
+</Window>

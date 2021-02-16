@@ -1,0 +1,38 @@
+﻿<UserControl x:Class="STA_Dimensionamento_Plinti.plinti.ucPropPlintoSuPaliTriangolari"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="300">
+    <Grid Name="mainGrid">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition></ColumnDefinition>
+            <ColumnDefinition></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="25"></RowDefinition>
+            <RowDefinition Height="25"></RowDefinition>
+            <RowDefinition Height="25"></RowDefinition>
+            <RowDefinition Height="25"></RowDefinition>
+            <RowDefinition Height="5"></RowDefinition>
+            <RowDefinition Height="25"></RowDefinition>
+            <RowDefinition Height="25"></RowDefinition>
+            <RowDefinition Height="25"></RowDefinition>
+            <RowDefinition Height="25"></RowDefinition>
+        </Grid.RowDefinitions>
+        
+        <TextBlock Text="Diametro Pali [cm]" HorizontalAlignment="Right" VerticalAlignment="Center"></TextBlock>
+        <TextBox Grid.Column="1" Grid.Row="0" Margin="2,2,2,2" Name="tbDiametroPali"></TextBox>
+        
+        <TextBlock Text="Portata Limite [kN]" Grid.Row="1" HorizontalAlignment="Right" VerticalAlignment="Center"></TextBlock>
+        <TextBox Grid.Column="1" Grid.Row="1" Margin="2,2,2,2" Name="tbPortataLimite"></TextBox>
+        
+        <TextBox Name="tbAreaPali" Grid.Column="1" Grid.Row="6" Margin="2,2,2,2"></TextBox>
+        <TextBox Name="tbJx" Grid.Column="1" Grid.Row="7" Margin="2,2,2,2"></TextBox>
+        <TextBox Name="tbJy" Grid.Column="1" Grid.Row="8" Margin="2,2,2,2"></TextBox>
+        
+        
+        <Button Grid.Column="1" Grid.Row="5" Content="Accetta" Click="Button_Click"></Button>
+    </Grid>
+</UserControl>

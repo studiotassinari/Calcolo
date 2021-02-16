@@ -1,0 +1,93 @@
+﻿<UserControl x:Class="Calcestruzzo.ucPropCLS"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:sys="clr-namespace:System;assembly=mscorlib"
+             xmlns:local="clr-namespace:Calcestruzzo"
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="300"
+             >
+	<UserControl.Resources>
+
+        <Color x:Key="Colore_Controllo_Sociale">#FF042D43</Color>
+        <SolidColorBrush x:Key="TestoScurobrush" Color="{DynamicResource Colore_Controllo_Sociale}"/>
+
+        <!-- Stile per le etichette descrittive -->
+        <Style x:Key="StileEtichetteDescrizione" TargetType="{x:Type Label}">
+            <Setter Property="Control.BorderBrush" Value="{StaticResource TestoScurobrush}"/>
+            <Setter Property="HorizontalContentAlignment" Value="Right"/>
+            <Setter Property="Control.Background" Value="{x:Null}"/>
+            <Setter Property="FrameworkElement.Margin" Value="2,2,2,2"/>
+            <Setter Property="Control.Foreground" Value="{StaticResource TestoScurobrush}"/>
+            <Setter Property="Control.FontFamily" Value="Lucida Sans Unicode"></Setter>
+            <Setter Property="BorderThickness" Value="1"/>
+        </Style>
+
+        <!--Stile per i text box di sola lettura -->
+        <Style x:Key="StileRisultati" TargetType="{x:Type TextBox}">
+            <Setter Property="Control.BorderBrush" Value="{StaticResource TestoScurobrush}"/>
+            <Setter Property="HorizontalContentAlignment" Value="Left"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Control.Background" Value="{x:Null}"/>
+            <Setter Property="FrameworkElement.Margin" Value="2,2,2,2"/>
+            <Setter Property="Control.Foreground" Value="{StaticResource TestoScurobrush}"/>
+            <Setter Property="Control.FontFamily" Value="Lucida Sans Unicode"></Setter>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="IsReadOnly" Value="True"/>
+        </Style>
+
+        <ObjectDataProvider x:Key="classiCls"
+                            MethodName="GetNames" 
+                            ObjectType="{x:Type sys:Enum}">
+            <ObjectDataProvider.MethodParameters>
+                <x:Type TypeName="local:ClassiNormale" />
+            </ObjectDataProvider.MethodParameters>
+        </ObjectDataProvider>
+
+        <local:ClassiCLSToStringConverter x:Key="ConvertitoreClasse"/>
+        <local:DoubleToStringConverter x:Key="ConvertitoreNumeri"/>
+        
+    </UserControl.Resources>
+    <Grid x:Name="mainGrid" DataContext="{Binding}">
+            <Grid.RowDefinitions>
+            	<RowDefinition Height="30"></RowDefinition>
+				<RowDefinition Height="30"></RowDefinition>
+            <RowDefinition Height="30"></RowDefinition>
+            <RowDefinition Height="30"></RowDefinition>
+            <RowDefinition Height="30"></RowDefinition>
+            <RowDefinition Height="30"></RowDefinition>
+            <RowDefinition Height="30"></RowDefinition>
+            <RowDefinition Height="30"></RowDefinition>
+        </Grid.RowDefinitions>
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition></ColumnDefinition>
+				<ColumnDefinition></ColumnDefinition>
+			</Grid.ColumnDefinitions>
+			
+			<Label Grid.Row="0" Content="Classe Calcestruzzo" Style="{DynamicResource StileEtichetteDescrizione}"/>
+        <ComboBox Grid.Column="1" Grid.Row="0" ItemsSource="{Binding Source={StaticResource classiCls}}" SelectedValue="{Binding Classe, Converter={StaticResource ConvertitoreClasse}}" Name="cbClasse" SelectionChanged="cbClasse_SelectionChanged" Background="{x:Null}" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
+
+        <Label Grid.Row="1" Grid.Column="0" Content="Rck [N/mmq]" Style="{DynamicResource StileEtichetteDescrizione}"></Label>
+        <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Rck, Mode=OneWay}" Style="{DynamicResource StileRisultati}"></TextBox>
+
+        <Label Grid.Row="2" Grid.Column="0" Content="fck [N/mmq]" Style="{DynamicResource StileEtichetteDescrizione}"></Label>
+        <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding fck, Converter={StaticResource ConvertitoreNumeri}, Mode=OneWay}" Style="{StaticResource StileRisultati}"></TextBox>
+
+        <Label Grid.Row="3" Grid.Column="0" Content="fcd [N/mmq]" Style="{DynamicResource StileEtichetteDescrizione}"></Label>
+        <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding fcd, Converter={StaticResource ConvertitoreNumeri}, Mode=OneWay}" Style="{StaticResource StileRisultati}"></TextBox>
+
+        <Label Grid.Row="4" Grid.Column="0" Content="Ecm [N/mmq]" Style="{DynamicResource StileEtichetteDescrizione}"></Label>
+        <TextBox Grid.Row="4" Grid.Column="1" Text="{Binding Ecm, Converter={StaticResource ConvertitoreNumeri}, Mode=OneWay}" Style="{StaticResource StileRisultati}"></TextBox>
+
+        <Label Grid.Row="5" Grid.Column="0" Content="fcm [N/mmq]" Style="{DynamicResource StileEtichetteDescrizione}"></Label>
+        <TextBox Grid.Row="5" Grid.Column="1" Text="{Binding fcm, Converter={StaticResource ConvertitoreNumeri}, Mode=OneWay}" Style="{StaticResource StileRisultati}"></TextBox>
+
+        <Label Grid.Row="6" Grid.Column="0" Content="fctm [N/mmq]" Style="{DynamicResource StileEtichetteDescrizione}"></Label>
+        <TextBox Grid.Row="6" Grid.Column="1" Text="{Binding fctm, Converter={StaticResource ConvertitoreNumeri}, Mode=OneWay}" Style="{StaticResource StileRisultati}"></TextBox>
+
+        <Label Grid.Row="7" Grid.Column="0" Content="fcfm [N/mmq]" Style="{DynamicResource StileEtichetteDescrizione}"></Label>
+        <TextBox Grid.Row="7" Grid.Column="1" Text="{Binding fcfm, Converter={StaticResource ConvertitoreNumeri}, Mode=OneWay}" Style="{StaticResource StileRisultati}"></TextBox>
+
+    </Grid>
+</UserControl>
