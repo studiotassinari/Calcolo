@@ -4,8 +4,9 @@ using System.Linq;
 using System.Text;
 using STA_Dimensionamento_Plinti.pali;
 using System.Xml;
-using STA_Prefabbricato.data;
+
 using Word = Microsoft.Office.Interop.Word;
+using STA.Geometria;
 
 namespace STA_Dimensionamento_Plinti
 {
@@ -187,7 +188,7 @@ namespace STA_Dimensionamento_Plinti
         private double sPesoTerrenoSopra {get; set;} //in daN
 
         //posizione eccentrica
-        private punto2D sEccentricitaPilastro = new punto2D();
+        private Punto2D sEccentricitaPilastro = new Punto2D();
         
         #endregion
 
@@ -216,7 +217,7 @@ namespace STA_Dimensionamento_Plinti
         /// <summary>
         /// Posizione del pilastro rispetto al baricentro del plinto
         /// </summary>
-        public punto2D EccentricitaPilastro { get { return sEccentricitaPilastro; } }
+        public Punto2D EccentricitaPilastro { get { return sEccentricitaPilastro; } }
 
         /// <summary>
         /// Valore limite della pressione sul terreno
@@ -265,8 +266,8 @@ namespace STA_Dimensionamento_Plinti
             sH = spessore;
             sImposta = imposta;
             sPressioneLimite = portataLimite;
-            sEccentricitaPilastro.x = 0;
-            sEccentricitaPilastro.y = 0;
+            sEccentricitaPilastro.X = 0;
+            sEccentricitaPilastro.Y = 0;
             calcolaProprietàBase();
         }
 
@@ -344,11 +345,11 @@ namespace STA_Dimensionamento_Plinti
             nodoProvv.Attributes.Append(nodoPressioneLimite);
 
             XmlAttribute nodoEccX = generali.Statici.xmldoc.CreateAttribute("prop_EccX");
-            nodoEccX.Value = EccentricitaPilastro.x.ToString();
+            nodoEccX.Value = EccentricitaPilastro.X.ToString();
             nodoProvv.Attributes.Append(nodoEccX);
 
             XmlAttribute nodoEccY = generali.Statici.xmldoc.CreateAttribute("prop_EccY");
-            nodoEccY.Value = EccentricitaPilastro.y.ToString();
+            nodoEccY.Value = EccentricitaPilastro.Y.ToString();
             nodoProvv.Attributes.Append(nodoEccY);
 
             XmlAttribute nodoConsideraTerreno = generali.Statici.xmldoc.CreateAttribute("prop_ConsideraTerreno");
@@ -421,8 +422,8 @@ namespace STA_Dimensionamento_Plinti
         /// <param name="y"></param>
         public void assegnaPosizione(double x, double y)
         {
-            sEccentricitaPilastro.x = x;
-            sEccentricitaPilastro.y = y;
+            sEccentricitaPilastro.X = x;
+            sEccentricitaPilastro.Y = y;
         }
 
         /// <summary>
@@ -439,7 +440,7 @@ namespace STA_Dimensionamento_Plinti
             uscita += " x " + H.ToString("F0");
             uscita += " | Q = " + Imposta.ToString("F0");
             uscita += " | pLim = " + ValoreLimite.ToString("F2");
-            uscita += " | Ecc: (" + EccentricitaPilastro.x.ToString() + "," + EccentricitaPilastro.y.ToString() + ")";
+            uscita += " | Ecc: (" + EccentricitaPilastro.Y.ToString() + "," + EccentricitaPilastro.Y.ToString() + ")";
             if (ConsideraTerrenoSopra == true)
             {
                 uscita += " | Con Terreno Sopra (gamma = " + PesoSpecTerreno.ToString("F0") + ")";
@@ -515,7 +516,7 @@ namespace STA_Dimensionamento_Plinti
 
         private int sColonne { get; set; }
 
-        private Figura sSagoma { get; set; }
+        //private Figura sSagoma { get; set; }
 
         private double sDistanzaPali { get; set; }
 
@@ -670,9 +671,9 @@ namespace STA_Dimensionamento_Plinti
                 int j = 0;
                 for (j = 0; j < colonne; j++)
                 {
-                    punto2D posizionePalo = new punto2D();
-                    posizionePalo.x = 3 * palo.Diametro * (colonne - 1) / 2 - j * 3 * palo.Diametro;
-                    posizionePalo.y = 3 * palo.Diametro * (ordini - 1) / 2 - i * 3 * palo.Diametro;
+                    Punto2D posizionePalo = new Punto2D();
+                    posizionePalo.X = 3 * palo.Diametro * (colonne - 1) / 2 - j * 3 * palo.Diametro;
+                    posizionePalo.Y = 3 * palo.Diametro * (ordini - 1) / 2 - i * 3 * palo.Diametro;
                     palo.AssegnaPosizione(posizionePalo);
 
                     sPali.Add(new Palo(palo.Diametro, palo.PortataLimite, posizionePalo));
@@ -697,25 +698,25 @@ namespace STA_Dimensionamento_Plinti
 
             //lunghezza del cateto del triangolo rettangolo che forma metà della figura
             double cateto = palo.Diametro * 3/2 * Math.Sqrt(3);
-                        
+
             //Aggiunta dei pali
 
             //primo palo in alto
-            punto2D posizionePalo1 = new punto2D();
-            posizionePalo1.x = 0;
-            posizionePalo1.y = cateto * 2 / 3;
+            Punto2D posizionePalo1 = new Punto2D();
+            posizionePalo1.X = 0;
+            posizionePalo1.Y = cateto * 2 / 3;
             sPali.Add(new Palo(palo.Diametro, palo.PortataLimite, posizionePalo1));
 
             //secondo palo in basso a destra
-            punto2D posizionePalo2 = new punto2D();
-            posizionePalo2.x = 1.5 * palo.Diametro;
-            posizionePalo2.y = -1/3 * cateto;
+            Punto2D posizionePalo2 = new Punto2D();
+            posizionePalo2.X = 1.5 * palo.Diametro;
+            posizionePalo2.Y = -1/3 * cateto;
             sPali.Add(new Palo(palo.Diametro, palo.PortataLimite, posizionePalo2));
 
             //terzo palo in basso a sinistra
-            punto2D posizionePalo3 = new punto2D();
-            posizionePalo3.x = -1.5 * palo.Diametro;
-            posizionePalo3.y = -1/3* palo.Diametro;
+            Punto2D posizionePalo3 = new Punto2D();
+            posizionePalo3.X = -1.5 * palo.Diametro;
+            posizionePalo3.Y = -1/3* palo.Diametro;
             sPali.Add(new Palo(palo.Diametro, palo.PortataLimite, posizionePalo3));
 
 
@@ -766,7 +767,7 @@ namespace STA_Dimensionamento_Plinti
             double prov = 0;
             foreach (IPalo palo in Pali)
             {
-                prov += palo.Area()/10000 * Math.Pow(palo.Posizione.y/100, 2);
+                prov += palo.Area()/10000 * Math.Pow(palo.Posizione.Y/100, 2);
             }
             return prov;
 
@@ -781,7 +782,7 @@ namespace STA_Dimensionamento_Plinti
             double prov = 0;
             foreach (IPalo palo in Pali)
             {
-                prov += palo.Area()/10000 * Math.Pow(palo.Posizione.x/100, 2);
+                prov += palo.Area()/10000 * Math.Pow(palo.Posizione.X/100, 2);
             }
             return prov;
         }

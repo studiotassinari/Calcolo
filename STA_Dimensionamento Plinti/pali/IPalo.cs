@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using STA_Prefabbricato.data;
+using STA.Geometria;
+//using STA_Prefabbricato.data;
 using System.Xml;
 
 namespace STA_Dimensionamento_Plinti.pali
@@ -18,13 +19,13 @@ namespace STA_Dimensionamento_Plinti.pali
         double PortataLimite { get; }
         double Diametro { get; }
         
-        punto2D Posizione { get; }
+        Punto2D Posizione { get; }
 
         XmlNode salvaXML();
 
         
 
-        void AssegnaPosizione(punto2D puntoPosizione);
+        void AssegnaPosizione(Punto2D puntoPosizione);
 
         double Area();
 

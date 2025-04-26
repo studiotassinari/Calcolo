@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using STA_Prefabbricato.data;
+using STA.Geometria;
 using System.Xml;
 
 namespace STA_Dimensionamento_Plinti.pali
@@ -14,7 +14,7 @@ namespace STA_Dimensionamento_Plinti.pali
     {
         #region proprietà private
         private double sDiametro { get; set; }
-        private punto2D sPosizione = new punto2D();
+        private Punto2D sPosizione = new Punto2D();
         private double sPortataLimite { get; set; }
 
         #endregion
@@ -29,7 +29,7 @@ namespace STA_Dimensionamento_Plinti.pali
         /// <summary>
         /// Posizione del Palo 
         /// </summary>
-        public punto2D Posizione { get { return sPosizione; } }
+        public Punto2D Posizione { get { return sPosizione; } }
         /// <summary>
         /// Portata Limite del Palo [kN]
         /// </summary>
@@ -54,7 +54,7 @@ namespace STA_Dimensionamento_Plinti.pali
         /// <param name="diametro">Diametro [cm]</param>
         /// <param name="portataLimite">Portata Limite del palo [kN]</param>
         /// <param name="posizione">posizione [cm]</param>
-        public Palo(double diametro, double portataLimite, punto2D posizione) : this (diametro, portataLimite)
+        public Palo(double diametro, double portataLimite, Punto2D posizione) : this (diametro, portataLimite)
         {
             sPosizione = posizione;
         }
@@ -67,9 +67,9 @@ namespace STA_Dimensionamento_Plinti.pali
         {
             sDiametro = double.Parse(nodoIn.Attributes["prop_Diametro"].Value);
             sPortataLimite = double.Parse(nodoIn.Attributes["prop_Portata"].Value);
-            punto2D posizione = new punto2D();
-            posizione.x = double.Parse(nodoIn.Attributes["prop_X"].Value);
-            posizione.y = double.Parse(nodoIn.Attributes["prop_Y"].Value);
+            Punto2D posizione = new Punto2D();
+            posizione.X = double.Parse(nodoIn.Attributes["prop_X"].Value);
+            posizione.Y = double.Parse(nodoIn.Attributes["prop_Y"].Value);
             AssegnaPosizione(posizione);
         }
 
@@ -86,7 +86,7 @@ namespace STA_Dimensionamento_Plinti.pali
             return Math.Pow(Diametro / 2, 2) * Math.PI;
         }
 
-        public void AssegnaPosizione(punto2D puntoPosizione)
+        public void AssegnaPosizione(Punto2D puntoPosizione)
         {
             sPosizione = puntoPosizione;
         }
@@ -110,11 +110,11 @@ namespace STA_Dimensionamento_Plinti.pali
             nodoProvv.Attributes.Append(nodoDiametro);
 
             XmlAttribute nodoX = generali.Statici.xmldoc.CreateAttribute("prop_X");
-            nodoX.Value = Posizione.x.ToString();
+            nodoX.Value = Posizione.X.ToString();
             nodoProvv.Attributes.Append(nodoX);
 
             XmlAttribute nodoY = generali.Statici.xmldoc.CreateAttribute("prop_Y");
-            nodoY.Value = Posizione.x.ToString();
+            nodoY.Value = Posizione.Y.ToString();
             nodoProvv.Attributes.Append(nodoY);
 
             XmlAttribute nodoPortata = generali.Statici.xmldoc.CreateAttribute("prop_Portata");
