@@ -1,12 +1,13 @@
-TA-Calcolo 1.3.2: più cerchiature con profili indipendenti nel modulo Muratura e cerchiatura.
+TA-Calcolo 1.3.3: interfaccia più compatta e selezione dei profili da tastiera.
 
-- Aggiunta, selezione e rimozione di cerchiature nello stesso progetto, con profilo, altezza, acciaio e schema indipendenti per ciascuna.
-- Proposte HEA / HEB / IPE per la cerchiatura selezionata tenendo conto del contributo delle altre cerchiature attive e mantenendo fissi i loro profili.
-- Riepilogo e risultati complessivi con la somma della rigidezza e della resistenza efficace delle cerchiature attive, contando una sola volta la muratura.
-- Salvataggio e riapertura di tutte le cerchiature, con importazione dei progetti delle versioni precedenti.
-- Relazioni Word e PDF con dati e contributi delle singole cerchiature e confronto complessivo.
-- Risultati e proposte da ricalcolare dopo la modifica di una cerchiatura.
+- Pannello cerchiature limitato alla larghezza di due colonne dei maschi.
+- Spazi verticali ridotti tra campi e sezioni di murature e cerchiature.
+- Confronti di rigidezza e resistenza limitati alla larghezza di tre colonne, con riepilogo aggiuntivo a destra.
+- Indicazione della riduzione (o dell’aumento) della larghezza totale dei maschi, in centimetri, tra prima e dopo.
+- Incrementi percentuali di rigidezza e resistenza efficace dovuti a tutte le cerchiature attive, riferiti alla muratura dopo l’intervento senza cerchiature.
+- Pressione media σ₀ in daN/cm² sotto il carico di ogni maschio, aggiornata con carico e geometria per N o q.
+- Profilo digitabile con completamento dall’elenco; i valori non presenti nel catalogo impediscono il calcolo.
 
-Scaricare **TA-Calcolo-Setup-1.3.2-win-x64.exe** oppure usare Verifica aggiornamenti e riavviare l’app. Il file STA-Calcolo-Update è riservato all’aggiornatore.
+Scaricare **TA-Calcolo-Setup-1.3.3-win-x64.exe** oppure usare Verifica aggiornamenti e riavviare l’app. Il file STA-Calcolo-Update è riservato all’aggiornatore.
 
-I progetti con più cerchiature richiedono TA-Calcolo 1.3.2 o successivo. Conservati i limiti del modello originale: confronto preliminare, non verifica strutturale completa.
+Conservati i limiti del modello originale: confronto preliminare, non verifica strutturale completa.

@@ -14,13 +14,28 @@ public sealed class MasonryPierViewModel : ObservableObject
     public bool LinearLoad=>Editor.ByKey["LoadMode"].Value=="Distribuito q";
     public bool HeightEditable {get;private set;}=true;
     public string GeometryText {get{try{var p=model with {};Editor.Apply(p);return $"Area {p.L*p.T:N2} cm² · h/l {p.H/p.L:N2}";}catch{return "Completare la geometria";}}}
+    public string PressureText
+    {
+        get
+        {
+            try
+            {
+                var p=model with {};Editor.Apply(p);MasonryCalculator.Positive(p.L,p.T);
+                double n=p.LoadMode=="linear"?p.Q*p.L/100:p.N;
+                double pressure=n*100/(p.L*p.T); // kN -> daN; area in cm².
+                if(!double.IsFinite(n)||n<0||!double.IsFinite(pressure))return "—";
+                return $"{pressure:N2}";
+            }
+            catch{return "—";}
+        }
+    }
     public RelayCommand RemoveCommand {get;}
     public MasonryPierViewModel(MasonryPier model,string label,Action<MasonryPierViewModel> remove)
     {
         this.model=model;this.label=label;
         Material=new(MasonryMaterialMapping.Read(model));
         Editor=new(model,[("H","Altezza [cm]",null),("L","Lunghezza [cm]",null),("T","Spessore [cm]",null),("LoadMode","Modalità del carico",["Risultante N","Distribuito q"]),("N","N compressione [kN]",null),("Q","q [kN/m]",null)]);
-        Editor.PropertyChanged+=(_,_)=>{Changed(nameof(Editor));Changed(nameof(LinearLoad));Changed(nameof(GeometryText));};
+        Editor.PropertyChanged+=(_,_)=>{Changed(nameof(Editor));Changed(nameof(LinearLoad));Changed(nameof(GeometryText));Changed(nameof(PressureText));};
         Material.PropertyChanged+=(_,_)=>{Changed(nameof(Material));Changed(nameof(MaterialId));Changed(nameof(Level));};
         RemoveCommand=new(()=>remove(this));
     }

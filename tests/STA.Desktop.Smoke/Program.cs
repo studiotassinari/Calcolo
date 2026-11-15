@@ -69,6 +69,49 @@ internal static class Program
         if(multiVm.Frames.Count!=1||multiVm.RemoveFrameCommand.CanExecute(null))throw new Exception("Remove frame failed");
         multiVm.CalculateCommand.Execute(null);if(multiVm.Results.Count==0)throw new Exception(multiVm.Status);
         Console.WriteLine("PASS WPF muratura: original JSON, invalidation, linked heights, automatic material selection, live summary, report, design and rendering");
+
+        var pressureVm=new MasonryPierViewModel(new(){L=850,T=20,N=170},"Pressione",_=>{});
+        if(pressureVm.PressureText!=$"{1d:N2}")throw new Exception("Pressure kN to daN/cm2");
+        pressureVm.Editor.ByKey["LoadMode"].Value="Distribuito q";pressureVm.Editor.ByKey["Q"].Value="20";
+        if(pressureVm.PressureText!=$"{1d:N2}")throw new Exception("Uniform load pressure");
+        pressureVm.Editor.ByKey["T"].Value="0";
+        if(pressureVm.PressureText!="—")throw new Exception("Invalid pressure geometry");
+        pressureVm.Editor.ByKey["T"].Value="20";pressureVm.Editor.ByKey["Q"].Value="0";
+        if(pressureVm.PressureText!=$"{0d:N2}")throw new Exception("Zero pressure");
+        var compactVm=new MasonryViewModel(files);compactVm.ExampleCommand.Execute(null);
+        var compactProject=compactVm.Build();
+        compactProject.Before=[new(){L=400}];compactProject.After=[new(){L=300}];
+        compactProject.Frame.Enabled=false;compactProject.AdditionalFrames=[];
+        compactVm.Load(compactProject);
+        if(compactVm.Summary.WidthReduction!=$"Riduzione {100:N1} cm"||compactVm.Summary.HasFrames)throw new Exception("Width summary or disabled frame summary");
+        compactVm.Before[0].Editor.ByKey["L"].Value="250";
+        if(compactVm.Summary.WidthReduction!=$"Aumento {50:N1} cm")throw new Exception("Live width summary");
+        compactVm.Frame.Enabled=true;compactVm.AddFrameCommand.Execute(null);
+        var cp=compactVm.Build();var ca=STA.Muratura.Core.MasonryCalculator.Total(cp.Before);var cb=STA.Muratura.Core.MasonryCalculator.Total(cp.After);
+        var cf=STA.Muratura.Core.FrameGroupCalculator.Calculate(cp.AllFrames,ca,cb);
+        var expectedIncrease=$"K +{cf.K/cb.K*100:N2} % · V +{cf.Veff/cb.Vt*100:N2} %";
+        if(!compactVm.Summary.HasFrames||compactVm.Summary.FrameIncrease!=expectedIncrease)throw new Exception("Combined frame percentage");
+        var compactWindow=new MasonryWindow{DataContext=compactVm};Render(compactWindow,"muratura-compatta",1760);
+        var framePanel=(FrameworkElement)compactWindow.FindName("FrameSection");
+        var comparisons=(FrameworkElement)compactWindow.FindName("ComparisonCards");
+        if(Math.Abs(framePanel.ActualWidth-794)>1||comparisons.ActualWidth>1174)throw new Exception("Compact section widths");
+        framePanel.BringIntoView();Render(compactWindow,"cerchiatura-compatta",1760);
+        var profileView=Find<SteelProfileView>(framePanel)!;
+        var profileBox=(System.Windows.Controls.ComboBox)profileView.FindName("ProfileSelector");
+        profileBox.ApplyTemplate();
+        if(!profileBox.IsEditable||profileBox.Template.FindName("PART_EditableTextBox",profileBox)==null)throw new Exception("Profile editor not editable");
+        profileBox.Text="IPE 200";profileBox.GetBindingExpression(System.Windows.Controls.ComboBox.TextProperty)!.UpdateSource();
+        if(compactVm.Frame.Profile.Model?.Id!="IPE 200")throw new Exception("Typed profile not applied");
+        profileBox.Text="INESISTENTE";profileBox.GetBindingExpression(System.Windows.Controls.ComboBox.TextProperty)!.UpdateSource();
+        compactVm.CalculateCommand.Execute(null);
+        if(compactVm.Results.Count!=0||compactVm.Summary.StiffnessDelta!="—")throw new Exception("Invalid typed profile accepted");
+        compactVm.Frame.Profile.SelectedId="hea140";
+        if(compactVm.Frame.Profile.Model?.Id!="HEA 140")throw new Exception("Profile normalization");
+        compactVm.CalculateCommand.Execute(null);if(compactVm.Results.Count==0)throw new Exception(compactVm.Status);
+        Render(compactWindow,"cerchiatura-compatta-stretto",920);
+        if(framePanel.ActualWidth>794||comparisons.ActualWidth>1174)throw new Exception("Compact narrow layout");
+        compactWindow.Close();
+
         var footing = new FootingViewModel(files); footing.ExampleCommand.Execute(null); footing.CalculateCommand.Execute(null);
         if (footing.Results.Length != 1 || !footing.ExportCommand.CanExecute(null)) throw new Exception(footing.Status);
         files.NextSave = "footing.json"; footing.SaveCommand.Execute(null); files.NextSave = "footing-results.json"; footing.ExportCommand.Execute(null);
@@ -91,9 +134,9 @@ internal static class Program
     }
     static T? Find<T>(DependencyObject parent) where T:DependencyObject {for(int i=0;i<VisualTreeHelper.GetChildrenCount(parent);i++){var child=VisualTreeHelper.GetChild(parent,i);if(child is T found)return found;var nested=Find<T>(child);if(nested!=null)return nested;}return null;}
     static void Capture(FrameworkElement content,string name){var bitmap=new RenderTargetBitmap((int)Math.Ceiling(content.ActualWidth),(int)Math.Ceiling(content.ActualHeight),96,96,PixelFormats.Pbgra32);var visual=new DrawingVisual();using(var dc=visual.RenderOpen())dc.DrawRectangle(new VisualBrush(content),null,new Rect(0,0,content.ActualWidth,content.ActualHeight));bitmap.Render(visual);using var stream=System.IO.File.Create("artifacts/"+name+".png");var encoder=new PngBitmapEncoder();encoder.Frames.Add(BitmapFrame.Create(bitmap));encoder.Save(stream);}
-    static void Render(Window window, string name)
+    static void Render(Window window, string name,double width=1180)
     {
-        window.Width=1180;window.Height=820;window.Show(); window.UpdateLayout();
+        window.Width=width;window.Height=820;window.Show(); window.UpdateLayout();
         var content = (FrameworkElement)window.Content; content.UpdateLayout();
         var bitmap = new RenderTargetBitmap((int)Math.Ceiling(content.ActualWidth), (int)Math.Ceiling(content.ActualHeight), 96, 96, PixelFormats.Pbgra32); var drawing=new DrawingVisual();using(var dc=drawing.RenderOpen())dc.DrawRectangle(new VisualBrush(content),null,new Rect(0,0,content.ActualWidth,content.ActualHeight));bitmap.Render(drawing); System.IO.Directory.CreateDirectory("artifacts"); using var file = System.IO.File.Create("artifacts/" + name + ".png"); var encoder = new PngBitmapEncoder(); encoder.Frames.Add(BitmapFrame.Create(bitmap)); encoder.Save(file);
     }

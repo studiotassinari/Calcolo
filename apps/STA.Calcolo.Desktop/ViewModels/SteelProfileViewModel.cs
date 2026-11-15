@@ -7,7 +7,8 @@ public sealed class SteelProfileViewModel : ObservableObject
     private readonly ModuleFieldViewModel selection;
     public IReadOnlyList<SteelProfile> Profiles=>ProfileCatalog.All;
     public SteelProfile? Model=>Profiles.SingleOrDefault(p=>p.Id==SelectedId);
-    public string SelectedId {get=>selection.Value;set=>selection.Value=value;}
+    public string SelectedId {get=>selection.Value;set=>selection.Value=Profiles.FirstOrDefault(p=>Normalize(p.Id)==Normalize(value))?.Id??value;}
+    private static string Normalize(string? value)=>string.Concat((value??"").Where(c=>!char.IsWhiteSpace(c))).ToUpperInvariant();
     public SteelProfileViewModel(ModuleFieldViewModel selection)
     {
         this.selection=selection;
