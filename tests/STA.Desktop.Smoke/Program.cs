@@ -8,9 +8,28 @@ using STA.Calcolo.Desktop.ViewModels;
 using STA.Calcolo.Desktop.Services;
 internal static class Program
 {
+    static void CheckSaveDirectories()
+    {
+        string projectDirectory=System.IO.Path.GetFullPath("artifacts/save-project");
+        string excelDirectory=System.IO.Path.GetFullPath("artifacts/save-excel");
+        System.IO.Directory.CreateDirectory(projectDirectory);System.IO.Directory.CreateDirectory(excelDirectory);
+        string? selected=null;string initial="";
+        var service=new FileService(dialog=>{initial=dialog.InitialDirectory;if(selected==null)return false;dialog.FileName=selected;return true;});
+        const string project="Progetto muratura|*.json",excel="Foglio Excel|*.xlsx";
+        selected=System.IO.Path.Combine(projectDirectory,"p.json");service.Save(project,"p.json");
+        selected=System.IO.Path.Combine(excelDirectory,"p.xlsx");service.Save(excel,"p.xlsx");
+        selected=null;
+        if(service.Save(project,"p.json")!=null||initial!=projectDirectory)throw new Exception("Project save directory not remembered");
+        service.Save(excel,"p.xlsx");if(initial!=excelDirectory)throw new Exception("Excel save directory not independent");
+        service.Save(project,"p.json");if(initial!=projectDirectory)throw new Exception("Cancel changed save directory");
+        var fresh=new FileService(dialog=>{if(dialog.InitialDirectory!=Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments))throw new Exception("Save directory leaked to a new session");return false;});
+        fresh.Save(project,"p.json");
+        Console.WriteLine("PASS save folders: independent project/Excel, cancellation and session lifetime");
+    }
     [STAThread]
     static int Main()
     {
+        CheckSaveDirectories();
         var app = new System.Windows.Application { ShutdownMode = ShutdownMode.OnExplicitShutdown }; app.Resources.MergedDictionaries.Add(new ResourceDictionary {Source=new Uri("/STA.Calcolo.Desktop;component/Themes/Tassinari.xaml",UriKind.Relative)}); var files = new MemoryFileService(); var windows = new WindowService(files); var mainVm = new MainViewModel(windows); var main = new MainWindow { DataContext = mainVm }; app.MainWindow = main;
         foreach (var module in WorkspaceCatalog.Create())
         {

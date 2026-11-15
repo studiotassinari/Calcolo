@@ -1,8 +1,7 @@
-TA-Calcolo 1.3.4: esportazione Excel nel formato del modello e comandi più accessibili.
+TA-Calcolo 1.3.5: Excel più fedele al modello e memoria delle cartelle di salvataggio.
 
-- Pulsante Copia prima → dopo anche tra le sezioni dei maschi.
-- Pulsante Crea Excel nella barra superiore: esporta dati e risultati correnti, con formule e tabelle nello stile del modello fornito.
-- Schede per tutti i maschi prima/dopo e tutte le cerchiature, con riepilogo complessivo. Esclusi calcoli estranei al modulo, collegamenti esterni e dati della commessa di riferimento.
-- Acciaio selezionabile dall’elenco 235, 275 e 355 MPa; valore iniziale 275 MPa.
+- Riepilogo su un secondo foglio, con larghezze indipendenti dalle schede dei maschi e formule collegate ai risultati.
+- Schede muratura con proporzioni, spaziature e intestazioni più fedeli al modello, per catturare le tabelle e inserirle nella relazione.
+- Salva progetto e Crea Excel ricordano separatamente l’ultima cartella scelta durante la sessione. Annullare la finestra non modifica la destinazione ricordata.
 
-Scaricare **TA-Calcolo-Setup-1.3.4-win-x64.exe** oppure usare Verifica aggiornamenti e riavviare l’app. Il file STA-Calcolo-Update è riservato all’aggiornatore.
+Scaricare **TA-Calcolo-Setup-1.3.5-win-x64.exe** oppure usare Verifica aggiornamenti e riavviare l’app. Il file STA-Calcolo-Update è riservato all’aggiornatore.
