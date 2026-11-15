@@ -92,6 +92,15 @@ internal static class Program
         var expectedIncrease=$"K +{cf.K/cb.K*100:N2} % · V +{cf.Veff/cb.Vt*100:N2} %";
         if(!compactVm.Summary.HasFrames||compactVm.Summary.FrameIncrease!=expectedIncrease)throw new Exception("Combined frame percentage");
         var compactWindow=new MasonryWindow{DataContext=compactVm};Render(compactWindow,"muratura-compatta",1760);
+        var page=(System.Windows.Controls.ScrollViewer)compactWindow.FindName("PageScroll");
+        foreach(var scrollName in new[]{"BeforeScroll","AfterScroll"})
+        {
+            var nested=(System.Windows.Controls.ScrollViewer)compactWindow.FindName(scrollName);
+            page.ScrollToTop();compactWindow.UpdateLayout();
+            nested.RaiseEvent(new System.Windows.Input.MouseWheelEventArgs(System.Windows.Input.Mouse.PrimaryDevice,0,-120){RoutedEvent=System.Windows.Input.Mouse.PreviewMouseWheelEvent});
+            compactWindow.UpdateLayout();
+            if(SystemParameters.WheelScrollLines!=0&&page.VerticalOffset<=0)throw new Exception("Wheel trapped in "+scrollName);
+        }
         var framePanel=(FrameworkElement)compactWindow.FindName("FrameSection");
         var comparisons=(FrameworkElement)compactWindow.FindName("ComparisonCards");
         if(Math.Abs(framePanel.ActualWidth-794)>1||comparisons.ActualWidth>1174)throw new Exception("Compact section widths");
