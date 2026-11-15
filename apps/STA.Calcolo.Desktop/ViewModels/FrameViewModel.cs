@@ -19,7 +19,7 @@ public sealed class FrameViewModel : ObservableObject
     public RelayCommand UseProfileCommand {get;}
     public FrameViewModel(FrameInput model,Func<(StateResult Before,StateResult After)> states,Action calculate,Action<string> status)
     {
-        editor=new(model,[("Enabled","Includi cerchiatura",["No","Sì"]),("Profile","Profilo OPPO",ProfileCatalog.All.Select(x=>x.Id).ToArray()),("H","Altezza telaio [cm]",null),("NColumns","Numero colonne",null),("NProfiles","Profili per colonna",null),("E","E acciaio [daN/cm²]",null),("Fy","fyk [MPa]",null),("Gamma","γM0",null),("Portal","Schema del portale",["Chiuso","Aperto"])]);
+        editor=new(model,[("Enabled","Includi cerchiatura",["No","Sì"]),("Profile","Profilo OPPO",ProfileCatalog.All.Select(x=>x.Id).ToArray()),("H","Altezza telaio [cm]",null),("NColumns","Numero colonne",null),("NProfiles","Profili per colonna",null),("E","E acciaio [daN/cm²]",null),("Fy","fyk [MPa]",["235","275","355"]),("Gamma","γM0",null),("Portal","Schema del portale",["Chiuso","Aperto"])]);
         Profile=new(ByKey["Profile"]);
         DesignCommand=new(()=>{try{calculate();var pair=states();Proposals=FrameCalculator.Design(Build(),pair.Before,pair.After);Changed(nameof(Proposals));status("Ricerca completata considerando le altre cerchiature attive: selezionare una proposta disponibile.");}catch(Exception e){ClearProposals();status(e.Message);}});
         UseProfileCommand=new(()=>{var id=SelectedProposal!.Candidate!.Profile.Id;Profile.SelectedId=id;calculate();},()=>SelectedProposal?.Candidate!=null);

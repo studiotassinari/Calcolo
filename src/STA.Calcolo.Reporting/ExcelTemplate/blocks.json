@@ -1,0 +1,2436 @@
+{
+  "Pier": {
+    "Cells": [
+      {
+        "Row": 0,
+        "Col": 0,
+        "Style": 157,
+        "Text": "GEOMETRIA MASCHIO 1 STATO ATTUALE"
+      },
+      {
+        "Row": 0,
+        "Col": 1,
+        "Style": 157,
+        "Text": null
+      },
+      {
+        "Row": 0,
+        "Col": 2,
+        "Style": 157,
+        "Text": null
+      },
+      {
+        "Row": 1,
+        "Col": 0,
+        "Style": 42,
+        "Text": "h0.1",
+        "RichText": "<ns0:is xmlns:ns0=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\"><ns0:r><ns0:t>h</ns0:t></ns0:r><ns0:r><ns0:rPr><ns0:vertAlign val=\"subscript\" /><ns0:sz val=\"12\" /><ns0:color theme=\"1\" /><ns0:rFont val=\"Swis721 Cn BT\" /><ns0:family val=\"2\" /></ns0:rPr><ns0:t>0.1</ns0:t></ns0:r></ns0:is>"
+      },
+      {
+        "Row": 1,
+        "Col": 1,
+        "Style": 43,
+        "Text": null
+      },
+      {
+        "Row": 1,
+        "Col": 2,
+        "Style": 42,
+        "Text": "cm"
+      },
+      {
+        "Row": 2,
+        "Col": 0,
+        "Style": 44,
+        "Text": "heff.1",
+        "RichText": "<ns0:is xmlns:ns0=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\"><ns0:r><ns0:t>h</ns0:t></ns0:r><ns0:r><ns0:rPr><ns0:vertAlign val=\"subscript\" /><ns0:sz val=\"12\" /><ns0:color theme=\"1\" /><ns0:rFont val=\"Swis721 Cn BT\" /><ns0:family val=\"2\" /></ns0:rPr><ns0:t>eff.1</ns0:t></ns0:r></ns0:is>"
+      },
+      {
+        "Row": 2,
+        "Col": 1,
+        "Style": 45,
+        "Text": null
+      },
+      {
+        "Row": 2,
+        "Col": 2,
+        "Style": 44,
+        "Text": "cm"
+      },
+      {
+        "Row": 3,
+        "Col": 0,
+        "Style": 44,
+        "Text": "l0.1",
+        "RichText": "<ns0:is xmlns:ns0=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\"><ns0:r><ns0:t>l</ns0:t></ns0:r><ns0:r><ns0:rPr><ns0:vertAlign val=\"subscript\" /><ns0:sz val=\"12\" /><ns0:color theme=\"1\" /><ns0:rFont val=\"Swis721 Cn BT\" /><ns0:family val=\"2\" /></ns0:rPr><ns0:t>0.1</ns0:t></ns0:r></ns0:is>"
+      },
+      {
+        "Row": 3,
+        "Col": 1,
+        "Style": 46,
+        "Text": null
+      },
+      {
+        "Row": 3,
+        "Col": 2,
+        "Style": 44,
+        "Text": "cm"
+      },
+      {
+        "Row": 4,
+        "Col": 0,
+        "Style": 44,
+        "Text": "t0.1",
+        "RichText": "<ns0:is xmlns:ns0=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\"><ns0:r><ns0:t>t</ns0:t></ns0:r><ns0:r><ns0:rPr><ns0:vertAlign val=\"subscript\" /><ns0:sz val=\"12\" /><ns0:color theme=\"1\" /><ns0:rFont val=\"Swis721 Cn BT\" /><ns0:family val=\"2\" /></ns0:rPr><ns0:t>0.1</ns0:t></ns0:r></ns0:is>"
+      },
+      {
+        "Row": 4,
+        "Col": 1,
+        "Style": 46,
+        "Text": null
+      },
+      {
+        "Row": 4,
+        "Col": 2,
+        "Style": 44,
+        "Text": "cm"
+      },
+      {
+        "Row": 5,
+        "Col": 0,
+        "Style": 47,
+        "Text": "A0.1",
+        "RichText": "<ns0:is xmlns:ns0=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\"><ns0:r><ns0:rPr><ns0:sz val=\"12\" /><ns0:color theme=\"1\" /><ns0:rFont val=\"Swis721 Cn BT\" /><ns0:family val=\"2\" /></ns0:rPr><ns0:t>A</ns0:t></ns0:r><ns0:r><ns0:rPr><ns0:vertAlign val=\"subscript\" /><ns0:sz val=\"12\" /><ns0:color theme=\"1\" /><ns0:rFont val=\"Swis721 Cn BT\" /><ns0:family val=\"2\" /></ns0:rPr><ns0:t>0.1</ns0:t></ns0:r></ns0:is>"
+      },
+      {
+        "Row": 5,
+        "Col": 1,
+        "Style": 45,
+        "Text": null
+      },
+      {
+        "Row": 5,
+        "Col": 2,
+        "Style": 48,
+        "Text": "cm2",
+        "RichText": "<ns0:is xmlns:ns0=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\"><ns0:r><ns0:t>cm</ns0:t></ns0:r><ns0:r><ns0:rPr><ns0:vertAlign val=\"superscript\" /><ns0:sz val=\"12\" /><ns0:color theme=\"1\" /><ns0:rFont val=\"Swis721 Cn BT\" /><ns0:family val=\"2\" /></ns0:rPr><ns0:t>2</ns0:t></ns0:r></ns0:is>"
+      },
+      {
+        "Row": 6,
+        "Col": 0,
+        "Style": 10,
+        "Text": null
+      },
+      {
+        "Row": 6,
+        "Col": 1,
+        "Style": 10,
+        "Text": null
+      },
+      {
+        "Row": 6,
+        "Col": 2,
+        "Style": 0,
+        "Text": null
+      },
+      {
+        "Row": 7,
+        "Col": 0,
+        "Style": 157,
+        "Text": "SNELLEZZA MASCHIO STATO ATTUALE"
+      },
+      {
+        "Row": 7,
+        "Col": 1,
+        "Style": 157,
+        "Text": null
+      },
+      {
+        "Row": 7,
+        "Col": 2,
+        "Style": 157,
+        "Text": null
+      },
+      {
+        "Row": 8,
+        "Col": 0,
+        "Style": 42,
+        "Text": "l0.1",
+        "RichText": "<ns0:is xmlns:ns0=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\"><ns0:r><ns0:t>l</ns0:t></ns0:r><ns0:r><ns0:rPr><ns0:vertAlign val=\"subscript\" /><ns0:sz val=\"12\" /><ns0:color theme=\"1\" /><ns0:rFont val=\"Swis721 Cn BT\" /><ns0:family val=\"2\" /></ns0:rPr><ns0:t>0.1</ns0:t></ns0:r></ns0:is>"
+      },
+      {
+        "Row": 8,
+        "Col": 1,
+        "Style": 49,
+        "Text": null
+      },
+      {
+        "Row": 8,
+        "Col": 2,
+        "Style": 42,
+        "Text": null
+      },
+      {
+        "Row": 9,
+        "Col": 0,
+        "Style": 3,
+        "Text": null
+      },
+      {
+        "Row": 9,
+        "Col": 1,
+        "Style": 3,
+        "Text": null
+      },
+      {
+        "Row": 9,
+        "Col": 2,
+        "Style": 3,
+        "Text": null
+      },
+      {
+        "Row": 10,
+        "Col": 0,
+        "Style": 157,
+        "Text": "CARATTERISTICHE DEL TIPO DI MURATURA (ATTUALE)"
+      },
+      {
+        "Row": 10,
+        "Col": 1,
+        "Style": 157,
+        "Text": null
+      },
+      {
+        "Row": 10,
+        "Col": 2,
+        "Style": 157,
+        "Text": null
+      },
+      {
+        "Row": 11,
+        "Col": 0,
+        "Style": 42,
+        "Text": "Tipo:"
+      },
+      {
+        "Row": 11,
+        "Col": 1,
+        "Style": 155,
+        "Text": null
+      },
+      {
+        "Row": 11,
+        "Col": 2,
+        "Style": 155,
+        "Text": null
+      },
+      {
+        "Row": 12,
+        "Col": 0,
+        "Style": 156,
+        "Text": "Livello di conoscenza"
+      },
+      {
+        "Row": 12,
+        "Col": 1,
+        "Style": 156,
+        "Text": null
+      },
+      {
+        "Row": 12,
+        "Col": 2,
+        "Style": 50,
+        "Text": null
+      },
+      {
+        "Row": 13,
+        "Col": 0,
+        "Style": 44,
+        "Text": "fm0.1",
+        "RichText": "<ns0:is xmlns:ns0=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\"><ns0:r><ns0:t>f</ns0:t></ns0:r><ns0:r><ns0:rPr><ns0:vertAlign val=\"subscript\" /><ns0:sz val=\"12\" /><ns0:color theme=\"1\" /><ns0:rFont val=\"Swis721 Cn BT\" /><ns0:family val=\"2\" /></ns0:rPr><ns0:t>m0.1</ns0:t></ns0:r></ns0:is>"
+      },
+      {
+        "Row": 13,
+        "Col": 1,
+        "Style": 52,
+        "Text": null
+      },
+      {
+        "Row": 13,
+        "Col": 2,
+        "Style": 44,
+        "Text": "N/cm2",
+        "RichText": "<ns0:is xmlns:ns0=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\"><ns0:r><ns0:t>N/cm</ns0:t></ns0:r><ns0:r><ns0:rPr><ns0:vertAlign val=\"superscript\" /><ns0:sz val=\"12\" /><ns0:color theme=\"1\" /><ns0:rFont val=\"Swis721 Cn BT\" /><ns0:family val=\"2\" /></ns0:rPr><ns0:t>2</ns0:t></ns0:r></ns0:is>"
+      },
+      {
+        "Row": 14,
+        "Col": 0,
+        "Style": 44,
+        "Text": "t0.1",
+        "RichText": "<ns0:is xmlns:ns0=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\"><ns0:r><ns0:rPr><ns0:sz val=\"12\" /><ns0:color theme=\"1\" /><ns0:rFont val=\"Symbol\" /><ns0:family val=\"1\" /><ns0:charset val=\"2\" /></ns0:rPr><ns0:t>t</ns0:t></ns0:r><ns0:r><ns0:rPr><ns0:vertAlign val=\"subscript\" /><ns0:sz val=\"12\" /><ns0:color theme=\"1\" /><ns0:rFont val=\"Swis721 Cn BT\" /><ns0:family val=\"2\" /></ns0:rPr><ns0:t>0.1</ns0:t></ns0:r></ns0:is>"
+      },
+      {
+        "Row": 14,
+        "Col": 1,
+        "Style": 52,
+        "Text": null
+      },
+      {
+        "Row": 14,
+        "Col": 2,
+        "Style": 44,
+        "Text": "N/cm2",
+        "RichText": "<ns0:is xmlns:ns0=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\"><ns0:r><ns0:t>N/cm</ns0:t></ns0:r><ns0:r><ns0:rPr><ns0:vertAlign val=\"superscript\" /><ns0:sz val=\"12\" /><ns0:color theme=\"1\" /><ns0:rFont val=\"Swis721 Cn BT\" /><ns0:family val=\"2\" /></ns0:rPr><ns0:t>2</ns0:t></ns0:r></ns0:is>"
+      },
+      {
+        "Row": 15,
+        "Col": 0,
+        "Style": 44,
+        "Text": "E0.1",
+        "RichText": "<ns0:is xmlns:ns0=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\"><ns0:r><ns0:t>E</ns0:t></ns0:r><ns0:r><ns0:rPr><ns0:vertAlign val=\"subscript\" /><ns0:sz val=\"12\" /><ns0:color theme=\"1\" /><ns0:rFont val=\"Swis721 Cn BT\" /><ns0:family val=\"2\" /></ns0:rPr><ns0:t>0.1</ns0:t></ns0:r></ns0:is>"
+      },
+      {
+        "Row": 15,
+        "Col": 1,
+        "Style": 52,
+        "Text": null
+      },
+      {
+        "Row": 15,
+        "Col": 2,
+        "Style": 44,
+        "Text": "N/mm2",
+        "RichText": "<ns0:is xmlns:ns0=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\"><ns0:r><ns0:t>N/mm</ns0:t></ns0:r><ns0:r><ns0:rPr><ns0:vertAlign val=\"superscript\" /><ns0:sz val=\"12\" /><ns0:color theme=\"1\" /><ns0:rFont val=\"Swis721 Cn BT\" /><ns0:family val=\"2\" /></ns0:rPr><ns0:t>2</ns0:t></ns0:r></ns0:is>"
+      },
+      {
+        "Row": 16,
+        "Col": 0,
+        "Style": 44,
+        "Text": "G0.1",
+        "RichText": "<ns0:is xmlns:ns0=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\"><ns0:r><ns0:t>G</ns0:t></ns0:r><ns0:r><ns0:rPr><ns0:vertAlign val=\"subscript\" /><ns0:sz val=\"12\" /><ns0:color theme=\"1\" /><ns0:rFont val=\"Swis721 Cn BT\" /><ns0:family val=\"2\" /></ns0:rPr><ns0:t>0.1</ns0:t></ns0:r></ns0:is>"
+      },
+      {
+        "Row": 16,
+        "Col": 1,
+        "Style": 52,
+        "Text": null
+      },
+      {
+        "Row": 16,
+        "Col": 2,
+        "Style": 44,
+        "Text": "N/mm2",
+        "RichText": "<ns0:is xmlns:ns0=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\"><ns0:r><ns0:t>N/mm</ns0:t></ns0:r><ns0:r><ns0:rPr><ns0:vertAlign val=\"superscript\" /><ns0:sz val=\"12\" /><ns0:color theme=\"1\" /><ns0:rFont val=\"Swis721 Cn BT\" /><ns0:family val=\"2\" /></ns0:rPr><ns0:t>2</ns0:t></ns0:r></ns0:is>"
+      },
+      {
+        "Row": 17,
+        "Col": 0,
+        "Style": 69,
+        "Text": "r0.1",
+        "RichText": "<ns0:is xmlns:ns0=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\"><ns0:r><ns0:rPr><ns0:sz val=\"12\" /><ns0:color theme=\"1\" /><ns0:rFont val=\"Symbol\" /><ns0:family val=\"1\" /><ns0:charset val=\"2\" /></ns0:rPr><ns0:t>r</ns0:t></ns0:r><ns0:r><ns0:rPr><ns0:vertAlign val=\"subscript\" /><ns0:sz val=\"12\" /><ns0:color theme=\"1\" /><ns0:rFont val=\"Swis721 Cn BT\" /><ns0:family val=\"2\" /></ns0:rPr><ns0:t>0.1</ns0:t></ns0:r></ns0:is>"
+      },
+      {
+        "Row": 17,
+        "Col": 1,
+        "Style": 70,
+        "Text": null
+      },
+      {
+        "Row": 17,
+        "Col": 2,
+        "Style": 69,
+        "Text": "daN/m3",
+        "RichText": "<ns0:is xmlns:ns0=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\"><ns0:r><ns0:t>daN/m</ns0:t></ns0:r><ns0:r><ns0:rPr><ns0:vertAlign val=\"superscript\" /><ns0:sz val=\"12\" /><ns0:color theme=\"1\" /><ns0:rFont val=\"Swis721 Cn BT\" /><ns0:family val=\"2\" /></ns0:rPr><ns0:t>3</ns0:t></ns0:r></ns0:is>"
+      },
+      {
+        "Row": 18,
+        "Col": 0,
+        "Style": 148,
+        "Text": "COEFF. CORRETTIVI"
+      },
+      {
+        "Row": 18,
+        "Col": 1,
+        "Style": 148,
+        "Text": null
+      },
+      {
+        "Row": 18,
+        "Col": 2,
+        "Style": 148,
+        "Text": null
+      },
+      {
+        "Row": 19,
+        "Col": 0,
+        "Style": 152,
+        "Text": "Malta buona"
+      },
+      {
+        "Row": 19,
+        "Col": 1,
+        "Style": 152,
+        "Text": null
+      },
+      {
+        "Row": 19,
+        "Col": 2,
+        "Style": 53,
+        "Text": null
+      },
+      {
+        "Row": 20,
+        "Col": 0,
+        "Style": 153,
+        "Text": "Giunti sottili "
+      },
+      {
+        "Row": 20,
+        "Col": 1,
+        "Style": 153,
+        "Text": null
+      },
+      {
+        "Row": 20,
+        "Col": 2,
+        "Style": 51,
+        "Text": null
+      },
+      {
+        "Row": 21,
+        "Col": 0,
+        "Style": 153,
+        "Text": "Ricorsi o listature"
+      },
+      {
+        "Row": 21,
+        "Col": 1,
+        "Style": 153,
+        "Text": null
+      },
+      {
+        "Row": 21,
+        "Col": 2,
+        "Style": 51,
+        "Text": null
+      },
+      {
+        "Row": 22,
+        "Col": 0,
+        "Style": 153,
+        "Text": "Connessione trasversale"
+      },
+      {
+        "Row": 22,
+        "Col": 1,
+        "Style": 153,
+        "Text": null
+      },
+      {
+        "Row": 22,
+        "Col": 2,
+        "Style": 51,
+        "Text": null
+      },
+      {
+        "Row": 23,
+        "Col": 0,
+        "Style": 153,
+        "Text": "Nucleo scadente e/o ampio "
+      },
+      {
+        "Row": 23,
+        "Col": 1,
+        "Style": 153,
+        "Text": null
+      },
+      {
+        "Row": 23,
+        "Col": 2,
+        "Style": 51,
+        "Text": null
+      },
+      {
+        "Row": 24,
+        "Col": 0,
+        "Style": 153,
+        "Text": "Iniezioni di miscele leganti"
+      },
+      {
+        "Row": 24,
+        "Col": 1,
+        "Style": 153,
+        "Text": null
+      },
+      {
+        "Row": 24,
+        "Col": 2,
+        "Style": 51,
+        "Text": null
+      },
+      {
+        "Row": 25,
+        "Col": 0,
+        "Style": 154,
+        "Text": "Intonaco armato"
+      },
+      {
+        "Row": 25,
+        "Col": 1,
+        "Style": 154,
+        "Text": null
+      },
+      {
+        "Row": 25,
+        "Col": 2,
+        "Style": 70,
+        "Text": null
+      },
+      {
+        "Row": 26,
+        "Col": 0,
+        "Style": 148,
+        "Text": "CARATTERISTICHE CORRETTE MASCHIO STATO ATTUALE"
+      },
+      {
+        "Row": 26,
+        "Col": 1,
+        "Style": 148,
+        "Text": null
+      },
+      {
+        "Row": 26,
+        "Col": 2,
+        "Style": 148,
+        "Text": null
+      },
+      {
+        "Row": 27,
+        "Col": 0,
+        "Style": 42,
+        "Text": "fm0.1.corr",
+        "RichText": "<ns0:is xmlns:ns0=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\"><ns0:r><ns0:t>f</ns0:t></ns0:r><ns0:r><ns0:rPr><ns0:vertAlign val=\"subscript\" /><ns0:sz val=\"12\" /><ns0:color theme=\"1\" /><ns0:rFont val=\"Swis721 Cn BT\" /><ns0:family val=\"2\" /></ns0:rPr><ns0:t>m0.1.corr</ns0:t></ns0:r></ns0:is>"
+      },
+      {
+        "Row": 27,
+        "Col": 1,
+        "Style": 42,
+        "Text": null
+      },
+      {
+        "Row": 27,
+        "Col": 2,
+        "Style": 42,
+        "Text": "N/cm2",
+        "RichText": "<ns0:is xmlns:ns0=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\"><ns0:r><ns0:t>N/cm</ns0:t></ns0:r><ns0:r><ns0:rPr><ns0:vertAlign val=\"superscript\" /><ns0:sz val=\"12\" /><ns0:color theme=\"1\" /><ns0:rFont val=\"Swis721 Cn BT\" /><ns0:family val=\"2\" /></ns0:rPr><ns0:t>2</ns0:t></ns0:r></ns0:is>"
+      },
+      {
+        "Row": 28,
+        "Col": 0,
+        "Style": 44,
+        "Text": "t0.1.corr",
+        "RichText": "<ns0:is xmlns:ns0=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\"><ns0:r><ns0:rPr><ns0:sz val=\"12\" /><ns0:color theme=\"1\" /><ns0:rFont val=\"Symbol\" /><ns0:family val=\"1\" /><ns0:charset val=\"2\" /></ns0:rPr><ns0:t>t</ns0:t></ns0:r><ns0:r><ns0:rPr><ns0:vertAlign val=\"subscript\" /><ns0:sz val=\"12\" /><ns0:color theme=\"1\" /><ns0:rFont val=\"Swis721 Cn BT\" /><ns0:family val=\"2\" /></ns0:rPr><ns0:t>0.1.corr</ns0:t></ns0:r></ns0:is>"
+      },
+      {
+        "Row": 28,
+        "Col": 1,
+        "Style": 54,
+        "Text": null
+      },
+      {
+        "Row": 28,
+        "Col": 2,
+        "Style": 44,
+        "Text": "N/cm2",
+        "RichText": "<ns0:is xmlns:ns0=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\"><ns0:r><ns0:t>N/cm</ns0:t></ns0:r><ns0:r><ns0:rPr><ns0:vertAlign val=\"superscript\" /><ns0:sz val=\"12\" /><ns0:color theme=\"1\" /><ns0:rFont val=\"Swis721 Cn BT\" /><ns0:family val=\"2\" /></ns0:rPr><ns0:t>2</ns0:t></ns0:r></ns0:is>"
+      },
+      {
+        "Row": 29,
+        "Col": 0,
+        "Style": 146,
+        "Text": "MODULO ELASTICO SEZIONE FESSURATA"
+      },
+      {
+        "Row": 29,
+        "Col": 1,
+        "Style": 146,
+        "Text": null
+      },
+      {
+        "Row": 29,
+        "Col": 2,
+        "Style": 55,
+        "Text": null
+      },
+      {
+        "Row": 30,
+        "Col": 0,
+        "Style": 44,
+        "Text": "E0.1.corr",
+        "RichText": "<ns0:is xmlns:ns0=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\"><ns0:r><ns0:t>E</ns0:t></ns0:r><ns0:r><ns0:rPr><ns0:vertAlign val=\"subscript\" /><ns0:sz val=\"12\" /><ns0:color theme=\"1\" /><ns0:rFont val=\"Swis721 Cn BT\" /><ns0:family val=\"2\" /></ns0:rPr><ns0:t>0.1.corr</ns0:t></ns0:r></ns0:is>"
+      },
+      {
+        "Row": 30,
+        "Col": 1,
+        "Style": 44,
+        "Text": null
+      },
+      {
+        "Row": 30,
+        "Col": 2,
+        "Style": 44,
+        "Text": "N/mm2",
+        "RichText": "<ns0:is xmlns:ns0=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\"><ns0:r><ns0:t>N/mm</ns0:t></ns0:r><ns0:r><ns0:rPr><ns0:vertAlign val=\"superscript\" /><ns0:sz val=\"12\" /><ns0:color theme=\"1\" /><ns0:rFont val=\"Swis721 Cn BT\" /><ns0:family val=\"2\" /></ns0:rPr><ns0:t>2</ns0:t></ns0:r></ns0:is>"
+      },
+      {
+        "Row": 31,
+        "Col": 0,
+        "Style": 44,
+        "Text": "G0.1.corr",
+        "RichText": "<ns0:is xmlns:ns0=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\"><ns0:r><ns0:t>G</ns0:t></ns0:r><ns0:r><ns0:rPr><ns0:vertAlign val=\"subscript\" /><ns0:sz val=\"12\" /><ns0:color theme=\"1\" /><ns0:rFont val=\"Swis721 Cn BT\" /><ns0:family val=\"2\" /></ns0:rPr><ns0:t>0.1.corr</ns0:t></ns0:r></ns0:is>"
+      },
+      {
+        "Row": 31,
+        "Col": 1,
+        "Style": 44,
+        "Text": null
+      },
+      {
+        "Row": 31,
+        "Col": 2,
+        "Style": 44,
+        "Text": "N/mm2",
+        "RichText": "<ns0:is xmlns:ns0=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\"><ns0:r><ns0:t>N/mm</ns0:t></ns0:r><ns0:r><ns0:rPr><ns0:vertAlign val=\"superscript\" /><ns0:sz val=\"12\" /><ns0:color theme=\"1\" /><ns0:rFont val=\"Swis721 Cn BT\" /><ns0:family val=\"2\" /></ns0:rPr><ns0:t>2</ns0:t></ns0:r></ns0:is>"
+      },
+      {
+        "Row": 32,
+        "Col": 0,
+        "Style": 0,
+        "Text": null
+      },
+      {
+        "Row": 32,
+        "Col": 1,
+        "Style": 0,
+        "Text": null
+      },
+      {
+        "Row": 32,
+        "Col": 2,
+        "Style": 0,
+        "Text": null
+      },
+      {
+        "Row": 33,
+        "Col": 0,
+        "Style": 149,
+        "Text": "CARICHI MASCHIO STATO ATTUALE"
+      },
+      {
+        "Row": 33,
+        "Col": 1,
+        "Style": 150,
+        "Text": null
+      },
+      {
+        "Row": 33,
+        "Col": 2,
+        "Style": 151,
+        "Text": null
+      },
+      {
+        "Row": 34,
+        "Col": 0,
+        "Style": 42,
+        "Text": "P0.1",
+        "RichText": "<ns0:is xmlns:ns0=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\"><ns0:r><ns0:t>P</ns0:t></ns0:r><ns0:r><ns0:rPr><ns0:vertAlign val=\"subscript\" /><ns0:sz val=\"12\" /><ns0:color theme=\"1\" /><ns0:rFont val=\"Swis721 Cn BT\" /><ns0:family val=\"2\" /></ns0:rPr><ns0:t>0.1</ns0:t></ns0:r></ns0:is>"
+      },
+      {
+        "Row": 34,
+        "Col": 1,
+        "Style": 133,
+        "Text": null
+      },
+      {
+        "Row": 34,
+        "Col": 2,
+        "Style": 42,
+        "Text": "kN"
+      },
+      {
+        "Row": 35,
+        "Col": 0,
+        "Style": 44,
+        "Text": "s0.1",
+        "RichText": "<ns0:is xmlns:ns0=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\"><ns0:r><ns0:rPr><ns0:sz val=\"12\" /><ns0:color theme=\"1\" /><ns0:rFont val=\"SymbolPS\" /><ns0:family val=\"1\" /><ns0:charset val=\"2\" /></ns0:rPr><ns0:t>s</ns0:t></ns0:r><ns0:r><ns0:rPr><ns0:vertAlign val=\"subscript\" /><ns0:sz val=\"12\" /><ns0:color theme=\"1\" /><ns0:rFont val=\"Swis721 Cn BT\" /><ns0:family val=\"2\" /></ns0:rPr><ns0:t>0.1</ns0:t></ns0:r></ns0:is>"
+      },
+      {
+        "Row": 35,
+        "Col": 1,
+        "Style": 56,
+        "Text": null
+      },
+      {
+        "Row": 35,
+        "Col": 2,
+        "Style": 44,
+        "Text": "daN/cm2",
+        "RichText": "<ns0:is xmlns:ns0=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\"><ns0:r><ns0:t>daN/cm</ns0:t></ns0:r><ns0:r><ns0:rPr><ns0:vertAlign val=\"superscript\" /><ns0:sz val=\"12\" /><ns0:color theme=\"1\" /><ns0:rFont val=\"Swis721 Cn BT\" /><ns0:family val=\"2\" /></ns0:rPr><ns0:t>2</ns0:t></ns0:r></ns0:is>"
+      },
+      {
+        "Row": 36,
+        "Col": 0,
+        "Style": 0,
+        "Text": null
+      },
+      {
+        "Row": 36,
+        "Col": 1,
+        "Style": 21,
+        "Text": null
+      },
+      {
+        "Row": 36,
+        "Col": 2,
+        "Style": 0,
+        "Text": null
+      },
+      {
+        "Row": 37,
+        "Col": 0,
+        "Style": 149,
+        "Text": "RESISTENZA TAGLIO MASCHIO STATO ATTUALE"
+      },
+      {
+        "Row": 37,
+        "Col": 1,
+        "Style": 150,
+        "Text": null
+      },
+      {
+        "Row": 37,
+        "Col": 2,
+        "Style": 151,
+        "Text": null
+      },
+      {
+        "Row": 38,
+        "Col": 0,
+        "Style": 57,
+        "Text": "b.1",
+        "RichText": "<ns0:is xmlns:ns0=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\"><ns0:r><ns0:t>b</ns0:t></ns0:r><ns0:r><ns0:rPr><ns0:vertAlign val=\"subscript\" /><ns0:sz val=\"12\" /><ns0:color theme=\"1\" /><ns0:rFont val=\"Swis721 Cn BT\" /><ns0:family val=\"2\" /></ns0:rPr><ns0:t>.1</ns0:t></ns0:r></ns0:is>"
+      },
+      {
+        "Row": 38,
+        "Col": 1,
+        "Style": 58,
+        "Text": null
+      },
+      {
+        "Row": 38,
+        "Col": 2,
+        "Style": 42,
+        "Text": null
+      },
+      {
+        "Row": 39,
+        "Col": 0,
+        "Style": 44,
+        "Text": "Vt.0.1",
+        "RichText": "<ns0:is xmlns:ns0=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\"><ns0:r><ns0:t>V</ns0:t></ns0:r><ns0:r><ns0:rPr><ns0:vertAlign val=\"subscript\" /><ns0:sz val=\"12\" /><ns0:color theme=\"1\" /><ns0:rFont val=\"Swis721 Cn BT\" /><ns0:family val=\"2\" /></ns0:rPr><ns0:t>t.0.1</ns0:t></ns0:r></ns0:is>"
+      },
+      {
+        "Row": 39,
+        "Col": 1,
+        "Style": 59,
+        "Text": null
+      },
+      {
+        "Row": 39,
+        "Col": 2,
+        "Style": 44,
+        "Text": "kN"
+      },
+      {
+        "Row": 40,
+        "Col": 0,
+        "Style": 0,
+        "Text": null
+      },
+      {
+        "Row": 40,
+        "Col": 1,
+        "Style": 0,
+        "Text": null
+      },
+      {
+        "Row": 40,
+        "Col": 2,
+        "Style": 0,
+        "Text": null
+      },
+      {
+        "Row": 41,
+        "Col": 0,
+        "Style": 149,
+        "Text": "TAGLIO ULTIMO MASCHI STATO ATTUALE"
+      },
+      {
+        "Row": 41,
+        "Col": 1,
+        "Style": 150,
+        "Text": null
+      },
+      {
+        "Row": 41,
+        "Col": 2,
+        "Style": 151,
+        "Text": null
+      },
+      {
+        "Row": 42,
+        "Col": 0,
+        "Style": 42,
+        "Text": "Vt.0.TOT",
+        "RichText": "<ns0:is xmlns:ns0=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\"><ns0:r><ns0:t>V</ns0:t></ns0:r><ns0:r><ns0:rPr><ns0:vertAlign val=\"subscript\" /><ns0:sz val=\"12\" /><ns0:color theme=\"1\" /><ns0:rFont val=\"Swis721 Cn BT\" /><ns0:family val=\"2\" /></ns0:rPr><ns0:t>t.0.TOT</ns0:t></ns0:r></ns0:is>"
+      },
+      {
+        "Row": 42,
+        "Col": 1,
+        "Style": 107,
+        "Text": null
+      },
+      {
+        "Row": 42,
+        "Col": 2,
+        "Style": 42,
+        "Text": "kN"
+      },
+      {
+        "Row": 43,
+        "Col": 0,
+        "Style": 0,
+        "Text": null
+      },
+      {
+        "Row": 43,
+        "Col": 1,
+        "Style": 0,
+        "Text": null
+      },
+      {
+        "Row": 43,
+        "Col": 2,
+        "Style": 0,
+        "Text": null
+      },
+      {
+        "Row": 44,
+        "Col": 0,
+        "Style": 149,
+        "Text": "SPOSTAMENTO ULTIMO TAGLIO MASCHIO 1 STATO ATTUALE"
+      },
+      {
+        "Row": 44,
+        "Col": 1,
+        "Style": 150,
+        "Text": null
+      },
+      {
+        "Row": 44,
+        "Col": 2,
+        "Style": 151,
+        "Text": null
+      },
+      {
+        "Row": 45,
+        "Col": 0,
+        "Style": 42,
+        "Text": "dy.0.1",
+        "RichText": "<ns0:is xmlns:ns0=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\"><ns0:r><ns0:t>d</ns0:t></ns0:r><ns0:r><ns0:rPr><ns0:vertAlign val=\"subscript\" /><ns0:sz val=\"12\" /><ns0:color theme=\"1\" /><ns0:rFont val=\"Swis721 Cn BT\" /><ns0:family val=\"2\" /></ns0:rPr><ns0:t>y.0.1</ns0:t></ns0:r></ns0:is>"
+      },
+      {
+        "Row": 45,
+        "Col": 1,
+        "Style": 68,
+        "Text": null
+      },
+      {
+        "Row": 45,
+        "Col": 2,
+        "Style": 42,
+        "Text": "mm"
+      },
+      {
+        "Row": 46,
+        "Col": 0,
+        "Style": 44,
+        "Text": null
+      },
+      {
+        "Row": 46,
+        "Col": 1,
+        "Style": 101,
+        "Text": null
+      },
+      {
+        "Row": 46,
+        "Col": 2,
+        "Style": 44,
+        "Text": "mm"
+      },
+      {
+        "Row": 47,
+        "Col": 0,
+        "Style": 0,
+        "Text": null
+      },
+      {
+        "Row": 47,
+        "Col": 1,
+        "Style": 0,
+        "Text": null
+      },
+      {
+        "Row": 47,
+        "Col": 2,
+        "Style": 0,
+        "Text": null
+      },
+      {
+        "Row": 48,
+        "Col": 0,
+        "Style": 149,
+        "Text": "SPOST. ULTIMO TAGLIO  MASCHI STATO ATTUALE"
+      },
+      {
+        "Row": 48,
+        "Col": 1,
+        "Style": 150,
+        "Text": null
+      },
+      {
+        "Row": 48,
+        "Col": 2,
+        "Style": 151,
+        "Text": null
+      },
+      {
+        "Row": 49,
+        "Col": 0,
+        "Style": 42,
+        "Text": "du.0.min",
+        "RichText": "<ns0:is xmlns:ns0=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\"><ns0:r><ns0:t>d</ns0:t></ns0:r><ns0:r><ns0:rPr><ns0:vertAlign val=\"subscript\" /><ns0:sz val=\"12\" /><ns0:color theme=\"1\" /><ns0:rFont val=\"Swis721 Cn BT\" /><ns0:family val=\"2\" /></ns0:rPr><ns0:t>u.0.min</ns0:t></ns0:r></ns0:is>"
+      },
+      {
+        "Row": 49,
+        "Col": 1,
+        "Style": 107,
+        "Text": null
+      },
+      {
+        "Row": 49,
+        "Col": 2,
+        "Style": 42,
+        "Text": "mm"
+      },
+      {
+        "Row": 50,
+        "Col": 0,
+        "Style": 0,
+        "Text": null
+      },
+      {
+        "Row": 50,
+        "Col": 1,
+        "Style": 0,
+        "Text": null
+      },
+      {
+        "Row": 50,
+        "Col": 2,
+        "Style": 0,
+        "Text": null
+      },
+      {
+        "Row": 51,
+        "Col": 0,
+        "Style": 148,
+        "Text": "RIGIDEZZA MASCHIO 1 STATO ATTUALE"
+      },
+      {
+        "Row": 51,
+        "Col": 1,
+        "Style": 148,
+        "Text": null
+      },
+      {
+        "Row": 51,
+        "Col": 2,
+        "Style": 148,
+        "Text": null
+      },
+      {
+        "Row": 52,
+        "Col": 0,
+        "Style": 42,
+        "Text": "K0.1",
+        "RichText": "<ns0:is xmlns:ns0=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\"><ns0:r><ns0:t>K</ns0:t></ns0:r><ns0:r><ns0:rPr><ns0:vertAlign val=\"subscript\" /><ns0:sz val=\"12\" /><ns0:color theme=\"1\" /><ns0:rFont val=\"Swis721 Cn BT\" /><ns0:family val=\"2\" /></ns0:rPr><ns0:t>0.1</ns0:t></ns0:r></ns0:is>"
+      },
+      {
+        "Row": 52,
+        "Col": 1,
+        "Style": 60,
+        "Text": null
+      },
+      {
+        "Row": 52,
+        "Col": 2,
+        "Style": 42,
+        "Text": "N/cm"
+      },
+      {
+        "Row": 53,
+        "Col": 0,
+        "Style": 0,
+        "Text": null
+      },
+      {
+        "Row": 53,
+        "Col": 1,
+        "Style": 0,
+        "Text": null
+      },
+      {
+        "Row": 53,
+        "Col": 2,
+        "Style": 0,
+        "Text": null
+      },
+      {
+        "Row": 54,
+        "Col": 0,
+        "Style": 149,
+        "Text": "RIGIDEZZA COMPLESSIVA MASCHI STATO ATTUALE"
+      },
+      {
+        "Row": 54,
+        "Col": 1,
+        "Style": 150,
+        "Text": null
+      },
+      {
+        "Row": 54,
+        "Col": 2,
+        "Style": 151,
+        "Text": null
+      },
+      {
+        "Row": 55,
+        "Col": 0,
+        "Style": 42,
+        "Text": "K0.TOT",
+        "RichText": "<ns0:is xmlns:ns0=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\"><ns0:r><ns0:t>K</ns0:t></ns0:r><ns0:r><ns0:rPr><ns0:vertAlign val=\"subscript\" /><ns0:sz val=\"12\" /><ns0:color theme=\"1\" /><ns0:rFont val=\"Swis721 Cn BT\" /><ns0:family val=\"2\" /></ns0:rPr><ns0:t>0.TOT</ns0:t></ns0:r></ns0:is>"
+      },
+      {
+        "Row": 55,
+        "Col": 1,
+        "Style": 107,
+        "Text": null
+      },
+      {
+        "Row": 55,
+        "Col": 2,
+        "Style": 42,
+        "Text": "N/cm"
+      }
+    ],
+    "Merges": [
+      {
+        "R1": 37,
+        "C1": 0,
+        "R2": 37,
+        "C2": 2
+      },
+      {
+        "R1": 29,
+        "C1": 0,
+        "R2": 29,
+        "C2": 1
+      },
+      {
+        "R1": 51,
+        "C1": 0,
+        "R2": 51,
+        "C2": 2
+      },
+      {
+        "R1": 0,
+        "C1": 0,
+        "R2": 0,
+        "C2": 2
+      },
+      {
+        "R1": 12,
+        "C1": 0,
+        "R2": 12,
+        "C2": 1
+      },
+      {
+        "R1": 10,
+        "C1": 0,
+        "R2": 10,
+        "C2": 2
+      },
+      {
+        "R1": 11,
+        "C1": 1,
+        "R2": 11,
+        "C2": 2
+      },
+      {
+        "R1": 21,
+        "C1": 0,
+        "R2": 21,
+        "C2": 1
+      },
+      {
+        "R1": 22,
+        "C1": 0,
+        "R2": 22,
+        "C2": 1
+      },
+      {
+        "R1": 18,
+        "C1": 0,
+        "R2": 18,
+        "C2": 2
+      },
+      {
+        "R1": 24,
+        "C1": 0,
+        "R2": 24,
+        "C2": 1
+      },
+      {
+        "R1": 25,
+        "C1": 0,
+        "R2": 25,
+        "C2": 1
+      },
+      {
+        "R1": 48,
+        "C1": 0,
+        "R2": 48,
+        "C2": 2
+      },
+      {
+        "R1": 33,
+        "C1": 0,
+        "R2": 33,
+        "C2": 2
+      },
+      {
+        "R1": 20,
+        "C1": 0,
+        "R2": 20,
+        "C2": 1
+      },
+      {
+        "R1": 41,
+        "C1": 0,
+        "R2": 41,
+        "C2": 2
+      },
+      {
+        "R1": 44,
+        "C1": 0,
+        "R2": 44,
+        "C2": 2
+      },
+      {
+        "R1": 23,
+        "C1": 0,
+        "R2": 23,
+        "C2": 1
+      },
+      {
+        "R1": 7,
+        "C1": 0,
+        "R2": 7,
+        "C2": 2
+      },
+      {
+        "R1": 19,
+        "C1": 0,
+        "R2": 19,
+        "C2": 1
+      },
+      {
+        "R1": 26,
+        "C1": 0,
+        "R2": 26,
+        "C2": 2
+      },
+      {
+        "R1": 54,
+        "C1": 0,
+        "R2": 54,
+        "C2": 2
+      }
+    ],
+    "Heights": [
+      18.0,
+      18.0,
+      18.0,
+      18.0,
+      18.0,
+      18.0,
+      18.0,
+      15.6,
+      18.0,
+      15.6,
+      15.6,
+      18.75,
+      18.75,
+      18.0,
+      18.0,
+      18.0,
+      18.0,
+      18.0,
+      18.0,
+      18.0,
+      18.0,
+      18.0,
+      15.6,
+      18.75,
+      18.0,
+      18.0,
+      18.0,
+      18.0,
+      18.0,
+      18.0,
+      18.0,
+      18.0,
+      15.6,
+      18.0,
+      18.0,
+      18.0,
+      18.0,
+      18.0,
+      18.0,
+      18.0,
+      15.6,
+      15.6,
+      18.0,
+      18.0,
+      18.75,
+      18.0,
+      18.0,
+      18.0,
+      15.6,
+      18.0,
+      15.6,
+      15.6,
+      18.9,
+      18.9,
+      15.6,
+      18.0
+    ],
+    "Widths": [
+      37.0,
+      32.5546875,
+      27.88671875
+    ]
+  },
+  "Frame": {
+    "Cells": [
+      {
+        "Row": 0,
+        "Col": 0,
+        "Style": 192,
+        "Text": "PROGETTO CERCHIATURA"
+      },
+      {
+        "Row": 0,
+        "Col": 1,
+        "Style": 192,
+        "Text": null
+      },
+      {
+        "Row": 0,
+        "Col": 2,
+        "Style": 192,
+        "Text": null
+      },
+      {
+        "Row": 1,
+        "Col": 0,
+        "Style": 48,
+        "Text": "V*"
+      },
+      {
+        "Row": 1,
+        "Col": 1,
+        "Style": 56,
+        "Text": null
+      },
+      {
+        "Row": 1,
+        "Col": 2,
+        "Style": 48,
+        "Text": "kN"
+      },
+      {
+        "Row": 2,
+        "Col": 0,
+        "Style": 48,
+        "Text": "fyk",
+        "RichText": "<ns0:is xmlns:ns0=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\"><ns0:r><ns0:t>f</ns0:t></ns0:r><ns0:r><ns0:rPr><ns0:vertAlign val=\"subscript\" /><ns0:sz val=\"12\" /><ns0:color theme=\"1\" /><ns0:rFont val=\"Swis721 Cn BT\" /><ns0:family val=\"2\" /></ns0:rPr><ns0:t>yk</ns0:t></ns0:r></ns0:is>"
+      },
+      {
+        "Row": 2,
+        "Col": 1,
+        "Style": 51,
+        "Text": null
+      },
+      {
+        "Row": 2,
+        "Col": 2,
+        "Style": 48,
+        "Text": "N/mm2",
+        "RichText": "<ns0:is xmlns:ns0=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\"><ns0:r><ns0:t>N/mm</ns0:t></ns0:r><ns0:r><ns0:rPr><ns0:vertAlign val=\"superscript\" /><ns0:sz val=\"12\" /><ns0:color theme=\"1\" /><ns0:rFont val=\"Swis721 Cn BT\" /><ns0:family val=\"2\" /></ns0:rPr><ns0:t>2</ns0:t></ns0:r></ns0:is>"
+      },
+      {
+        "Row": 3,
+        "Col": 0,
+        "Style": 48,
+        "Text": "gM0",
+        "RichText": "<ns0:is xmlns:ns0=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\"><ns0:r><ns0:rPr><ns0:sz val=\"12\" /><ns0:color theme=\"1\" /><ns0:rFont val=\"Symbol\" /><ns0:family val=\"1\" /><ns0:charset val=\"2\" /></ns0:rPr><ns0:t>g</ns0:t></ns0:r><ns0:r><ns0:rPr><ns0:vertAlign val=\"subscript\" /><ns0:sz val=\"12\" /><ns0:color theme=\"1\" /><ns0:rFont val=\"Swis721 Cn BT\" /><ns0:family val=\"2\" /></ns0:rPr><ns0:t>M0</ns0:t></ns0:r></ns0:is>"
+      },
+      {
+        "Row": 3,
+        "Col": 1,
+        "Style": 44,
+        "Text": null
+      },
+      {
+        "Row": 3,
+        "Col": 2,
+        "Style": 65,
+        "Text": null
+      },
+      {
+        "Row": 4,
+        "Col": 0,
+        "Style": 48,
+        "Text": "htelaio",
+        "RichText": "<ns0:is xmlns:ns0=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\"><ns0:r><ns0:t>h</ns0:t></ns0:r><ns0:r><ns0:rPr><ns0:vertAlign val=\"subscript\" /><ns0:sz val=\"12\" /><ns0:color theme=\"1\" /><ns0:rFont val=\"Swis721 Cn BT\" /><ns0:family val=\"2\" /></ns0:rPr><ns0:t>telaio</ns0:t></ns0:r></ns0:is>"
+      },
+      {
+        "Row": 4,
+        "Col": 1,
+        "Style": 51,
+        "Text": null
+      },
+      {
+        "Row": 4,
+        "Col": 2,
+        "Style": 48,
+        "Text": "cm"
+      },
+      {
+        "Row": 5,
+        "Col": 0,
+        "Style": 48,
+        "Text": "W*"
+      },
+      {
+        "Row": 5,
+        "Col": 1,
+        "Style": 56,
+        "Text": null
+      },
+      {
+        "Row": 5,
+        "Col": 2,
+        "Style": 48,
+        "Text": "cm3",
+        "RichText": "<ns0:is xmlns:ns0=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\"><ns0:r><ns0:t>cm</ns0:t></ns0:r><ns0:r><ns0:rPr><ns0:vertAlign val=\"superscript\" /><ns0:sz val=\"12\" /><ns0:color theme=\"1\" /><ns0:rFont val=\"Swis721 Cn BT\" /><ns0:family val=\"2\" /></ns0:rPr><ns0:t>3</ns0:t></ns0:r></ns0:is>"
+      },
+      {
+        "Row": 6,
+        "Col": 0,
+        "Style": 33,
+        "Text": "SCELTA PROFILO"
+      },
+      {
+        "Row": 6,
+        "Col": 1,
+        "Style": 0,
+        "Text": null
+      },
+      {
+        "Row": 6,
+        "Col": 2,
+        "Style": 0,
+        "Text": null
+      },
+      {
+        "Row": 7,
+        "Col": 0,
+        "Style": 48,
+        "Text": "Tipo profilo colonna"
+      },
+      {
+        "Row": 7,
+        "Col": 1,
+        "Style": 51,
+        "Text": null
+      },
+      {
+        "Row": 7,
+        "Col": 2,
+        "Style": 65,
+        "Text": null
+      },
+      {
+        "Row": 8,
+        "Col": 0,
+        "Style": 48,
+        "Text": "hprofilo",
+        "RichText": "<ns0:is xmlns:ns0=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\"><ns0:r><ns0:t>h</ns0:t></ns0:r><ns0:r><ns0:rPr><ns0:vertAlign val=\"subscript\" /><ns0:sz val=\"12\" /><ns0:color theme=\"1\" /><ns0:rFont val=\"Swis721 Cn BT\" /><ns0:family val=\"2\" /></ns0:rPr><ns0:t>profilo</ns0:t></ns0:r></ns0:is>"
+      },
+      {
+        "Row": 8,
+        "Col": 1,
+        "Style": 48,
+        "Text": null
+      },
+      {
+        "Row": 8,
+        "Col": 2,
+        "Style": 48,
+        "Text": "cm"
+      },
+      {
+        "Row": 9,
+        "Col": 0,
+        "Style": 48,
+        "Text": "E"
+      },
+      {
+        "Row": 9,
+        "Col": 1,
+        "Style": 48,
+        "Text": null
+      },
+      {
+        "Row": 9,
+        "Col": 2,
+        "Style": 48,
+        "Text": "daN/cm2",
+        "RichText": "<ns0:is xmlns:ns0=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\"><ns0:r><ns0:t>daN/cm</ns0:t></ns0:r><ns0:r><ns0:rPr><ns0:vertAlign val=\"superscript\" /><ns0:sz val=\"12\" /><ns0:color theme=\"1\" /><ns0:rFont val=\"Swis721 Cn BT\" /><ns0:family val=\"2\" /></ns0:rPr><ns0:t>2</ns0:t></ns0:r></ns0:is>"
+      },
+      {
+        "Row": 10,
+        "Col": 0,
+        "Style": 48,
+        "Text": "Jprof",
+        "RichText": "<ns0:is xmlns:ns0=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\"><ns0:r><ns0:t>J</ns0:t></ns0:r><ns0:r><ns0:rPr><ns0:vertAlign val=\"subscript\" /><ns0:sz val=\"12\" /><ns0:color theme=\"1\" /><ns0:rFont val=\"Swis721 Cn BT\" /><ns0:family val=\"2\" /></ns0:rPr><ns0:t>prof</ns0:t></ns0:r></ns0:is>"
+      },
+      {
+        "Row": 10,
+        "Col": 1,
+        "Style": 51,
+        "Text": null
+      },
+      {
+        "Row": 10,
+        "Col": 2,
+        "Style": 48,
+        "Text": "cm4",
+        "RichText": "<ns0:is xmlns:ns0=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\"><ns0:r><ns0:t>cm</ns0:t></ns0:r><ns0:r><ns0:rPr><ns0:vertAlign val=\"superscript\" /><ns0:sz val=\"12\" /><ns0:color theme=\"1\" /><ns0:rFont val=\"Swis721 Cn BT\" /><ns0:family val=\"2\" /></ns0:rPr><ns0:t>4</ns0:t></ns0:r></ns0:is>"
+      },
+      {
+        "Row": 11,
+        "Col": 0,
+        "Style": 48,
+        "Text": "Wprof",
+        "RichText": "<ns0:is xmlns:ns0=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\"><ns0:r><ns0:t>W</ns0:t></ns0:r><ns0:r><ns0:rPr><ns0:vertAlign val=\"subscript\" /><ns0:sz val=\"12\" /><ns0:color theme=\"1\" /><ns0:rFont val=\"Swis721 Cn BT\" /><ns0:family val=\"2\" /></ns0:rPr><ns0:t>prof</ns0:t></ns0:r></ns0:is>"
+      },
+      {
+        "Row": 11,
+        "Col": 1,
+        "Style": 51,
+        "Text": null
+      },
+      {
+        "Row": 11,
+        "Col": 2,
+        "Style": 48,
+        "Text": "cm3",
+        "RichText": "<ns0:is xmlns:ns0=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\"><ns0:r><ns0:t>cm</ns0:t></ns0:r><ns0:r><ns0:rPr><ns0:vertAlign val=\"superscript\" /><ns0:sz val=\"12\" /><ns0:color theme=\"1\" /><ns0:rFont val=\"Swis721 Cn BT\" /><ns0:family val=\"2\" /></ns0:rPr><ns0:t>3</ns0:t></ns0:r></ns0:is>"
+      },
+      {
+        "Row": 12,
+        "Col": 0,
+        "Style": 48,
+        "Text": "Numero profili per colonna"
+      },
+      {
+        "Row": 12,
+        "Col": 1,
+        "Style": 51,
+        "Text": null
+      },
+      {
+        "Row": 12,
+        "Col": 2,
+        "Style": 65,
+        "Text": null
+      },
+      {
+        "Row": 13,
+        "Col": 0,
+        "Style": 48,
+        "Text": "Jcolonna",
+        "RichText": "<ns0:is xmlns:ns0=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\"><ns0:r><ns0:t>J</ns0:t></ns0:r><ns0:r><ns0:rPr><ns0:vertAlign val=\"subscript\" /><ns0:sz val=\"12\" /><ns0:color theme=\"1\" /><ns0:rFont val=\"Swis721 Cn BT\" /><ns0:family val=\"2\" /></ns0:rPr><ns0:t>colonna</ns0:t></ns0:r></ns0:is>"
+      },
+      {
+        "Row": 13,
+        "Col": 1,
+        "Style": 48,
+        "Text": null
+      },
+      {
+        "Row": 13,
+        "Col": 2,
+        "Style": 48,
+        "Text": "cm4",
+        "RichText": "<ns0:is xmlns:ns0=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\"><ns0:r><ns0:t>cm</ns0:t></ns0:r><ns0:r><ns0:rPr><ns0:vertAlign val=\"superscript\" /><ns0:sz val=\"12\" /><ns0:color theme=\"1\" /><ns0:rFont val=\"Swis721 Cn BT\" /><ns0:family val=\"2\" /></ns0:rPr><ns0:t>4</ns0:t></ns0:r></ns0:is>"
+      },
+      {
+        "Row": 14,
+        "Col": 0,
+        "Style": 48,
+        "Text": "Wcolonna",
+        "RichText": "<ns0:is xmlns:ns0=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\"><ns0:r><ns0:t>W</ns0:t></ns0:r><ns0:r><ns0:rPr><ns0:vertAlign val=\"subscript\" /><ns0:sz val=\"12\" /><ns0:color theme=\"1\" /><ns0:rFont val=\"Swis721 Cn BT\" /><ns0:family val=\"2\" /></ns0:rPr><ns0:t>colonna</ns0:t></ns0:r></ns0:is>"
+      },
+      {
+        "Row": 14,
+        "Col": 1,
+        "Style": 48,
+        "Text": null
+      },
+      {
+        "Row": 14,
+        "Col": 2,
+        "Style": 48,
+        "Text": "cm3",
+        "RichText": "<ns0:is xmlns:ns0=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\"><ns0:r><ns0:t>cm</ns0:t></ns0:r><ns0:r><ns0:rPr><ns0:vertAlign val=\"superscript\" /><ns0:sz val=\"12\" /><ns0:color theme=\"1\" /><ns0:rFont val=\"Swis721 Cn BT\" /><ns0:family val=\"2\" /></ns0:rPr><ns0:t>3</ns0:t></ns0:r></ns0:is>"
+      },
+      {
+        "Row": 15,
+        "Col": 0,
+        "Style": 65,
+        "Text": "Verifica W"
+      },
+      {
+        "Row": 15,
+        "Col": 1,
+        "Style": 193,
+        "Text": null
+      },
+      {
+        "Row": 15,
+        "Col": 2,
+        "Style": 193,
+        "Text": null
+      },
+      {
+        "Row": 16,
+        "Col": 0,
+        "Style": 48,
+        "Text": "Numero colonne"
+      },
+      {
+        "Row": 16,
+        "Col": 1,
+        "Style": 51,
+        "Text": null
+      },
+      {
+        "Row": 16,
+        "Col": 2,
+        "Style": 65,
+        "Text": null
+      },
+      {
+        "Row": 17,
+        "Col": 0,
+        "Style": 200,
+        "Text": "RESISTENZA TAGLIO TELAIO"
+      },
+      {
+        "Row": 17,
+        "Col": 1,
+        "Style": 200,
+        "Text": null
+      },
+      {
+        "Row": 17,
+        "Col": 2,
+        "Style": 200,
+        "Text": null
+      },
+      {
+        "Row": 18,
+        "Col": 0,
+        "Style": 71,
+        "Text": "TIPO DI PORTALE"
+      },
+      {
+        "Row": 18,
+        "Col": 1,
+        "Style": 201,
+        "Text": null
+      },
+      {
+        "Row": 18,
+        "Col": 2,
+        "Style": 201,
+        "Text": null
+      },
+      {
+        "Row": 19,
+        "Col": 0,
+        "Style": 48,
+        "Text": "Vtelaio",
+        "RichText": "<ns0:is xmlns:ns0=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\"><ns0:r><ns0:t>V</ns0:t></ns0:r><ns0:r><ns0:rPr><ns0:vertAlign val=\"subscript\" /><ns0:sz val=\"12\" /><ns0:color theme=\"1\" /><ns0:rFont val=\"Swis721 Cn BT\" /><ns0:family val=\"2\" /></ns0:rPr><ns0:t>telaio</ns0:t></ns0:r></ns0:is>"
+      },
+      {
+        "Row": 19,
+        "Col": 1,
+        "Style": 56,
+        "Text": null
+      },
+      {
+        "Row": 19,
+        "Col": 2,
+        "Style": 48,
+        "Text": "kN"
+      },
+      {
+        "Row": 20,
+        "Col": 0,
+        "Style": 44,
+        "Text": "Ktel",
+        "RichText": "<ns0:is xmlns:ns0=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\"><ns0:r><ns0:t>K</ns0:t></ns0:r><ns0:r><ns0:rPr><ns0:vertAlign val=\"subscript\" /><ns0:sz val=\"12\" /><ns0:color theme=\"1\" /><ns0:rFont val=\"Swis721 Cn BT\" /><ns0:family val=\"2\" /></ns0:rPr><ns0:t>tel</ns0:t></ns0:r></ns0:is>"
+      },
+      {
+        "Row": 20,
+        "Col": 1,
+        "Style": 67,
+        "Text": null
+      },
+      {
+        "Row": 20,
+        "Col": 2,
+        "Style": 44,
+        "Text": "N/cm"
+      },
+      {
+        "Row": 21,
+        "Col": 0,
+        "Style": 48,
+        "Text": "dy,telaio",
+        "RichText": "<ns0:is xmlns:ns0=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\"><ns0:r><ns0:t>d</ns0:t></ns0:r><ns0:r><ns0:rPr><ns0:vertAlign val=\"subscript\" /><ns0:sz val=\"12\" /><ns0:color theme=\"1\" /><ns0:rFont val=\"Swis721 Cn BT\" /><ns0:family val=\"2\" /></ns0:rPr><ns0:t>y,telaio</ns0:t></ns0:r></ns0:is>"
+      },
+      {
+        "Row": 21,
+        "Col": 1,
+        "Style": 74,
+        "Text": null
+      },
+      {
+        "Row": 21,
+        "Col": 2,
+        "Style": 48,
+        "Text": "mm"
+      },
+      {
+        "Row": 22,
+        "Col": 0,
+        "Style": 22,
+        "Text": "Controlli"
+      },
+      {
+        "Row": 22,
+        "Col": 1,
+        "Style": 0,
+        "Text": null
+      },
+      {
+        "Row": 22,
+        "Col": 2,
+        "Style": 0,
+        "Text": null
+      },
+      {
+        "Row": 23,
+        "Col": 0,
+        "Style": 48,
+        "Text": "Spostamento=du,1-2-dy,telaio"
+      },
+      {
+        "Row": 23,
+        "Col": 1,
+        "Style": 56,
+        "Text": null
+      },
+      {
+        "Row": 23,
+        "Col": 2,
+        "Style": 48,
+        "Text": null
+      },
+      {
+        "Row": 24,
+        "Col": 0,
+        "Style": 48,
+        "Text": "Resistenza"
+      },
+      {
+        "Row": 24,
+        "Col": 1,
+        "Style": 48,
+        "Text": null
+      },
+      {
+        "Row": 24,
+        "Col": 2,
+        "Style": 48,
+        "Text": null
+      },
+      {
+        "Row": 25,
+        "Col": 0,
+        "Style": 93,
+        "Text": "Veffettivo telaio=",
+        "RichText": "<ns0:is xmlns:ns0=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\"><ns0:r><ns0:t>V</ns0:t></ns0:r><ns0:r><ns0:rPr><ns0:sz val=\"8\" /><ns0:color theme=\"1\" /><ns0:rFont val=\"Swis721 Cn BT\" /><ns0:family val=\"2\" /></ns0:rPr><ns0:t>effettivo telaio</ns0:t></ns0:r><ns0:r><ns0:rPr><ns0:sz val=\"12\" /><ns0:color theme=\"1\" /><ns0:rFont val=\"Swis721 Cn BT\" /><ns0:family val=\"2\" /></ns0:rPr><ns0:t>=</ns0:t></ns0:r></ns0:is>"
+      },
+      {
+        "Row": 25,
+        "Col": 1,
+        "Style": 94,
+        "Text": null
+      },
+      {
+        "Row": 25,
+        "Col": 2,
+        "Style": 97,
+        "Text": "kN"
+      }
+    ],
+    "Merges": [
+      {
+        "R1": 15,
+        "C1": 1,
+        "R2": 15,
+        "C2": 2
+      },
+      {
+        "R1": 18,
+        "C1": 1,
+        "R2": 18,
+        "C2": 2
+      },
+      {
+        "R1": 0,
+        "C1": 0,
+        "R2": 0,
+        "C2": 2
+      },
+      {
+        "R1": 17,
+        "C1": 0,
+        "R2": 17,
+        "C2": 2
+      }
+    ],
+    "Heights": [
+      18.0,
+      18.0,
+      18.0,
+      18.0,
+      18.0,
+      18.0,
+      18.0,
+      15.6,
+      18.75,
+      18.0,
+      18.0,
+      18.0,
+      18.0,
+      18.0,
+      18.0,
+      18.0,
+      18.0,
+      15.6,
+      18.0,
+      18.0,
+      18.0,
+      18.0,
+      18.0,
+      18.0,
+      18.0,
+      15.6
+    ],
+    "Widths": [
+      33.109375,
+      32.88671875,
+      25.88671875
+    ]
+  },
+  "Summary": {
+    "Cells": [
+      {
+        "Row": 0,
+        "Col": 0,
+        "Style": 148,
+        "Text": "RIEPILOGO DIFFERENZE MASCHI MURARI"
+      },
+      {
+        "Row": 0,
+        "Col": 1,
+        "Style": 148,
+        "Text": null
+      },
+      {
+        "Row": 0,
+        "Col": 2,
+        "Style": 148,
+        "Text": null
+      },
+      {
+        "Row": 0,
+        "Col": 3,
+        "Style": 148,
+        "Text": null
+      },
+      {
+        "Row": 1,
+        "Col": 0,
+        "Style": 197,
+        "Text": "TAGLIO RESISTENTE STATO ATTUALE Vu.0,TOT",
+        "RichText": "<ns0:is xmlns:ns0=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\"><ns0:r><ns0:t>TAGLIO RESISTENTE STATO ATTUALE V</ns0:t></ns0:r><ns0:r><ns0:rPr><ns0:vertAlign val=\"subscript\" /><ns0:sz val=\"12\" /><ns0:color theme=\"1\" /><ns0:rFont val=\"Swis721 Cn BT\" /><ns0:family val=\"2\" /></ns0:rPr><ns0:t>u.0,TOT</ns0:t></ns0:r></ns0:is>"
+      },
+      {
+        "Row": 1,
+        "Col": 1,
+        "Style": 197,
+        "Text": null
+      },
+      {
+        "Row": 1,
+        "Col": 2,
+        "Style": 58,
+        "Text": null
+      },
+      {
+        "Row": 1,
+        "Col": 3,
+        "Style": 57,
+        "Text": "kN"
+      },
+      {
+        "Row": 2,
+        "Col": 0,
+        "Style": 173,
+        "Text": "TAGLIO RESISTENTE STATO PROGETTO Vt.f",
+        "RichText": "<ns0:is xmlns:ns0=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\"><ns0:r><ns0:t>TAGLIO RESISTENTE STATO PROGETTO V</ns0:t></ns0:r><ns0:r><ns0:rPr><ns0:vertAlign val=\"subscript\" /><ns0:sz val=\"12\" /><ns0:color theme=\"1\" /><ns0:rFont val=\"Swis721 Cn BT\" /><ns0:family val=\"2\" /></ns0:rPr><ns0:t>t.f</ns0:t></ns0:r></ns0:is>"
+      },
+      {
+        "Row": 2,
+        "Col": 1,
+        "Style": 173,
+        "Text": null
+      },
+      {
+        "Row": 2,
+        "Col": 2,
+        "Style": 56,
+        "Text": null
+      },
+      {
+        "Row": 2,
+        "Col": 3,
+        "Style": 48,
+        "Text": "kN"
+      },
+      {
+        "Row": 3,
+        "Col": 0,
+        "Style": 173,
+        "Text": "VARIAZIONE DI RESISTENZA PER TAGLIO DVt",
+        "RichText": "<ns0:is xmlns:ns0=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\"><ns0:r><ns0:t xml:space=\"preserve\">VARIAZIONE DI RESISTENZA PER TAGLIO </ns0:t></ns0:r><ns0:r><ns0:rPr><ns0:sz val=\"12\" /><ns0:color theme=\"1\" /><ns0:rFont val=\"Symbol\" /><ns0:family val=\"1\" /><ns0:charset val=\"2\" /></ns0:rPr><ns0:t>D</ns0:t></ns0:r><ns0:r><ns0:rPr><ns0:sz val=\"12\" /><ns0:color theme=\"1\" /><ns0:rFont val=\"Swis721 Cn BT\" /><ns0:family val=\"2\" /></ns0:rPr><ns0:t>V</ns0:t></ns0:r><ns0:r><ns0:rPr><ns0:vertAlign val=\"subscript\" /><ns0:sz val=\"12\" /><ns0:color theme=\"1\" /><ns0:rFont val=\"Swis721 Cn BT\" /><ns0:family val=\"2\" /></ns0:rPr><ns0:t>t</ns0:t></ns0:r></ns0:is>"
+      },
+      {
+        "Row": 3,
+        "Col": 1,
+        "Style": 173,
+        "Text": null
+      },
+      {
+        "Row": 3,
+        "Col": 2,
+        "Style": 56,
+        "Text": null
+      },
+      {
+        "Row": 3,
+        "Col": 3,
+        "Style": 48,
+        "Text": "kN"
+      },
+      {
+        "Row": 4,
+        "Col": 0,
+        "Style": 173,
+        "Text": "% VARIAZIONE DI RESISTENZA PER TAGLIO DVt",
+        "RichText": "<ns0:is xmlns:ns0=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\"><ns0:r><ns0:t xml:space=\"preserve\">% VARIAZIONE DI RESISTENZA PER TAGLIO </ns0:t></ns0:r><ns0:r><ns0:rPr><ns0:sz val=\"12\" /><ns0:color theme=\"1\" /><ns0:rFont val=\"Symbol\" /><ns0:family val=\"1\" /><ns0:charset val=\"2\" /></ns0:rPr><ns0:t>D</ns0:t></ns0:r><ns0:r><ns0:rPr><ns0:sz val=\"12\" /><ns0:color theme=\"1\" /><ns0:rFont val=\"Swis721 Cn BT\" /><ns0:family val=\"2\" /></ns0:rPr><ns0:t>V</ns0:t></ns0:r><ns0:r><ns0:rPr><ns0:vertAlign val=\"subscript\" /><ns0:sz val=\"12\" /><ns0:color theme=\"1\" /><ns0:rFont val=\"Swis721 Cn BT\" /><ns0:family val=\"2\" /></ns0:rPr><ns0:t>t</ns0:t></ns0:r></ns0:is>"
+      },
+      {
+        "Row": 4,
+        "Col": 1,
+        "Style": 173,
+        "Text": null
+      },
+      {
+        "Row": 4,
+        "Col": 2,
+        "Style": 61,
+        "Text": null
+      },
+      {
+        "Row": 4,
+        "Col": 3,
+        "Style": 62,
+        "Text": null
+      },
+      {
+        "Row": 5,
+        "Col": 0,
+        "Style": 173,
+        "Text": "RIGIDEZZA MASCHIO STATO ATTUALE K0.TOT",
+        "RichText": "<ns0:is xmlns:ns0=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\"><ns0:r><ns0:t>RIGIDEZZA MASCHIO STATO ATTUALE K</ns0:t></ns0:r><ns0:r><ns0:rPr><ns0:vertAlign val=\"subscript\" /><ns0:sz val=\"12\" /><ns0:color theme=\"1\" /><ns0:rFont val=\"Swis721 Cn BT\" /><ns0:family val=\"2\" /></ns0:rPr><ns0:t>0.TOT</ns0:t></ns0:r></ns0:is>"
+      },
+      {
+        "Row": 5,
+        "Col": 1,
+        "Style": 173,
+        "Text": null
+      },
+      {
+        "Row": 5,
+        "Col": 2,
+        "Style": 63,
+        "Text": null
+      },
+      {
+        "Row": 5,
+        "Col": 3,
+        "Style": 44,
+        "Text": "N/cm"
+      },
+      {
+        "Row": 6,
+        "Col": 0,
+        "Style": 173,
+        "Text": "RIGIDEZZA MASCHIO STATO PROGETTO Kf",
+        "RichText": "<ns0:is xmlns:ns0=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\"><ns0:r><ns0:t>RIGIDEZZA MASCHIO STATO PROGETTO K</ns0:t></ns0:r><ns0:r><ns0:rPr><ns0:vertAlign val=\"subscript\" /><ns0:sz val=\"12\" /><ns0:color theme=\"1\" /><ns0:rFont val=\"Swis721 Cn BT\" /><ns0:family val=\"2\" /></ns0:rPr><ns0:t>f</ns0:t></ns0:r></ns0:is>"
+      },
+      {
+        "Row": 6,
+        "Col": 1,
+        "Style": 173,
+        "Text": null
+      },
+      {
+        "Row": 6,
+        "Col": 2,
+        "Style": 63,
+        "Text": null
+      },
+      {
+        "Row": 6,
+        "Col": 3,
+        "Style": 44,
+        "Text": "N/cm"
+      },
+      {
+        "Row": 7,
+        "Col": 0,
+        "Style": 173,
+        "Text": "VARIAZIONE DI RIGIDEZZA DK",
+        "RichText": "<ns0:is xmlns:ns0=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\"><ns0:r><ns0:t xml:space=\"preserve\">VARIAZIONE DI RIGIDEZZA </ns0:t></ns0:r><ns0:r><ns0:rPr><ns0:sz val=\"12\" /><ns0:color theme=\"1\" /><ns0:rFont val=\"Symbol\" /><ns0:family val=\"1\" /><ns0:charset val=\"2\" /></ns0:rPr><ns0:t>D</ns0:t></ns0:r><ns0:r><ns0:rPr><ns0:sz val=\"12\" /><ns0:color theme=\"1\" /><ns0:rFont val=\"Swis721 Cn BT\" /><ns0:family val=\"2\" /></ns0:rPr><ns0:t>K</ns0:t></ns0:r></ns0:is>"
+      },
+      {
+        "Row": 7,
+        "Col": 1,
+        "Style": 173,
+        "Text": null
+      },
+      {
+        "Row": 7,
+        "Col": 2,
+        "Style": 63,
+        "Text": null
+      },
+      {
+        "Row": 7,
+        "Col": 3,
+        "Style": 44,
+        "Text": "N/cm"
+      },
+      {
+        "Row": 8,
+        "Col": 0,
+        "Style": 173,
+        "Text": "% VARIAZIONE DI RIGIDEZZA DK",
+        "RichText": "<ns0:is xmlns:ns0=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\"><ns0:r><ns0:t xml:space=\"preserve\">% VARIAZIONE DI RIGIDEZZA </ns0:t></ns0:r><ns0:r><ns0:rPr><ns0:sz val=\"12\" /><ns0:color theme=\"1\" /><ns0:rFont val=\"Symbol\" /><ns0:family val=\"1\" /><ns0:charset val=\"2\" /></ns0:rPr><ns0:t>D</ns0:t></ns0:r><ns0:r><ns0:rPr><ns0:sz val=\"12\" /><ns0:color theme=\"1\" /><ns0:rFont val=\"Swis721 Cn BT\" /><ns0:family val=\"2\" /></ns0:rPr><ns0:t>K</ns0:t></ns0:r></ns0:is>"
+      },
+      {
+        "Row": 8,
+        "Col": 1,
+        "Style": 173,
+        "Text": null
+      },
+      {
+        "Row": 8,
+        "Col": 2,
+        "Style": 116,
+        "Text": null
+      },
+      {
+        "Row": 8,
+        "Col": 3,
+        "Style": 62,
+        "Text": null
+      },
+      {
+        "Row": 9,
+        "Col": 0,
+        "Style": 193,
+        "Text": null
+      },
+      {
+        "Row": 9,
+        "Col": 1,
+        "Style": 193,
+        "Text": null
+      },
+      {
+        "Row": 9,
+        "Col": 2,
+        "Style": 193,
+        "Text": null
+      },
+      {
+        "Row": 9,
+        "Col": 3,
+        "Style": 193,
+        "Text": null
+      },
+      {
+        "Row": 10,
+        "Col": 0,
+        "Style": 199,
+        "Text": null
+      },
+      {
+        "Row": 10,
+        "Col": 1,
+        "Style": 199,
+        "Text": null
+      },
+      {
+        "Row": 10,
+        "Col": 2,
+        "Style": 199,
+        "Text": null
+      },
+      {
+        "Row": 10,
+        "Col": 3,
+        "Style": 199,
+        "Text": null
+      },
+      {
+        "Row": 11,
+        "Col": 0,
+        "Style": 198,
+        "Text": "RESISTENZA  MASSIMA TAGLIO TELAIO DVteL.RES",
+        "RichText": "<ns0:is xmlns:ns0=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\"><ns0:r><ns0:t xml:space=\"preserve\">RESISTENZA  MASSIMA TAGLIO TELAIO </ns0:t></ns0:r><ns0:r><ns0:rPr><ns0:sz val=\"12\" /><ns0:color theme=\"1\" /><ns0:rFont val=\"Symbol\" /><ns0:family val=\"1\" /><ns0:charset val=\"2\" /></ns0:rPr><ns0:t>D</ns0:t></ns0:r><ns0:r><ns0:rPr><ns0:sz val=\"12\" /><ns0:color theme=\"1\" /><ns0:rFont val=\"Swis721 Cn BT\" /><ns0:family val=\"2\" /></ns0:rPr><ns0:t>V</ns0:t></ns0:r><ns0:r><ns0:rPr><ns0:vertAlign val=\"subscript\" /><ns0:sz val=\"12\" /><ns0:color theme=\"1\" /><ns0:rFont val=\"Swis721 Cn BT\" /><ns0:family val=\"2\" /></ns0:rPr><ns0:t>teL.RES</ns0:t></ns0:r></ns0:is>"
+      },
+      {
+        "Row": 11,
+        "Col": 1,
+        "Style": 198,
+        "Text": null
+      },
+      {
+        "Row": 11,
+        "Col": 2,
+        "Style": 75,
+        "Text": null
+      },
+      {
+        "Row": 11,
+        "Col": 3,
+        "Style": 71,
+        "Text": "kN"
+      },
+      {
+        "Row": 12,
+        "Col": 0,
+        "Style": 92,
+        "Text": "RESISTENZA EFFETTIVA MOBILITATA DAL TELAIO"
+      },
+      {
+        "Row": 12,
+        "Col": 1,
+        "Style": 92,
+        "Text": null
+      },
+      {
+        "Row": 12,
+        "Col": 2,
+        "Style": 75,
+        "Text": null
+      },
+      {
+        "Row": 12,
+        "Col": 3,
+        "Style": 71,
+        "Text": "kN"
+      },
+      {
+        "Row": 13,
+        "Col": 0,
+        "Style": 173,
+        "Text": "RIGIDEZZA TELAIO DKtel.RES",
+        "RichText": "<ns0:is xmlns:ns0=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\"><ns0:r><ns0:t xml:space=\"preserve\">RIGIDEZZA TELAIO </ns0:t></ns0:r><ns0:r><ns0:rPr><ns0:sz val=\"12\" /><ns0:color theme=\"1\" /><ns0:rFont val=\"Symbol\" /><ns0:family val=\"1\" /><ns0:charset val=\"2\" /></ns0:rPr><ns0:t>D</ns0:t></ns0:r><ns0:r><ns0:rPr><ns0:sz val=\"12\" /><ns0:color theme=\"1\" /><ns0:rFont val=\"Swis721 Cn BT\" /><ns0:family val=\"2\" /></ns0:rPr><ns0:t>K</ns0:t></ns0:r><ns0:r><ns0:rPr><ns0:vertAlign val=\"subscript\" /><ns0:sz val=\"12\" /><ns0:color theme=\"1\" /><ns0:rFont val=\"Swis721 Cn BT\" /><ns0:family val=\"2\" /></ns0:rPr><ns0:t>tel.RES</ns0:t></ns0:r></ns0:is>"
+      },
+      {
+        "Row": 13,
+        "Col": 1,
+        "Style": 173,
+        "Text": null
+      },
+      {
+        "Row": 13,
+        "Col": 2,
+        "Style": 63,
+        "Text": null
+      },
+      {
+        "Row": 13,
+        "Col": 3,
+        "Style": 44,
+        "Text": "N/cm"
+      },
+      {
+        "Row": 14,
+        "Col": 0,
+        "Style": 173,
+        "Text": "RES. A TAGLIO  PARETE CON CERCHIATURA Vfinale",
+        "RichText": "<ns0:is xmlns:ns0=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\"><ns0:r><ns0:t>RES. A TAGLIO  PARETE CON CERCHIATURA V</ns0:t></ns0:r><ns0:r><ns0:rPr><ns0:vertAlign val=\"subscript\" /><ns0:sz val=\"12\" /><ns0:color theme=\"1\" /><ns0:rFont val=\"Swis721 Cn BT\" /><ns0:family val=\"2\" /></ns0:rPr><ns0:t>finale</ns0:t></ns0:r></ns0:is>"
+      },
+      {
+        "Row": 14,
+        "Col": 1,
+        "Style": 173,
+        "Text": null
+      },
+      {
+        "Row": 14,
+        "Col": 2,
+        "Style": 56,
+        "Text": null
+      },
+      {
+        "Row": 14,
+        "Col": 3,
+        "Style": 48,
+        "Text": "kN"
+      },
+      {
+        "Row": 15,
+        "Col": 0,
+        "Style": 173,
+        "Text": "CONFRONTO RES. STATO ATTUALE-FINALE"
+      },
+      {
+        "Row": 15,
+        "Col": 1,
+        "Style": 173,
+        "Text": null
+      },
+      {
+        "Row": 15,
+        "Col": 2,
+        "Style": 61,
+        "Text": null
+      },
+      {
+        "Row": 15,
+        "Col": 3,
+        "Style": 48,
+        "Text": null
+      },
+      {
+        "Row": 16,
+        "Col": 0,
+        "Style": 173,
+        "Text": "VERIFICA RESISTENZA A TAGLIO"
+      },
+      {
+        "Row": 16,
+        "Col": 1,
+        "Style": 173,
+        "Text": null
+      },
+      {
+        "Row": 16,
+        "Col": 2,
+        "Style": 64,
+        "Text": null
+      },
+      {
+        "Row": 16,
+        "Col": 3,
+        "Style": 48,
+        "Text": null
+      },
+      {
+        "Row": 17,
+        "Col": 0,
+        "Style": 173,
+        "Text": "RIGIDEZZA PARETE CON CERCHIATURA Kfinale.RES",
+        "RichText": "<ns0:is xmlns:ns0=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\"><ns0:r><ns0:t>RIGIDEZZA PARETE CON CERCHIATURA K</ns0:t></ns0:r><ns0:r><ns0:rPr><ns0:vertAlign val=\"subscript\" /><ns0:sz val=\"12\" /><ns0:color theme=\"1\" /><ns0:rFont val=\"Swis721 Cn BT\" /><ns0:family val=\"2\" /></ns0:rPr><ns0:t>finale.RES</ns0:t></ns0:r></ns0:is>"
+      },
+      {
+        "Row": 17,
+        "Col": 1,
+        "Style": 173,
+        "Text": null
+      },
+      {
+        "Row": 17,
+        "Col": 2,
+        "Style": 63,
+        "Text": null
+      },
+      {
+        "Row": 17,
+        "Col": 3,
+        "Style": 44,
+        "Text": "N/cm"
+      },
+      {
+        "Row": 18,
+        "Col": 0,
+        "Style": 173,
+        "Text": "CONFRONTO RIGID. STATO ATTUALE-FINALE"
+      },
+      {
+        "Row": 18,
+        "Col": 1,
+        "Style": 173,
+        "Text": null
+      },
+      {
+        "Row": 18,
+        "Col": 2,
+        "Style": 61,
+        "Text": null
+      },
+      {
+        "Row": 18,
+        "Col": 3,
+        "Style": 48,
+        "Text": null
+      },
+      {
+        "Row": 19,
+        "Col": 0,
+        "Style": 173,
+        "Text": "VERIFICA RIGIDEZZA"
+      },
+      {
+        "Row": 19,
+        "Col": 1,
+        "Style": 173,
+        "Text": null
+      },
+      {
+        "Row": 19,
+        "Col": 2,
+        "Style": 64,
+        "Text": null
+      },
+      {
+        "Row": 19,
+        "Col": 3,
+        "Style": 48,
+        "Text": null
+      }
+    ],
+    "Merges": [
+      {
+        "R1": 3,
+        "C1": 0,
+        "R2": 3,
+        "C2": 1
+      },
+      {
+        "R1": 0,
+        "C1": 0,
+        "R2": 0,
+        "C2": 3
+      },
+      {
+        "R1": 4,
+        "C1": 0,
+        "R2": 4,
+        "C2": 1
+      },
+      {
+        "R1": 6,
+        "C1": 0,
+        "R2": 6,
+        "C2": 1
+      },
+      {
+        "R1": 17,
+        "C1": 0,
+        "R2": 17,
+        "C2": 1
+      },
+      {
+        "R1": 19,
+        "C1": 0,
+        "R2": 19,
+        "C2": 1
+      },
+      {
+        "R1": 10,
+        "C1": 0,
+        "R2": 10,
+        "C2": 3
+      },
+      {
+        "R1": 7,
+        "C1": 0,
+        "R2": 7,
+        "C2": 1
+      },
+      {
+        "R1": 2,
+        "C1": 0,
+        "R2": 2,
+        "C2": 1
+      },
+      {
+        "R1": 9,
+        "C1": 0,
+        "R2": 9,
+        "C2": 3
+      },
+      {
+        "R1": 13,
+        "C1": 0,
+        "R2": 13,
+        "C2": 1
+      },
+      {
+        "R1": 15,
+        "C1": 0,
+        "R2": 15,
+        "C2": 1
+      },
+      {
+        "R1": 16,
+        "C1": 0,
+        "R2": 16,
+        "C2": 1
+      },
+      {
+        "R1": 18,
+        "C1": 0,
+        "R2": 18,
+        "C2": 1
+      },
+      {
+        "R1": 14,
+        "C1": 0,
+        "R2": 14,
+        "C2": 1
+      },
+      {
+        "R1": 8,
+        "C1": 0,
+        "R2": 8,
+        "C2": 1
+      },
+      {
+        "R1": 5,
+        "C1": 0,
+        "R2": 5,
+        "C2": 1
+      },
+      {
+        "R1": 11,
+        "C1": 0,
+        "R2": 11,
+        "C2": 1
+      },
+      {
+        "R1": 1,
+        "C1": 0,
+        "R2": 1,
+        "C2": 1
+      }
+    ],
+    "Heights": [
+      15.6,
+      18.0,
+      18.0,
+      24.0,
+      31.2,
+      18.9,
+      18.0,
+      15.6,
+      31.2,
+      15.6,
+      15.6,
+      18.9,
+      18.9,
+      18.9,
+      18.9,
+      18.9,
+      15.6,
+      18.9,
+      15.6,
+      15.6
+    ],
+    "Widths": [
+      37.0,
+      32.5546875,
+      27.88671875,
+      20.109375
+    ]
+  }
+}

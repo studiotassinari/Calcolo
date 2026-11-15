@@ -46,7 +46,7 @@ public sealed class MasonryViewModel : ObservableObject
     public ProfileProposal? SelectedProposal {get=>Frame?.SelectedProposal;set{if(Frame!=null)Frame.SelectedProposal=value;}}
     public RelayCommand AddBeforeCommand{get;} public RelayCommand AddAfterCommand{get;} public RelayCommand CopyCommand{get;} public RelayCommand ExampleCommand{get;}
     public RelayCommand ApplyMaterialCommand{get;} public RelayCommand CalculateCommand{get;} public RelayCommand DesignCommand=>Frame?.DesignCommand!; public RelayCommand UseProfileCommand=>Frame?.UseProfileCommand!;
-    public RelayCommand OpenCommand{get;} public RelayCommand SaveCommand{get;} public RelayCommand ExportCommand{get;} public RelayCommand ReportCommand{get;} public RelayCommand WordReportCommand{get;}
+    public RelayCommand OpenCommand{get;} public RelayCommand SaveCommand{get;} public RelayCommand ExportCommand{get;} public RelayCommand ReportCommand{get;} public RelayCommand WordReportCommand{get;} public RelayCommand ExcelReportCommand{get;}
     public RelayCommand EqualBeforeCommand{get;} public RelayCommand EqualAfterCommand{get;}
     public MasonryViewModel(IFileService files,IMasonryReportService? reportService=null)
     {
@@ -64,6 +64,7 @@ public sealed class MasonryViewModel : ObservableObject
         ExportCommand=new(()=>Run(()=>{var path=files.Save("Risultati JSON|*.json","muratura-risultati.json");if(path!=null)files.Write(path,ModuleFiles.Write(new{Input=Build(),Results}));}),()=>Results.Count>0);
         ReportCommand=new(()=>Run(()=>{var p=Build();var path=files.Save("Relazione PDF|*.pdf","relazione-maschi.pdf");if(path!=null){files.WriteBytes(path,reports.Pdf(p));Status="Relazione PDF salvata in formato A4 con margini di 15 mm.";}}),()=>Results.Count>0);
         WordReportCommand=new(()=>Run(()=>{var p=Build();var path=files.Save("Relazione Word|*.docx","relazione-maschi.docx");if(path!=null){files.WriteBytes(path,reports.Word(p));Status="Relazione Word modificabile salvata in formato A4 con margini di 15 mm.";}}),()=>Results.Count>0);
+        ExcelReportCommand=new(()=>Run(()=>{var p=Build();MasonryFiles.Validate(p);var data=reports.Excel(p);var path=files.Save("Foglio Excel|*.xlsx","confronto-maschi.xlsx");if(path!=null){files.WriteBytes(path,data);Status="Excel creato con i dati e i risultati correnti del modulo.";}}));
         Load(new(){Before=[new(),new(),new()],After=[new(),new(),new()],EqualHeights=new(){["before"]=true,["after"]=true}});
     }
     private void Equal(ObservableCollection<MasonryPierViewModel> rows){var h=rows[0].Editor.Fields.Single(f=>f.Key=="H").Value;foreach(var p in rows)p.Editor.Fields.Single(f=>f.Key=="H").Value=h;}
