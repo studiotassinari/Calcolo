@@ -4,4 +4,5 @@ public interface IMasonryReportService
 {
     byte[] Word(MasonryProject project);
     byte[] Pdf(MasonryProject project);
+    byte[] Excel(MasonryProject project);
 }

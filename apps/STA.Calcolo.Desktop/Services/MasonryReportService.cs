@@ -4,6 +4,7 @@ using STA.Muratura.Core;
 namespace STA.Calcolo.Desktop.Services;
 public sealed class MasonryReportService : IMasonryReportService
 {
+    public byte[] Excel(MasonryProject project)=>MasonryExcelWriter.Write(project);
     private static byte[] Logo()
     {
         using var stream=System.Windows.Application.GetResourceStream(new Uri("pack://application:,,,/STA.Calcolo.Desktop;component/Assets/Brand/Logo.png"))!.Stream;

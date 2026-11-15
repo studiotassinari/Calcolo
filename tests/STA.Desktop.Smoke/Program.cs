@@ -25,6 +25,13 @@ internal static class Program
             Console.WriteLine("PASS WPF " + module.Id);
         }
         var masonry=new MasonryViewModel(files);masonry.ExampleCommand.Execute(null);masonry.CalculateCommand.Execute(null);
+        if(!new MasonryViewModel(files).Frame.ByKey["Fy"].Choices.SequenceEqual(new[]{"235","275","355"}))throw new Exception("Steel list");
+        if(new MasonryViewModel(files).Frame.ByKey["Fy"].Value!="275")throw new Exception("Steel default");
+        files.NextSave="masonry.xlsx";masonry.ExcelReportCommand.Execute(null);
+        if(!files.Binary.ContainsKey(files.NextSave))throw new Exception(masonry.Status);
+        masonry.Before[0].Editor.ByKey["N"].Value="175";files.NextSave="masonry-updated.xlsx";masonry.ExcelReportCommand.Execute(null);
+        if(!files.Binary.ContainsKey(files.NextSave)||files.Binary[files.NextSave].SequenceEqual(files.Binary["masonry.xlsx"]))throw new Exception("Stale Excel data");
+        masonry.ExampleCommand.Execute(null);masonry.CalculateCommand.Execute(null);
         if(masonry.Results.Count==0)throw new Exception(masonry.Status);
         files.NextSave="masonry.json";masonry.SaveCommand.Execute(null);var masonrySaved=files.Content[files.NextSave];
         files.NextSave="masonry-report.pdf";masonry.ReportCommand.Execute(null);if(!files.Binary.ContainsKey(files.NextSave))throw new Exception(masonry.Status);

@@ -17,6 +17,7 @@ many.After=many.Before.Select((p,i)=>p with {L=200+i*20,C=[1.1,1.2,1,1,.9,1,1]})
 var multi=example with {Version=3,AdditionalFrames=[example.Frame with {Enabled=true,Profile="IPE 200",H=240},example.Frame with {Enabled=false}]};
 foreach(var (name,p) in new[]{("piu-cerchiature",multi),("esempio",example),("20-maschi",many),("senza-telaio",example with {Frame=example.Frame with {Enabled=false}})})
 {
+    ExcelChecks.Verify(p,name);
     var data=MasonryReportBuilder.Build(p,new(2026,11,7));var compare=MasonryReportBuilder.Compare(p);
     Assert(compare.Length==2&&MasonryReportBuilder.Piers(p).Length==p.Before.Length+p.After.Length,"Missing rows");
     Assert(compare.All(r=>Math.Abs(r.Finale-r.Dopo-r.Telaio)<1e-6),"Final equilibrium");
