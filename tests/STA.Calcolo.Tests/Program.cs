@@ -43,6 +43,8 @@ using(var source=new MidasReactionSource("https://example.test/gen","test-only",
 Test("MIDAS URL e chiave",()=>{Reject(()=>new MidasReactionSource("http://example.test","key"));Reject(()=>new MidasReactionSource("https://example.test",""));});
 ApplicationTests.Run(Test);
 ShearTests.Run(Test);
+// Include i contratti geografici, gli spettri TXT e le formule del materiale.
+ScientificTests.Run(Test);
 Console.WriteLine($"{count} test superati");
 
 sealed class FakeHandler(string table) : HttpMessageHandler

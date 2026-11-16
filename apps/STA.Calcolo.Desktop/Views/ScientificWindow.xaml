@@ -1,0 +1,71 @@
+<Window x:Class="STA.Calcolo.Desktop.Views.ScientificWindow"
+ xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+ xmlns:local="clr-namespace:STA.Calcolo.Desktop.Views" Title="{Binding Title}" Width="1280" Height="880"
+ MinWidth="920" MinHeight="650">
+ <Window.Resources><BooleanToVisibilityConverter x:Key="Visible"/></Window.Resources>
+ <!-- La vista dichiara solo binding: calcoli, salvataggi e selezione geografica appartengono al ViewModel. -->
+ <DockPanel Background="#F3F6F6" Margin="22">
+  <StackPanel DockPanel.Dock="Top">
+   <Grid Margin="0,0,0,10"><Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="190"/></Grid.ColumnDefinitions>
+    <StackPanel><TextBlock Text="{Binding Title}" FontSize="28" FontWeight="SemiBold"/><TextBlock Text="{Binding Description}" TextWrapping="Wrap" Margin="0,5,15,0"/></StackPanel>
+    <Image Grid.Column="1" Source="/STA.Calcolo.Desktop;component/Assets/Brand/Logo.png" Height="60" Stretch="Uniform"/>
+   </Grid>
+   <WrapPanel><Button Content="Apri progetto" Command="{Binding OpenCommand}"/><Button Content="Salva progetto" Command="{Binding SaveCommand}"/>
+    <Button Content="Calcola" Command="{Binding CalculateCommand}"/><Button Content="Esporta risultati" Command="{Binding ExportCommand}"/>
+    <Button Content="Tutti gli spettri TXT (ZIP)" Command="{Binding ExportSpectraCommand}" Visibility="{Binding IsSeismic, Converter={StaticResource Visible}}"/>
+   </WrapPanel>
+  </StackPanel>
+  <TextBlock DockPanel.Dock="Bottom" Text="{Binding Status}" TextWrapping="Wrap" Margin="0,10,0,0"/>
+  <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="330"/><ColumnDefinition Width="18"/><ColumnDefinition/></Grid.ColumnDefinitions>
+   <ScrollViewer VerticalScrollBarVisibility="Auto"><StackPanel>
+    <Border Style="{StaticResource Panel}"><ItemsControl ItemsSource="{Binding Fields}"><ItemsControl.ItemTemplate><DataTemplate>
+     <StackPanel Margin="0,0,0,12"><TextBlock Text="{Binding Label}" TextWrapping="Wrap" Margin="0,0,0,5"/>
+      <Grid><TextBox Text="{Binding Value, UpdateSourceTrigger=PropertyChanged}">
+       <TextBox.Style><Style TargetType="TextBox" BasedOn="{StaticResource {x:Type TextBox}}"><Style.Triggers><DataTrigger Binding="{Binding HasChoices}" Value="True"><Setter Property="Visibility" Value="Collapsed"/></DataTrigger></Style.Triggers></Style></TextBox.Style>
+      </TextBox>
+      <ComboBox ItemsSource="{Binding Choices}" SelectedItem="{Binding Value, UpdateSourceTrigger=PropertyChanged}" Visibility="{Binding HasChoices, Converter={StaticResource Visible}}" IsTextSearchEnabled="True" MaxDropDownHeight="320"/>
+      </Grid>
+     </StackPanel>
+    </DataTemplate></ItemsControl.ItemTemplate></ItemsControl></Border>
+    <TextBlock Text="{Binding Context}" TextWrapping="Wrap" Foreground="#135F6E" Margin="5,0,5,12"/>
+   </StackPanel></ScrollViewer>
+   <DockPanel Grid.Column="2">
+    <Border DockPanel.Dock="Top" Style="{StaticResource Panel}" Background="#192845"><TextBlock Text="{Binding Summary}" Foreground="White" FontSize="22" TextWrapping="Wrap"/></Border>
+    <TabControl x:Name="ScientificTabs"><TabControl.Style><Style TargetType="TabControl"><Setter Property="SelectedIndex" Value="0"/><Style.Triggers><DataTrigger Binding="{Binding IsConcrete}" Value="True"><Setter Property="SelectedIndex" Value="2"/></DataTrigger></Style.Triggers></Style></TabControl.Style>
+     <TabItem Header="Grafici e figure" Visibility="{Binding HasChart, Converter={StaticResource Visible}}">
+      <ScrollViewer VerticalScrollBarVisibility="Auto"><StackPanel Margin="12">
+       <local:SnowRoofView x:Name="SnowFigure" Angle="{Binding RoofAngle}" Load="{Binding SnowLoad}" Height="240" Visibility="{Binding IsSnow, Converter={StaticResource Visible}}"/>
+       <local:ScientificPlotView x:Name="MainChart" Series="{Binding Series}" XAxis="{Binding XAxis}" YAxis="{Binding YAxis}" Profile="{Binding IsWind}" Height="340"/>
+       <StackPanel Visibility="{Binding IsWind, Converter={StaticResource Visible}}">
+        <TextBlock Text="Categorie di esposizione I–V · confronto a parità di ct" FontSize="16" FontWeight="SemiBold" Margin="0,16,0,4"/>
+        <TextBlock Text="Il tratto costante sotto zmin è parte del modello. La curva selezionata è evidenziata." TextWrapping="Wrap"/>
+        <local:ScientificPlotView x:Name="ExposureChart" Series="{Binding ExposureSeries}" XAxis="Coefficiente ce(z) [–]" YAxis="Altezza z [m]" Height="340"/>
+       </StackPanel>
+      </StackPanel></ScrollViewer>
+     </TabItem>
+     <TabItem x:Name="MapTab" Header="Sito sulla mappa" Visibility="{Binding IsSeismic, Converter={StaticResource Visible}}">
+      <Grid Margin="10"><Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+       <TextBlock Text="Clic: seleziona il sito · trascina: sposta la mappa · rotella / + e −: zoom · Home: centra il marker" TextWrapping="Wrap" Margin="0,0,0,10"/>
+       <local:GeographicMapView x:Name="SiteMap" Grid.Row="1" Location="{Binding Location, Mode=TwoWay}" MinHeight="320"/>
+       <TextBlock Grid.Row="2" Text="Cartografia OpenStreetMap via Internet. Le coordinate si possono inserire anche manualmente; la selezione invalida i risultati precedenti." TextWrapping="Wrap" Margin="0,8,0,0"/>
+      </Grid>
+     </TabItem>
+     <TabItem x:Name="ResultsTab" Header="Risultati e formule">
+      <ScrollViewer VerticalScrollBarVisibility="Auto"><StackPanel Margin="12">
+       <ItemsControl ItemsSource="{Binding Results}"><ItemsControl.ItemTemplate><DataTemplate>
+        <Border Style="{StaticResource Panel}" Padding="12" Margin="0,0,0,8"><StackPanel>
+         <WrapPanel><TextBlock Text="{Binding Grandezza}" FontWeight="SemiBold" Margin="0,0,15,0"/><TextBlock Text="{Binding Valore, StringFormat=0.######}" FontSize="18"/><TextBlock Text="{Binding Unità}" Margin="7,3,0,0"/></WrapPanel>
+         <!-- Il riferimento accompagna ogni formula anche nei risultati esportati. -->
+         <TextBlock Text="{Binding Riferimento}" Foreground="#135F6E" TextWrapping="Wrap" Margin="0,5,0,0"/>
+         <TextBlock Text="{Binding Equazione}" FontFamily="Cambria Math" FontSize="18" TextWrapping="Wrap" Margin="0,8,0,0"/>
+        </StackPanel></Border>
+       </DataTemplate></ItemsControl.ItemTemplate></ItemsControl>
+      </StackPanel></ScrollViewer>
+     </TabItem>
+    </TabControl>
+   </DockPanel>
+  </Grid>
+ </DockPanel>
+ <!-- Per il calcestruzzo la prima scheda visibile è quella delle formule. -->
+ <Window.Style><Style TargetType="Window" BasedOn="{StaticResource {x:Type Window}}"/></Window.Style>
+</Window>

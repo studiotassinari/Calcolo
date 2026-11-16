@@ -11,7 +11,8 @@ public sealed class WindowService(IFileService files) : IWindowService
     public void Open(string moduleId)
     {
         if (open.TryGetValue(moduleId, out var existing)) { if (existing.WindowState == WindowState.Minimized) existing.WindowState = WindowState.Normal; existing.Activate(); return; }
-        Window window = moduleId == ShearWorkspace.ModuleId ? new ShearWindow { DataContext = new ShearViewModel(files) } : moduleId == "muratura" ? new MasonryWindow { DataContext = new MasonryViewModel(files) } : moduleId == "trave" ? new BeamWindow { DataContext = new BeamViewModel(files, this) } : moduleId == "plinti" ? new FootingWindow { DataContext = new FootingViewModel(files) } : new WorkspaceWindow { DataContext = new WorkspaceViewModel(WorkspaceCatalog.Create().Single(m => m.Id == moduleId), files) };
+        // I moduli scientifici condividono la vista, mantenendo sessioni e risultati separati per modulo.
+        Window window = moduleId is "neve" or "vento" or "sisma" or "calcestruzzo" ? new ScientificWindow { DataContext = new ScientificViewModel(moduleId, files) } : moduleId == ShearWorkspace.ModuleId ? new ShearWindow { DataContext = new ShearViewModel(files) } : moduleId == "muratura" ? new MasonryWindow { DataContext = new MasonryViewModel(files) } : moduleId == "trave" ? new BeamWindow { DataContext = new BeamViewModel(files, this) } : moduleId == "plinti" ? new FootingWindow { DataContext = new FootingViewModel(files) } : new WorkspaceWindow { DataContext = new WorkspaceViewModel(WorkspaceCatalog.Create().Single(m => m.Id == moduleId), files) };
         if (sessions.TryGetValue(moduleId, out var context)) window.DataContext = context; else sessions.Add(moduleId, window.DataContext);
         window.Owner = System.Windows.Application.Current.MainWindow; open.Add(moduleId, window); window.Closed += (_, _) => open.Remove(moduleId); window.Show();
     }
