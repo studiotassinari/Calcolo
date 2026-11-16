@@ -2,10 +2,12 @@ using System.Globalization;
 using STA.Taglio.Core;
 namespace STA.Calcolo.Reporting;
 
+/// <summary>Compone dati e risultati del taglio nel formato comune delle relazioni aziendali.</summary>
 public static class ShearReportBuilder
 {
     public static ReportDocument Build(ShearInput p, string title, DateTime created)
     {
+        // Una sola istantanea numerica alimenta tutte le tabelle: quote e risultati restano coerenti.
         var r = ShearCalculator.Calculate(p);
         static string N(double n) => n.ToString("N3", CultureInfo.GetCultureInfo("it-IT"));
         string[] Row(string label, double value, string unit = "") => [label, N(value) + " " + unit];
@@ -38,6 +40,7 @@ public static class ShearReportBuilder
             ["Confronto della sola resistenza", r.Pass ? "Sufficiente" : "Insufficiente"],
             Row("θ proposto", r.SuggestedTheta, "°"), Row("VRd al θ proposto", r.SuggestedCapacity, "kN")
         ]);
+        // Due pagine logiche separano input e risultati, mantenendo espliciti i limiti del modello.
         return new(title, created,
         [
             new("Taglio · dati della sezione", [geometry, materials], [], [title, "Dimensioni in mm, aree in mm², resistenze in MPa, forze in kN. Per pareti H è la lunghezza resistente in pianta, non l’altezza di piano."]),

@@ -1,6 +1,7 @@
 using STA.Calcolo.Application;
 using STA.Taglio.Core;
 using TaglioClsRect;
+// Regressione contro il sorgente storico e controlli indipendenti di unità, dominio e importazione.
 internal static class ShearTests
 {
     private static void Assert(bool value) { if (!value) throw new Exception("Shear assertion failed"); }
@@ -10,6 +11,7 @@ internal static class ShearTests
     {
         test("taglio: parità con sorgente originale su 288 casi", () =>
         {
+            // Incrocia norme, tipologie, fck, N, θ, α e piegati: 288 configurazioni riproducibili.
             int count=0;
             foreach(bool en in new[]{false,true}) foreach(bool wall in new[]{false,true})
             foreach(double fck in new[]{30d,70d,90d}) foreach(double n in new[]{0d,200d})
@@ -32,6 +34,7 @@ internal static class ShearTests
             }
             Assert(count==288);
         });
+        // I valori chiusi a 45° verificano le unità senza dipendere dalla ricerca del sorgente storico.
         test("taglio: controllo indipendente a 45 gradi e unità", () =>
         {
             var p=new ShearInput{H=500,B=300,Cover=50,Diameter=10,Spacing=100,Legs=2,Fck=30,Fyk=450,Theta=45};

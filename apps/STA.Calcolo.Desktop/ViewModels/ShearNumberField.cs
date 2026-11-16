@@ -4,6 +4,7 @@ using STA.Calcolo.Application;
 using STA.Calcolo.Desktop.Infrastructure;
 namespace STA.Calcolo.Desktop.ViewModels;
 
+/// <summary>Campo numerico osservabile: conserva il testo in editing e comunica gli errori al binding WPF.</summary>
 public sealed class ShearNumberField(ModuleField definition) : ObservableObject, IDataErrorInfo
 {
     public string Key => definition.Key;
@@ -14,6 +15,7 @@ public sealed class ShearNumberField(ModuleField definition) : ObservableObject,
         get => value;
         set { if (Set(ref this.value, value)) { Changed(nameof(Error)); Changed(nameof(IsValid)); } }
     }
+    // Accetta punto o virgola decimale; non interpreta separatori delle migliaia o valori non finiti.
     public bool TryNumber(out double number) =>
         double.TryParse((Value ?? "").Replace(',', '.'), NumberStyles.Float, CultureInfo.InvariantCulture, out number) && double.IsFinite(number);
     public bool IsValid => TryNumber(out _);

@@ -5,6 +5,10 @@ using STA.Calcolo.Desktop.Services;
 using STA.Taglio.Core;
 namespace STA.Calcolo.Desktop.ViewModels;
 
+/// <summary>
+/// Stato del modulo e comandi MVVM: nessun accesso diretto a finestre o dialoghi.
+/// La figura e i campi condividono gli stessi oggetti osservabili, senza copie dei valori.
+/// </summary>
 public sealed class ShearViewModel : ObservableObject
 {
     private readonly ShearWorkspace module = new();
@@ -51,6 +55,7 @@ public sealed class ShearViewModel : ObservableObject
     public RelayCommand ExportCommand { get; }
     public RelayCommand WordCommand { get; }
 
+    /// <summary>Compone i gruppi di input e riceve i servizi sostituibili nei test.</summary>
     public ShearViewModel(IFileService files, IShearReportService? reports = null)
     {
         this.files = files; this.reports = reports ?? new ShearReportService();
@@ -62,7 +67,9 @@ public sealed class ShearViewModel : ObservableObject
         Stirrups = Group("Diameter", "Spacing", "Legs", "Alpha");
         BentBars = Group("BentDiameter", "BentSpacing", "BentCount", "BentAlpha");
         foreach (var f in ByKey.Values) f.PropertyChanged += (_, e) => { if (e.PropertyName == nameof(ShearNumberField.Value)) Invalidate(); };
+        // Ogni modifica invalida l'esito: non si esportano verifiche relative a dati precedenti.
         CalculateCommand = new(() => Run(Calculate), () => InputsValid);
+        // La proposta viene prima applicata all'input e poi verificata come una normale configurazione.
         SuggestCommand = new(() => Run(() =>
         {
             var result = module.Compute(Document());
@@ -93,6 +100,7 @@ public sealed class ShearViewModel : ObservableObject
         }), () => HasResults);
         UpdateFigure();
     }
+    /// <summary>Crea un'istantanea completa e serializzabile degli input correnti.</summary>
     public ModuleDocument Document()
     {
         var fields = ByKey.ToDictionary(k => k.Key, k => k.Value.Value);
@@ -101,7 +109,7 @@ public sealed class ShearViewModel : ObservableObject
     }
     public void Load(ModuleDocument doc)
     {
-        module.Input(doc); // Validate completely before touching the open project.
+        module.Input(doc); // Convalida tutto prima di modificare il progetto aperto.
         loading = true;
         try
         {
@@ -117,6 +125,7 @@ public sealed class ShearViewModel : ObservableObject
         Result = module.Compute(Document()); Results = ShearWorkspace.Rows(Result);
         NotifyResults(); Status = "Calcolo aggiornato. " + Outcome + ".";
     }
+    /// <summary>Rimuove risultati e abilitazione all'export, poi aggiorna solo la geometria di presentazione.</summary>
     private void Invalidate()
     {
         if (loading) return;
@@ -131,16 +140,18 @@ public sealed class ShearViewModel : ObservableObject
             nameof(ConcreteText), nameof(UtilizationText), nameof(Outcome), nameof(SuggestedText) }) Changed(name);
         ExportCommand?.Refresh(); WordCommand?.Refresh();
     }
+    // La figura non esegue calcoli strutturali e non nasconde gli editor durante un input incompleto.
     private void UpdateFigure()
     {
         HasFigure = ByKey["B"].TryNumber(out var b) && b >= 1 && b <= 100000
             && ByKey["H"].TryNumber(out var h0) && h0 >= 1 && h0 <= 100000;
-        // Read separately so the variables remain definitely assigned after short-circuit evaluation.
+        // Lettura separata: le variabili restano definite anche se il controllo precedente termina subito.
         ByKey["H"].TryNumber(out var h);
         HasFigure &= ByKey["Cover"].TryNumber(out var cover) && cover >= 0 && cover < h;
-        if (HasFigure) Figure = ShearFigure.Create(b, h, cover); // Keep editor anchors while the user clears a quote.
+        if (HasFigure) Figure = ShearFigure.Create(b, h, cover); // Conserva le posizioni dei campi mentre l'utente cancella una quota.
         Changed(nameof(Figure)); Changed(nameof(HasFigure));
     }
+    // Gli errori operativi diventano messaggi nello stato; gli errori di memoria non sono assorbiti.
     private void Run(Action action)
     {
         try { action(); }

@@ -17,7 +17,7 @@ dotnet run --project apps/STA.Calcolo.Cli -- plinti examples/plinti-example.json
 dotnet run --project apps/STA.Calcolo.Cli -- modulo examples/sezione.json sezione-risultati.json
 ```
 
-Dalla finestra principale scegli uno degli 12 moduli. Materiali, carichi, sezioni e trefolature hanno parametri, calcolo, salvataggio e riapertura; sezioni, trefolature e sisma hanno grafici WPF. Il progetto travi importa i documenti salvati dagli editor di sezioni e trefolature. I plinti storici comprendono basi superficiali e pali rettangolari/triangolari, per singolo nodo o più nodi.
+Dalla finestra principale scegli uno dei 13 moduli. Materiali, carichi, sezioni e trefolature hanno parametri, calcolo, salvataggio e riapertura; sezioni, trefolature e sisma hanno grafici WPF. Il progetto travi importa i documenti salvati dagli editor di sezioni e trefolature. I plinti storici comprendono basi superficiali e pali rettangolari/triangolari, per singolo nodo o più nodi.
 
 Nel modulo **Plinti · reazioni e MIDAS**: **Carica esempio**, modifica i parametri, importa le reazioni oppure leggile da MIDAS, quindi **Calcola**. L'esempio contiene dati sintetici, inclusi resistenza e attrito del terreno. Le reazioni importate devono essere in kN e kN·m, con Z globale verso l'alto. I parametri hanno unità esplicite. Salva progetto e risultati in JSON per riutilizzarli da altri programmi.
 
@@ -25,7 +25,7 @@ Nel modulo **Plinti · reazioni e MIDAS**: **Carica esempio**, modifica i parame
 
 | Cartella | Contenuto |
 | --- | --- |
-| `src` | 19 librerie portabili: contratti, materiali, geometria, sezioni, neve, vento, sisma, trefolatura, travi, plinti, I/O, MIDAS e base carichi |
+| `src` | 20 librerie portabili: contratti, materiali, geometria, sezioni, neve, vento, sisma, trefolatura, travi, plinti, I/O, MIDAS e base carichi |
 | `apps` | App WPF, CLI e aggiornatore indipendente |
 | `tests` | Test C# senza pacchetti esterni e smoke WPF |
 | `examples` | Contratto JSON e reazioni CSV dimostrative |

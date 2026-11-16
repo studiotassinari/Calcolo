@@ -1,6 +1,6 @@
 namespace STA.Calcolo.Desktop.ViewModels;
 
-/// <summary>Presentation geometry in a 660 × 470 viewport, with equal scale on both axes.</summary>
+/// <summary>Geometria di presentazione in un riquadro 660 × 370, con uguale scala sui due assi.</summary>
 public sealed record ShearFigure(double Left, double Top, double Width, double Height, double CoverPixels)
 {
     public static ShearFigure Empty { get; } = new(100, 60, 0, 0, 0);
@@ -19,8 +19,9 @@ public sealed record ShearFigure(double Left, double Top, double Width, double H
     public double DLabelY => Top + (Height - CoverPixels) / 2 - 9;
     public static ShearFigure Create(double b, double h, double cover)
     {
-        double scale = Math.Min(360 / b, 310 / h);
+        // Riserva margini alle quote e usa un solo fattore: una parete sottile non viene deformata.
+        double scale = Math.Min(340 / b, 240 / h);
         double width = b * scale, height = h * scale;
-        return new(80 + (360 - width) / 2, 44 + (310 - height) / 2, width, height, cover * scale);
+        return new(80 + (340 - width) / 2, 25 + (240 - height) / 2, width, height, cover * scale);
     }
 }

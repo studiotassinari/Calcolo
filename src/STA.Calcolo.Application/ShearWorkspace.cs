@@ -1,6 +1,7 @@
 using STA.Taglio.Core;
 namespace STA.Calcolo.Application;
 
+/// <summary>Adatta il motore di taglio al catalogo e al contratto condiviso da desktop e CLI.</summary>
 public sealed class ShearWorkspace : ICalculationWorkspace
 {
     public const string ModuleId = "taglio-cls";
@@ -35,6 +36,7 @@ public sealed class ShearWorkspace : ICalculationWorkspace
         new("Theta", "θ bielle [°]", "45")
     ];
     public ModuleDocument Example() => new(1, Id, Fields.ToDictionary(f => f.Key, f => f.Default), ExampleData);
+    /// <summary>Convalida il documento e converte i campi testuali, mantenendo le unità del core.</summary>
     public ShearInput Input(ModuleDocument doc)
     {
         var data = new ModuleInput(doc, this); data.Validate();
@@ -67,6 +69,7 @@ public sealed class ShearWorkspace : ICalculationWorkspace
     }
     public ShearResult Compute(ModuleDocument doc) => ShearCalculator.Calculate(Input(doc));
     public IReadOnlyList<ResultRow> Calculate(ModuleDocument doc) => Rows(Compute(doc));
+    // Le stesse righe alimentano l'interfaccia generica e l'esportazione della CLI.
     public static IReadOnlyList<ResultRow> Rows(ShearResult r) =>
     [
         new("Altezza utile d", r.D, "mm"), new("fcd", r.Fcd, "MPa"), new("fyd", r.Fyd, "MPa"),
