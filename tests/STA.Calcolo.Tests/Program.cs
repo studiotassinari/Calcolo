@@ -42,6 +42,7 @@ using(var source=new MidasReactionSource("https://example.test/gen","test-only",
 }
 Test("MIDAS URL e chiave",()=>{Reject(()=>new MidasReactionSource("http://example.test","key"));Reject(()=>new MidasReactionSource("https://example.test",""));});
 ApplicationTests.Run(Test);
+ShearTests.Run(Test);
 Console.WriteLine($"{count} test superati");
 
 sealed class FakeHandler(string table) : HttpMessageHandler

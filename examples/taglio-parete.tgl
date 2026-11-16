@@ -1,0 +1,37 @@
+# File di Input per Verifica a Taglio
+# Versione: 1.0
+[PROGETTO]
+Titolo=Parete = prova
+[GEOMETRIA]
+H=2000
+B=250
+Ricoprimento=40
+ArmaturaLongitudinale=1200
+[SOLLECITAZIONI]
+NCompressione=200,5
+Ved=120
+[MATERIALI]
+ClasseCalcestruzzo=6
+fck=30
+GammaC=1,5
+AlfaCC=0
+fyk=450
+GammaS=1,15
+ClasseAcciaio=0
+[STAFFE]
+DiametroStaffe=1
+InterasseStaffe=200
+NumeroBracci=2
+AlfaStaffe=90
+[FERRI_PIEGATI]
+DiametroPiegati=2
+InterassePiegati=400
+NumeroPiegati=0
+AlfaPiegati=45
+[ANGOLI]
+Theta=45
+[NORMATIVA]
+NTC2018=True
+EN1992=False
+Trave=False
+Parete=True

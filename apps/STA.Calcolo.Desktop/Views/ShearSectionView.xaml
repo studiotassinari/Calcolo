@@ -1,0 +1,51 @@
+<UserControl x:Class="STA.Calcolo.Desktop.Views.ShearSectionView"
+ xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+ <UserControl.Resources>
+  <BooleanToVisibilityConverter x:Key="Visible"/>
+  <DrawingBrush x:Key="ConcreteHatch" TileMode="Tile" Viewport="0,0,12,12" ViewportUnits="Absolute">
+   <DrawingBrush.Drawing><DrawingGroup><GeometryDrawing Brush="#F1F6F5"><GeometryDrawing.Geometry><RectangleGeometry Rect="0,0,12,12"/></GeometryDrawing.Geometry></GeometryDrawing>
+    <GeometryDrawing Geometry="M0,12 L12,0"><GeometryDrawing.Pen><Pen Brush="#DCE6E5" Thickness="0.7"/></GeometryDrawing.Pen></GeometryDrawing>
+   </DrawingGroup></DrawingBrush.Drawing>
+  </DrawingBrush>
+ </UserControl.Resources>
+ <Grid>
+  <TextBlock Text="Inserire dimensioni valide per visualizzare la sezione." Foreground="#A84631" TextWrapping="Wrap" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,8,0,0">
+   <TextBlock.Style><Style TargetType="TextBlock"><Setter Property="Visibility" Value="Collapsed"/><Style.Triggers><DataTrigger Binding="{Binding HasFigure}" Value="False"><Setter Property="Visibility" Value="Visible"/></DataTrigger></Style.Triggers></Style></TextBlock.Style>
+  </TextBlock>
+  <Viewbox Stretch="Uniform">
+   <Canvas Width="660" Height="370" Background="White">
+    <Canvas Visibility="{Binding HasFigure,Converter={StaticResource Visible}}">
+    <Rectangle Canvas.Left="{Binding Figure.Left}" Canvas.Top="{Binding Figure.Top}" Width="{Binding Figure.Width}" Height="{Binding Figure.Height}"
+     Fill="{StaticResource ConcreteHatch}" Stroke="{DynamicResource BrandNavy}" StrokeThickness="2"/>
+    <!-- Asl è rappresentata schematicamente: il numero di barre non è dedotto dall’area totale. -->
+    <Line X1="{Binding Figure.Left}" X2="{Binding Figure.Right}" Y1="{Binding Figure.ReinforcementY}" Y2="{Binding Figure.ReinforcementY}" Stroke="{DynamicResource BrandTeal}" StrokeThickness="4"/>
+    <TextBlock Text="Asl · armatura tesa" Canvas.Left="{Binding Figure.Left}" Canvas.Top="{Binding Figure.CoverLabelY}" Foreground="{DynamicResource BrandTeal}" FontSize="14" Background="#EEFFFFFF"/>
+
+    <Line X1="{Binding Figure.Left}" X2="{Binding Figure.Left}" Y1="{Binding Figure.Bottom}" Y2="{Binding Figure.DimensionY}" Stroke="#8EA5AC" StrokeDashArray="3,3"/>
+    <Line X1="{Binding Figure.Right}" X2="{Binding Figure.Right}" Y1="{Binding Figure.Bottom}" Y2="{Binding Figure.DimensionY}" Stroke="#8EA5AC" StrokeDashArray="3,3"/>
+    <Line X1="{Binding Figure.Left}" X2="{Binding Figure.Right}" Y1="{Binding Figure.DimensionY}" Y2="{Binding Figure.DimensionY}" Stroke="{DynamicResource BrandNavy}" StrokeThickness="1"/>
+    <Path Canvas.Left="{Binding Figure.Left}" Canvas.Top="{Binding Figure.DimensionY}" Data="M-5,5 L5,-5" Stroke="{DynamicResource BrandNavy}" StrokeThickness="2"/>
+    <Path Canvas.Left="{Binding Figure.Right}" Canvas.Top="{Binding Figure.DimensionY}" Data="M-5,5 L5,-5" Stroke="{DynamicResource BrandNavy}" StrokeThickness="2"/>
+
+    <Line X1="{Binding Figure.Right}" X2="{Binding Figure.DimensionX}" Y1="{Binding Figure.Top}" Y2="{Binding Figure.Top}" Stroke="#8EA5AC" StrokeDashArray="3,3"/>
+    <Line X1="{Binding Figure.Right}" X2="{Binding Figure.DimensionX}" Y1="{Binding Figure.Bottom}" Y2="{Binding Figure.Bottom}" Stroke="#8EA5AC" StrokeDashArray="3,3"/>
+    <Line X1="{Binding Figure.DimensionX}" X2="{Binding Figure.DimensionX}" Y1="{Binding Figure.Top}" Y2="{Binding Figure.Bottom}" Stroke="{DynamicResource BrandNavy}" StrokeThickness="1"/>
+    <Path Canvas.Left="{Binding Figure.DimensionX}" Canvas.Top="{Binding Figure.Top}" Data="M-5,5 L5,-5" Stroke="{DynamicResource BrandNavy}" StrokeThickness="2"/>
+    <Path Canvas.Left="{Binding Figure.DimensionX}" Canvas.Top="{Binding Figure.Bottom}" Data="M-5,5 L5,-5" Stroke="{DynamicResource BrandNavy}" StrokeThickness="2"/>
+
+    </Canvas>
+    <!-- Gli editor restano visibili anche con geometria invalida, per consentire cancellazione e riscrittura. -->
+    <TextBox x:Name="FigureWidthEditor" Canvas.Left="{Binding Figure.WidthEditorX}" Canvas.Top="{Binding Figure.WidthEditorY}" Width="104" Height="36"
+     Text="{Binding ByKey[B].Value,UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}" FontSize="20" FontWeight="SemiBold" TextAlignment="Center"
+     AutomationProperties.Name="Base o spessore b in millimetri, modifica sulla figura" ToolTip="b · base della trave / spessore della parete [mm]"/>
+    <TextBlock Canvas.Left="{Binding Figure.WidthEditorX}" Canvas.Top="{Binding Figure.WidthEditorY}" Margin="0,40,0,0" Width="104" Text="b / spessore [mm]" TextAlignment="Center" FontSize="14"/>
+
+    <TextBox x:Name="FigureHeightEditor" Canvas.Left="{Binding Figure.HeightEditorX}" Canvas.Top="{Binding Figure.HeightEditorY}" Width="104" Height="36"
+     Text="{Binding ByKey[H].Value,UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}" FontSize="20" FontWeight="SemiBold" TextAlignment="Center"
+     AutomationProperties.Name="Altezza sezione o lunghezza parete H in millimetri, modifica sulla figura" ToolTip="H · altezza della sezione / lunghezza in pianta della parete [mm]"/>
+    <TextBlock Canvas.Left="{Binding Figure.HeightEditorX}" Canvas.Top="{Binding Figure.HeightEditorY}" Margin="0,40,0,0" Width="104" Text="H [mm]" TextAlignment="Center" FontSize="14"/>
+    <TextBlock Canvas.Left="80" Canvas.Top="350" Text="Quote in mm · stessa scala sui due assi · armatura schematica" FontSize="14" Foreground="#526778"/>
+   </Canvas>
+  </Viewbox>
+ </Grid>
+</UserControl>

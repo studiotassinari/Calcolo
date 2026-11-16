@@ -13,7 +13,8 @@
         "STA.Prefabbricato.Trefolatura.Core",
         "STA.Prefabbricato.Trave.Core",
         "STA.Calcolo.IO",
-        "STA.Plinti.Storici.Core"
+        "STA.Plinti.Storici.Core",
+        "STA.Taglio.Core"
       ]
     },
     {
@@ -32,7 +33,8 @@
       "id": "STA.Calcolo.Reporting",
       "project": "src/STA.Calcolo.Reporting/STA.Calcolo.Reporting.csproj",
       "dependencies": [
-        "STA.Muratura.Core"
+        "STA.Muratura.Core",
+        "STA.Taglio.Core"
       ]
     },
     {
@@ -127,6 +129,11 @@
     {
       "id": "STA.Profilati.Core",
       "project": "src/STA.Profilati.Core/STA.Profilati.Core.csproj",
+      "dependencies": []
+    },
+    {
+      "id": "STA.Taglio.Core",
+      "project": "src/STA.Taglio.Core/STA.Taglio.Core.csproj",
       "dependencies": []
     }
   ]

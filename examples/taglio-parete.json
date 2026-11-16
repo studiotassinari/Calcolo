@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 1,
+  "module": "taglio-cls",
+  "fields": {
+    "Standard": "NTC 2018",
+    "Kind": "Parete",
+    "H": "2000",
+    "B": "250",
+    "Cover": "40",
+    "Asl": "1200",
+    "N": "200.5",
+    "V": "120",
+    "Fck": "30",
+    "Fyk": "450",
+    "GammaC": "1.5",
+    "GammaS": "1.15",
+    "AlphaCc": "0.85",
+    "Diameter": "8",
+    "Spacing": "200",
+    "Legs": "2",
+    "Alpha": "90",
+    "BentDiameter": "10",
+    "BentSpacing": "400",
+    "BentCount": "0",
+    "BentAlpha": "45",
+    "Theta": "45"
+  },
+  "data": "Parete in calcestruzzo armato"
+}

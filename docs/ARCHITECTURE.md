@@ -36,3 +36,7 @@ Per aggiungere una funzione: introdurre i DTO e le unità, implementare il servi
 - Application/Core: calcoli, modelli, validazione e serializzazione senza dipendenze Windows.
 
 Il controllo di architettura impedisce di reintrodurre logica nel code-behind o dipendenze di presentazione nei ViewModel. Riferimento: [data binding WPF di Microsoft](https://learn.microsoft.com/en-us/dotnet/desktop/wpf/data/).
+
+## Taglio di sezioni in c.a.
+
+`STA.Taglio.Core` è il motore portabile di TaglioClsRect; `ShearWorkspace` lo registra nel catalogo comune e `ShearViewModel` alimenta la vista dedicata con quote editabili. `ShearFiles` importa .tgl senza modificare gli originali. La relazione usa `ShearReportBuilder` e il generatore Word condiviso. Vedi [Taglio CLS](TAGLIO-CLS.md).
