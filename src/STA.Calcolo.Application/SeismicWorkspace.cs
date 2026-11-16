@@ -9,10 +9,11 @@ public sealed class SeismicWorkspace : ICalculationWorkspace, IPlotWorkspace
     public string Id => "sisma";
     public string Title => "Spettri sismici";
     public string Description => "Reticolo e formule del progetto storico. Coordinate in gradi decimali; spettri elastici o SLV di progetto con smorzamento 5%.";
-    public IReadOnlyList<ModuleField> Fields => [new("lon", "Longitudine [°]", "12.19944"), new("lat", "Latitudine [°]", "44.41778"), new("vita", "Vita nominale [anni]", "50", ["10", "50", "100"]), new("uso", "Classe d'uso", "II", ["I", "II", "III", "IV"]), new("terreno", "Sottosuolo", "A", Enum.GetNames<TipiTerreni>()), new("q", "Fattore di struttura q", "1"), new("modo", "Spettri", "Elastici", ["Elastici", "Progetto SLV"]), new("direzione", "Direzione", "Orizzontale", ["Orizzontale", "Verticale"]), new("periodo", "Periodo massimo visualizzato [s]", "4")];
+    public IReadOnlyList<ModuleField> Fields => [new("lon", "Longitudine [°]", "12.19944"), new("lat", "Latitudine [°]", "44.41778"), new("vita", "Vita nominale [anni]", "50", ["10", "50", "100"]), new("uso", "Classe d'uso", "II", ["I", "II", "III", "IV"]), new("terreno", "Sottosuolo", "A", Enum.GetNames<TipiTerreni>()), new("q", "Fattore di struttura q", "1.5"), new("modo", "Spettri", "Elastici", ["Elastici", "Progetto SLV"]), new("direzione", "Direzione", "Orizzontale", ["Orizzontale", "Verticale"]), new("periodo", "Periodo massimo visualizzato [s]", "4")];
     public string DataHint => "";
     public string ExampleData => "";
-    public IReadOnlyList<ResultRow> Calculate(ModuleDocument document)
+    /// <summary>Crea il modello comune a grafico ed esportazioni, con q iniziale 1,5.</summary>
+    public Sisma Build(ModuleDocument document)
     {
         var i = new ModuleInput(document, this); i.Validate();
         var m = new Sisma(i.Number("lon", 6, 19), i.Number("lat", 36, 48));
@@ -20,6 +21,11 @@ public sealed class SeismicWorkspace : ICalculationWorkspace, IPlotWorkspace
         m.ClasseUso = m.ElencoClassiUso.Single(v => v.ID == i.Text("uso"));
         m.CategoriaSottosuolo = m.ElencoCategorieSottosuolo.Single(v => v.Categoria == i.Choice<TipiTerreni>("terreno"));
         m.FattoreStruttura = i.Number("q", 1, 10); m.creaSpettri();
+        return m;
+    }
+    public IReadOnlyList<ResultRow> Calculate(ModuleDocument document)
+    {
+        var m = Build(document); var i = new ModuleInput(document, this);
         var result = new List<ResultRow> { new("Periodo riferimento", m.PeriodoRiferimento, "anni") };
         var maxPeriod = i.Number("periodo", 0.1, 20);
         foreach (var s in i.Text("modo") == "Elastici" ? m.spettri : m.spettriProgetto)

@@ -44,6 +44,8 @@ internal static class Program
             Console.WriteLine("PASS WPF " + module.Id);
         }
         ShearSmoke.Run(Render);
+        // Verifica le nuove interfacce senza richieste cartografiche di rete.
+        ScientificSmoke.Run(Render);
         var masonry=new MasonryViewModel(files);masonry.ExampleCommand.Execute(null);masonry.CalculateCommand.Execute(null);
         if(!new MasonryViewModel(files).Frame.ByKey["Fy"].Choices.SequenceEqual(new[]{"235","275","355"}))throw new Exception("Steel list");
         if(new MasonryViewModel(files).Frame.ByKey["Fy"].Value!="275")throw new Exception("Steel default");

@@ -88,7 +88,8 @@ namespace Calcestruzzo
                 }
                 else
                 {
-                    return (0.3 * Math.Pow(fck, 0.66666666));
+                    // Esponente teorico esatto 2/3, condiviso con la formula mostrata nell’interfaccia.
+                    return (0.3 * Math.Pow(fck, 2.0 / 3.0));
                 }
             }
             
@@ -210,15 +211,18 @@ namespace Calcestruzzo
                     break;
 
                 case ClassiNormale.C80_95:
-                    _Rck = 85;
+                    // Resistenza cubica coerente con la classe; corregge il valore storico copiato da C70/85.
+                    _Rck = 95;
                     break;
 
                 case ClassiNormale.C90_105:
-                    _Rck = 85;
+                    // La classe C90/105 richiede Rck = 105 MPa.
+                    _Rck = 105;
                     break;
 
                 case ClassiNormale.C100_115:
-                    _Rck = 85;
+                    // Classe storica del catalogo: Rck = 115 MPa, non 85 MPa.
+                    _Rck = 115;
                     break;
 
                 default:
