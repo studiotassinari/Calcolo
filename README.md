@@ -57,3 +57,7 @@ Il modulo **Muratura e cerchiatura** (versione 1.1.0) aggiunge confronto prima/d
 Dalla versione **1.2.0** l’applicazione si chiama **TA-Calcolo** e usa logo, icona, caratteri e colori Tassinari Associati. Il modulo cerchiature riprende la pagina originale con maschi affiancati e riepilogo fisso.
 
 La versione **1.3.0** aggiunge relazioni Word/PDF A4 con margini e risultati raggruppati per stato e maschio. [Guida alle relazioni](docs/RELAZIONI.md).
+
+## Taglio · sezioni in c.a.
+
+Il modulo TaglioClsRect è integrato nella schermata iniziale: travi e pareti, quote H/b editabili direttamente sulla sezione vettoriale, input .tgl e JSON, risultati e relazione Word con grafica TA. Motore portabile separato dalla UI MVVM. [Guida, compatibilità e limiti delle formule migrate](docs/TAGLIO-CLS.md).
