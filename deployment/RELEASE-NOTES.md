@@ -1,7 +1,13 @@
-TA-Calcolo 1.3.5: Excel più fedele al modello e memoria delle cartelle di salvataggio.
+TA-Calcolo 1.4.0: modulo Taglio · sezioni in c.a. integrato nell'interfaccia.
 
-- Riepilogo su un secondo foglio, con larghezze indipendenti dalle schede dei maschi e formule collegate ai risultati.
-- Schede muratura con proporzioni, spaziature e intestazioni più fedeli al modello, per catturare le tabelle e inserirle nella relazione.
-- Salva progetto e Crea Excel ricordano separatamente l’ultima cartella scelta durante la sessione. Annullare la finestra non modifica la destinazione ricordata.
+- Verifica a taglio di sezioni rettangolari e pareti, con architettura MVVM e grafica Tassinari Associati.
+- Figura vettoriale proporzionale: dimensioni b e H modificabili direttamente sulle quote e sincronizzate con i campi.
+- Importazione dei progetti storici .tgl, salvataggio JSON e relazione Word.
+- Invalidazione dei risultati dopo ogni modifica, controlli degli input e applicazione coerente dell'angolo suggerito.
+- Codice commentato in italiano e documentazione del modulo.
 
-Scaricare **TA-Calcolo-Setup-1.3.5-win-x64.exe** oppure usare Verifica aggiornamenti e riavviare l’app. Il file STA-Calcolo-Update è riservato all’aggiornatore.
+Formule conservate dal programma TaglioClsRect originale: la migrazione non costituisce un aggiornamento normativo. H indica la lunghezza della sezione della parete in pianta, non l'altezza di piano; il copriferro è misurato al baricentro dell'armatura tesa.
+
+Verificati 288 casi di regressione rispetto al motore originale, oltre ai test di importazione, calcolo, esportazione e interfaccia WPF.
+
+Scaricare **TA-Calcolo-Setup-1.4.0-win-x64.exe** oppure usare Verifica aggiornamenti e riavviare l’app. Il file STA-Calcolo-Update è riservato all’aggiornatore.
