@@ -91,7 +91,7 @@ internal static class ScientificTests
         });
         test("calcestruzzo: formule e correzione Rck delle classi elevate", () => {
             var m = new ConcreteWorkspace();
-            foreach (string cls in Enum.GetNames<Calcestruzzo.ClassiNormale>()) {
+            foreach (string cls in m.Fields.Single(f => f.Key == "classe").Choices!) {
                 var d = Example(m); d.Fields["classe"] = cls; var r = m.Calculate(d);
                 double rck = double.Parse(cls.Split('_')[1], CultureInfo.InvariantCulture);
                 Near(r[0].Valore,rck); Near(r[1].Valore,.83*rck); Near(r[2].Valore,.85*.83*rck/1.5);
@@ -99,6 +99,31 @@ internal static class ScientificTests
                 Near(r[4].Valore, rck > 60 ? 2.12*Math.Log(1+fcm/10) : .3*Math.Pow(.83*rck,2d/3));
                 Assert(r.All(v => !string.IsNullOrWhiteSpace(v.Formula) && !string.IsNullOrWhiteSpace(v.Sostituzione)));
             }
+        });
+        test("calcestruzzo NTC 2018: riciclo, prove, spessori e compatibilità", () => {
+            var m = new ConcreteWorkspace(); var d = Example(m); d.Fields["classe"] = "C30_37";
+            var ordinary = m.Calculate(d);
+            // Valori indipendenti: C30/37 dà fck=30,71 MPa e fcd=17,402333... MPa.
+            Near(ordinary[1].Valore,30.71); Near(ordinary[2].Valore,17.4023333333333);
+            Near(ordinary[7].Valore,.7*ordinary[4].Valore); Near(ordinary[8].Valore,1.3*ordinary[4].Valore);
+            Near(ordinary[9].Valore,ordinary[7].Valore/1.5);
+            d.Fields["riciclo"]="Sì"; var recycled=m.Calculate(d);
+            Near(recycled[4].Valore,.9*ordinary[4].Valore); Near(recycled[6].Valore,.8*ordinary[6].Valore);
+            d.Fields["vapore"]="Sì"; Reject(()=>m.Calculate(d));
+            d.Fields["ecm"]="31500"; Near(m.Calculate(d)[6].Valore,31500);
+            d.Fields["elemento"]="Piano gettato in opera, spessore < 50 mm";
+            var thin=m.Calculate(d); Near(thin[2].Valore,.8*ordinary[2].Valore); Near(thin[9].Valore,.8*recycled[9].Valore);
+            foreach(var invalid in new[]{"0","-1","NaN","Infinity"}) { d.Fields["ecm"]=invalid; Reject(()=>m.Calculate(d)); }
+            var old=new ModuleDocument(1,"calcestruzzo",new() {["classe"]="C25_30"},"");
+            Near(m.Calculate(old)[1].Valore,24.9);
+            Assert(old.Fields.Count==1); Assert(m.Normalize(old).Fields.Count==m.Fields.Count);
+            old.Fields["classe"]="C100_115"; Reject(()=>m.Calculate(old));
+            d=Example(m); d.Fields.Remove("riciclo"); Reject(()=>m.Calculate(d));
+            Assert((int)Calcestruzzo.ClassiNormale.C100_115==16);
+            Assert(m.Calculate(Example(m)).All(r=>r.Riferimento!.Contains("NTC 2018")));
+            var culture=CultureInfo.CurrentCulture;
+            try { CultureInfo.CurrentCulture=CultureInfo.GetCultureInfo("en-US"); Assert(ordinary[1].Equazione.Contains("30,71 MPa")); }
+            finally { CultureInfo.CurrentCulture=culture; }
         });
     }
 }

@@ -27,7 +27,9 @@ namespace Calcestruzzo
         C70_85,
         C80_95,
         C90_105,
-        C100_115
+        C100_115,
+        // Aggiunta in coda per conservare gli identificatori numerici dei progetti esistenti.
+        C30_37
     }
 
 
@@ -51,7 +53,7 @@ namespace Calcestruzzo
         #region pro. esterne
 
         /// <summary>
-        /// Classe del Calcestruzzo secondo la UNI EN 206-1:2006
+        /// Catalogo storico delle classi; per l'ambito NTC 2018 usare ConcreteNtc2018.
         /// </summary>
         public ClassiNormale Classe { get { return _Classe; } set { _Classe = value; } }
 
@@ -76,13 +78,14 @@ namespace Calcestruzzo
         public double fcm { get { return (fck + 8); } }
 
         /// <summary>
-        /// Resistenza media a trazione semplice [N/mmq], [NTC2008 - 11.2.10.2]
+        /// Resistenza media a trazione semplice [N/mmq], [NTC 2018 - 11.2.10.2]
         /// </summary>
         public double fctm
         {
             get
             {
-                if (Classe > ClassiNormale.C50_60)
+                // La soglia dipende dalla resistenza, non dall'ordine dei valori dell'enumerazione.
+                if (Rck > 60)
                 {
                     return (2.12 * Math.Log(1 + fcm / 10));
                 }
@@ -96,7 +99,7 @@ namespace Calcestruzzo
         }
 
         /// <summary>
-        /// Resistenza media a flessione [N/mmq], [NTC2008 - 11.2.10.2]
+        /// Resistenza media a flessione [N/mmq], [NTC 2018 - 11.2.10.2]
         /// </summary>
         public double fcfm
         {
@@ -105,7 +108,7 @@ namespace Calcestruzzo
         }
 
         /// <summary>
-        /// Modulo elastico istantaneo [N/mmq], [NTC2008 - 11.2.10.3]
+        /// Modulo elastico istantaneo [N/mmq], [NTC 2018 - 11.2.10.3]
         /// </summary>
         public double Ecm
         {
@@ -176,6 +179,11 @@ namespace Calcestruzzo
 
                 case ClassiNormale.C28_35:
                     _Rck = 35;
+                    break;
+
+                // Classe prevista dalla Tab. 4.1.I NTC 2018, assente nel catalogo originale.
+                case ClassiNormale.C30_37:
+                    _Rck = 37;
                     break;
 
                 case ClassiNormale.C32_40:

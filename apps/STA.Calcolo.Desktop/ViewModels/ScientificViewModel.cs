@@ -81,6 +81,8 @@ public sealed class ScientificViewModel : ObservableObject
     public void Load(ModuleDocument doc)
     {
         if (IsSnow || IsWind) doc = ClimateDocuments.Normalize(doc, module);
+        // L'importazione dei vecchi materiali rende esplicite le ipotesi prima di modificare la vista.
+        if (IsConcrete) doc = ((ConcreteWorkspace)module).Normalize(doc);
         module.Calculate(doc);
         loading = true;
         try { foreach (var field in Fields) field.Value = doc.Fields[field.Key]; }
@@ -135,7 +137,9 @@ public sealed class ScientificViewModel : ObservableObject
                     " cp positivo = pressione; negativo = depressione. cp=1 e cd=1 sono ipotesi da verificare.";
             }
             else if (IsSeismic) Context = "Marker WGS84: clic per selezionare, trascina per spostare la mappa, rotella per zoom. Coordinate ammesse dal modulo: lon 6–19°, lat 36–48°. Il motore usa il reticolo storico; la mappa non certifica la copertura del reticolo. q si applica solo al progetto SLV orizzontale.";
-            else Context = "Valori in MPa = N/mm². Le formule riportano il modello storico, compresa la conversione fck = 0,83 Rck; non la resistenza cilindrica nominale riportata nella sigla Cxx/yy. Classi elevate da verificare rispetto all'ambito normativo.";
+            else Context = "Valori in MPa = N/mm². NTC 2018 §§11.2.10 e 4.1.2.1.1: fck = 0,83 Rck, diverso dal valore nominale nella sigla. Aggregati riciclati: occorre qualificare la miscela e rispettare origine e percentuali della Tab. 11.2.III. Ecm da prove sostituisce la stima; obbligatorio per maturazione a vapore. Le prescrizioni di durabilità EN 206 non sono verificate automaticamente."
+                + (Enum.TryParse<Calcestruzzo.ClassiNormale>(ByKey["classe"].Value, out var cls) && new Calcestruzzo.Calcestruzzo(cls).Rck > 55 ? " Oltre C45/55: sperimentazione preventiva e controllo qualità (§4.1)." : "")
+                + (ByKey["classe"].Value is "C80_95" or "C90_105" ? " Oltre C70/85: qualificazione secondo §11.1, caso C)." : "");
         }
         catch (Exception ex) when (ex is ArgumentException or InvalidOperationException) { Context = ex.Message; }
         Changed(nameof(Context));

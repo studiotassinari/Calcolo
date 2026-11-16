@@ -57,7 +57,17 @@ internal static class ScientificSmoke
                     if (id == "neve") { vm.ByKey["provincia"].Value = "Ravenna"; vm.ByKey["falda"].Value = "45"; vm.CalculateCommand.Execute(null); Assert(vm.HasResults && vm.RoofAngle == 45 && vm.Context.Contains("Mediterranea"), vm.Status); }
                     if (id == "vento") { vm.ByKey["cp"].Value = "-0.8"; vm.CalculateCommand.Execute(null); Assert(vm.Series[0].Points.All(p => p.X < 0) && vm.ExposureSeries.Count == 5, "Grafici vento"); render(view,"vento-depressione",1280); }
                     ((TabItem)view.FindName("ResultsTab")).IsSelected = true; render(view, "scientifico-" + id + "-risultati", 1080);
-                    if (id == "calcestruzzo") Assert(vm.Results.All(r => r.Equazione.Contains("=")), "Formule mancanti");
+                    if (id == "calcestruzzo")
+                    {
+                        Assert(vm.Results.All(r => r.Equazione.Contains("=") && r.Riferimento != null), "Formule o fonti mancanti");
+                        // I vecchi file acquisiscono le ipotesi esplicite senza errori di binding.
+                        vm.Load(new ModuleDocument(1, "calcestruzzo", new() { ["classe"]="C30_37" }, ""));
+                        Assert(vm.ByKey["riciclo"].Value=="No", "Migrazione materiale");
+                        vm.ByKey["vapore"].Value="Sì"; vm.CalculateCommand.Execute(null);
+                        Assert(!vm.HasResults && vm.Status.Contains("vapore"), "Formula Ecm applicata fuori ambito");
+                        vm.ByKey["ecm"].Value="31000"; vm.CalculateCommand.Execute(null);
+                        Assert(vm.HasResults && vm.Results.Single(r=>r.Grandezza=="Ecm").Valore==31000, vm.Status);
+                    }
                     render(view, "scientifico-" + id + "-compatto", 920);
                 }
                 finally { view.Close(); }

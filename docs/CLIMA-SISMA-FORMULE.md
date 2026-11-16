@@ -24,12 +24,30 @@ La cartografia richiede Internet; se non disponibile restano attivi i campi manu
 
 “Tutti gli spettri TXT (ZIP)” salva 9 file numerici: SLO, SLD, SLV, SLC elastici H/V e SLV di progetto H, più istruzioni e progetto JSON. Il motore storico non definisce altri spettri di progetto. Il verticale rimane elastico e non è etichettato come progetto. Tutti i 40 campioni nativi per serie sono inclusi, indipendentemente da selezione e periodo massimo visualizzato. Colonne TAB, punto decimale, T [s], Sa [m/s²], intestazioni commentate con #. q modifica solo il progetto orizzontale.
 
-## Calcestruzzo
-Le schede dei risultati mostrano formula, sostituzione e risultato in MPa. È mantenuta ed esplicitata la conversione storica fck = 0,83 Rck, diversa dalla resistenza cilindrica nominale della sigla Cxx/yy. Sono conservati αcc = 0,85 e γc = 1,5.
-Correzioni documentate:
-- Rck per C80/95, C90/105 e C100/115: 95, 105 e 115 MPa (prima tutte erroneamente 85).
-- esponente di fctm per classi fino a C50/60: 2/3 esatto al posto di 0,66666666.
-Le classi storiche elevate rimangono nel catalogo: non se ne certifica l'ammissibilità normativa. Per esse va verificato l'ambito di impiego.
+## Calcestruzzo — aggiornamento NTC 2018
+Il modulo usa un motore dedicato alle proprietà progettuali del calcestruzzo di peso normale a 28 giorni, secondo §§11.2.10.1–3 e 4.1.2.1.1. Ogni risultato mostra formula, sostituzione, valore in MPa e riferimento normativo, conservati anche nell'esportazione JSON.
+
+La conversione fck = 0,83 Rck è **confermata dalla formula [11.2.1] NTC 2018**: non è il valore cilindrico nominale della sigla Cxx/yy. Sono mantenuti αcc = 0,85 e γc = 1,5; non si applica automaticamente la riduzione speciale di γc a 1,4.
+Sono aggiunti i frattili 5% e 95% della resistenza a trazione e fctd. Per elementi piani gettati in opera di spessore <50 mm l'apposita scelta riduce fcd e fctd del 20%.
+
+Con aggregati grossi di riciclo la stima di fctm è ridotta del 10% e quella di Ecm del 20%. La selezione presuppone che origine, percentuali d'impiego e qualificazione della miscela rispettino la Tab. 11.2.III: questo modulo non verifica tali condizioni né la composizione. Un Ecm da prove sostituisce la stima senza ulteriori riduzioni; è obbligatorio per maturazione a vapore. Nessuna formula di maturazione nel tempo, ritiro o viscosità è implementata.
+
+Correzioni rispetto al catalogo originale:
+- inserita C30/37, mantenendo gli identificatori numerici delle classi esistenti;
+- Rck per C80/95, C90/105 e C100/115 nel motore storico: 95, 105 e 115 MPa (prima tutte erroneamente 85);
+- esponente 2/3 esatto e soglia basata sulla resistenza, indipendente dall'ordine delle enumerazioni;
+- C100/115 resta riconoscibile nel motore storico, ma è esclusa dal modulo NTC 2018; un vecchio file con questa classe viene rifiutato senza sovrascrivere il progetto aperto.
+
+C28/35 e C32/40 sono conservate come consentito dal §4.1. Oltre C45/55 è richiesta sperimentazione preventiva; oltre C70/85 il §4.1 rinvia alla qualificazione del §11.1, caso C). Il calcolo di una proprietà non costituisce verifica dell'ammissibilità del materiale per una specifica struttura.
+
+I vecchi JSON con il solo campo classe acquisiscono le ipotesi originarie esplicite: niente riciclo, niente vapore, Ecm teorico ed elemento ordinario. Contratti parziali o sconosciuti sono rifiutati.
+
+### EN 206, UNI 11104 ed Eurocodici
+Al 16/11/2026 il catalogo UNI indica UNI EN 206-1:2026 e UNI EN 206-2:2026 (09/07/2026) come sostitutive della UNI EN 206:2021. Le specificazioni italiane sono UNI 11104:2025, con errata corrige 2026. I cataloghi sono stati consultati; i testi integrali delle nuove norme **non erano disponibili per questo aggiornamento**.
+
+Non sono quindi introdotte tabelle ricostruite di durabilità, rapporti a/c, dosaggi minimi, classi di esposizione o criteri di conformità e certificazione. I riferimenti di edizione non equivalgono a una dichiarazione di conformità a EN 206. Il profilo numerico implementato rimane NTC 2018; le edizioni più recenti degli Eurocodici non sono applicate automaticamente in sostituzione delle NTC.
+
+Il motore sismico resta storico e **non è dichiarato aggiornato alle NTC 2018**. La revisione deve includere unità e datum del reticolo, interpolazione temporale, parametri del verticale e limite inferiore dello spettro di progetto. La mappa è un ausilio di selezione, non una validazione di questi aspetti. Il modulo taglio e gli altri moduli non sono ricertificati da questo aggiornamento.
 
 ## Verifiche
 Suite portabile: associazioni geografiche, formule indipendenti, plateau zmin, segno del vento, compatibilità JSON, proiezione geografica, 9 serie TXT e invarianza degli elastici rispetto a q, tutte le classi calcestruzzo.
@@ -39,4 +57,9 @@ Smoke WPF: finestre reali, assenza di errori binding, tema, caricamento atomico,
 - DM 17 gennaio 2018, capitolo 3, §§3.3–3.4, tabelle 3.3.I–II e zonazione provinciale §3.4.2, consultato il 16/11/2026:
 https://www.gazzettaufficiale.it/do/atto/serie_generale/caricaPdf?art.codiceRedazionale=18A00716&art.dataPubblicazioneGazzetta=2018-02-20&art.num=1&art.tiposerie=SG&cdimg=18A0071600100010110004&dgu=2018-02-20
 - Politica tessere OSM: https://operations.osmfoundation.org/policies/tiles/
-- Motori sismico e materiale del repository: formule storiche, non aggiornamento normativo complessivo.
+- NTC 2018, capitolo 11, §§11.2.10.1–3:
+https://www.gazzettaufficiale.it/do/atto/serie_generale/caricaPdf?art.codiceRedazionale=18A00716&art.dataPubblicazioneGazzetta=2018-02-20&art.num=1&art.tiposerie=SG&cdimg=18A0071600100010110012&dgu=2018-02-20
+- NTC 2018, capitolo 4, §4.1 e §§4.1.2.1.1.1–2:
+https://www.gazzettaufficiale.it/do/atto/serie_generale/caricaPdf?art.codiceRedazionale=18A00716&art.dataPubblicazioneGazzetta=2018-02-20&art.num=1&art.tiposerie=SG&cdimg=18A0071600100010110005&dgu=2018-02-20
+- Cataloghi UNI: https://store.uni.com/uni-en-206-1-2026 ; https://store.uni.com/uni-en-206-2-2026 ; https://store.uni.com/uni-11104-2025 ; https://store.uni.com/ec-2-2026-uni-11104-2025
+- Motore sismico del repository: formule storiche, revisione normativa ancora da completare.

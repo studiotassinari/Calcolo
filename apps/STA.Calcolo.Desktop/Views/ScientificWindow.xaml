@@ -55,6 +55,8 @@
        <ItemsControl ItemsSource="{Binding Results}"><ItemsControl.ItemTemplate><DataTemplate>
         <Border Style="{StaticResource Panel}" Padding="12" Margin="0,0,0,8"><StackPanel>
          <WrapPanel><TextBlock Text="{Binding Grandezza}" FontWeight="SemiBold" Margin="0,0,15,0"/><TextBlock Text="{Binding Valore, StringFormat=0.######}" FontSize="18"/><TextBlock Text="{Binding Unità}" Margin="7,3,0,0"/></WrapPanel>
+         <!-- Il riferimento accompagna ogni formula anche nei risultati esportati. -->
+         <TextBlock Text="{Binding Riferimento}" Foreground="#135F6E" TextWrapping="Wrap" Margin="0,5,0,0"/>
          <TextBlock Text="{Binding Equazione}" FontFamily="Cambria Math" FontSize="18" TextWrapping="Wrap" Margin="0,8,0,0"/>
         </StackPanel></Border>
        </DataTemplate></ItemsControl.ItemTemplate></ItemsControl>
