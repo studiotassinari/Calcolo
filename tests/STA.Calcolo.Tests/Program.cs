@@ -45,6 +45,8 @@ ApplicationTests.Run(Test);
 ShearTests.Run(Test);
 // Include i contratti geografici, gli spettri TXT e le formule del materiale.
 ScientificTests.Run(Test);
+// Parità del muro con il programma consegnato nello ZIP e import MDST.
+RetainingWallTests.Run(Test);
 Console.WriteLine($"{count} test superati");
 
 sealed class FakeHandler(string table) : HttpMessageHandler

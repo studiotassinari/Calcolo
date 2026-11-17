@@ -135,6 +135,11 @@
       "id": "STA.Taglio.Core",
       "project": "src/STA.Taglio.Core/STA.Taglio.Core.csproj",
       "dependencies": []
+    },
+    {
+      "id": "STA.MuroSostegno.Core",
+      "project": "src/STA.MuroSostegno.Core/STA.MuroSostegno.Core.csproj",
+      "dependencies": []
     }
   ]
 }

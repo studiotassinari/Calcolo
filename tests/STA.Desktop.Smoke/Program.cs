@@ -44,6 +44,8 @@ internal static class Program
             Console.WriteLine("PASS WPF " + module.Id);
         }
         ShearSmoke.Run(Render);
+        // Verifica il nuovo modulo integrato e i suoi formati di progetto.
+        RetainingWallSmoke.Run(Render);
         // Verifica le nuove interfacce senza richieste cartografiche di rete.
         ScientificSmoke.Run(Render);
         var masonry=new MasonryViewModel(files);masonry.ExampleCommand.Execute(null);masonry.CalculateCommand.Execute(null);
@@ -164,7 +166,13 @@ internal static class Program
         footing.Parameters.Single(p => p.Key == "qRd").Value = "invalid"; if (footing.Results.Length != 0 || footing.ExportCommand.CanExecute(null)) throw new Exception("Stale footing results");
         footing.CalculateCommand.Execute(null); if (footing.Results.Length != 0) throw new Exception("Invalid footing result");
         Render(main, "desktop-smoke"); main.Show();
+        ((System.Windows.Controls.ScrollViewer)main.FindName("HomeScroll")).ScrollToEnd();Render(main,"desktop-muro-sostegno");
         foreach (var card in mainVm.Modules) { card.OpenCommand.Execute(null); card.OpenCommand.Execute(null); }
+        // Verifica che anche il muro conservi i dati alla riapertura.
+        var wallWindow=main.OwnedWindows.Cast<Window>().Single(w=>w.DataContext is RetainingWallViewModel);
+        var wallSession=(RetainingWallViewModel)wallWindow.DataContext;wallSession.Title="Sessione muro mantenuta";wallWindow.Close();
+        mainVm.Modules.Single(m=>m.Title=="Muro di sostegno").OpenCommand.Execute(null);
+        if(!main.OwnedWindows.Cast<Window>().Any(w=>ReferenceEquals(w.DataContext,wallSession)))throw new Exception("Riapertura muro: sessione persa");
         if (main.OwnedWindows.Count != mainVm.Modules.Count) throw new Exception("Navigation duplicated windows");
         var sample = main.OwnedWindows.Cast<Window>().First(w => w.DataContext is WorkspaceViewModel); var context = sample.DataContext; sample.Close(); mainVm.Modules.Single(m=>m.Title==((WorkspaceViewModel)context).Title).OpenCommand.Execute(null); if (!main.OwnedWindows.Cast<Window>().Any(w => ReferenceEquals(w.DataContext, context))) throw new Exception("Reopen lost project");
         foreach (Window child in main.OwnedWindows.Cast<Window>().ToArray()) child.Close();

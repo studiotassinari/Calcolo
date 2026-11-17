@@ -17,7 +17,7 @@ dotnet run --project apps/STA.Calcolo.Cli -- plinti examples/plinti-example.json
 dotnet run --project apps/STA.Calcolo.Cli -- modulo examples/sezione.json sezione-risultati.json
 ```
 
-Dalla finestra principale scegli uno dei 13 moduli. Materiali, carichi, sezioni e trefolature hanno parametri, calcolo, salvataggio e riapertura; sezioni, trefolature e sisma hanno grafici WPF. Il progetto travi importa i documenti salvati dagli editor di sezioni e trefolature. I plinti storici comprendono basi superficiali e pali rettangolari/triangolari, per singolo nodo o più nodi.
+Dalla finestra principale scegli uno dei 14 moduli. Materiali, carichi, sezioni e trefolature hanno parametri, calcolo, salvataggio e riapertura; sezioni, trefolature e sisma hanno grafici WPF. Il progetto travi importa i documenti salvati dagli editor di sezioni e trefolature. I plinti storici comprendono basi superficiali e pali rettangolari/triangolari, per singolo nodo o più nodi.
 
 Nel modulo **Plinti · reazioni e MIDAS**: **Carica esempio**, modifica i parametri, importa le reazioni oppure leggile da MIDAS, quindi **Calcola**. L'esempio contiene dati sintetici, inclusi resistenza e attrito del terreno. Le reazioni importate devono essere in kN e kN·m, con Z globale verso l'alto. I parametri hanno unità esplicite. Salva progetto e risultati in JSON per riutilizzarli da altri programmi.
 
@@ -61,3 +61,5 @@ La versione **1.3.0** aggiunge relazioni Word/PDF A4 con margini e risultati rag
 ## Taglio · sezioni in c.a.
 
 Il modulo TaglioClsRect è integrato nella schermata iniziale: travi e pareti, quote H/b editabili direttamente sulla sezione vettoriale, input .tgl e JSON, risultati e relazione Word con grafica TA. Motore portabile separato dalla UI MVVM. [Guida, compatibilità e limiti delle formule migrate](docs/TAGLIO-CLS.md).
+
+Il modulo **Muro di sostegno** della versione **1.5.1**, integrato sulla base della release 1.5.0, riprende la grafica di Muratura e cerchiatura e legge i progetti `.mdst` originali. [Guida e limiti del motore](docs/MURO-SOSTEGNO.md).
