@@ -8,4 +8,4 @@
   <ProjectReference Include="../../src/STA.Materiali/STA.Materiali.csproj" />
  </ItemGroup>
  <ItemGroup><Content Include="../../examples/plinti-example.json" Link="plinti-example.json" CopyToOutputDirectory="PreserveNewest" /></ItemGroup>
-<ItemGroup><ProjectReference Include="../../src/STA.Calcolo.Application/STA.Calcolo.Application.csproj" /></ItemGroup><ItemGroup><Content Include="../../examples/taglio-parete.tgl" Link="taglio-parete.tgl" CopyToOutputDirectory="PreserveNewest" /></ItemGroup></Project>
+<ItemGroup><ProjectReference Include="../../src/STA.Calcolo.Application/STA.Calcolo.Application.csproj" /></ItemGroup><ItemGroup><Content Include="../../examples/taglio-parete.tgl" Link="taglio-parete.tgl" CopyToOutputDirectory="PreserveNewest" /></ItemGroup><ItemGroup><ProjectReference Include="../../src/STA.MuroSostegno.Core/STA.MuroSostegno.Core.csproj"/></ItemGroup><ItemGroup><Content Include="Reference/retaining-wall-original.json" Link="retaining-wall-original.json" CopyToOutputDirectory="PreserveNewest"/></ItemGroup></Project>

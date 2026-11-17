@@ -1,17 +1,17 @@
-TA-Calcolo 1.5.0: neve geografica, vento MVVM, mappa sismica e proprietà del calcestruzzo NTC 2018.
+TA-Calcolo 1.5.1: nuovo modulo Muro di sostegno, integrato sulla base della release 1.5.0.
 
-- Neve: scelta della provincia secondo la zonazione NTC 2018, figura della falda e grafico qsk/quota.
-- Vento: velocità e profili NTC 2018, pressione/depressione e confronto delle categorie di esposizione I–V assegnate dal progettista.
-- Spettri: marker OpenStreetMap bidirezionale, q iniziale 1,5 ed esportazione ZIP dei 9 spettri TXT disponibili nel motore storico.
-- Calcestruzzo: formule teoriche, sostituzioni, risultati e riferimenti NTC 2018; C30/37, frattili a trazione e fctd, riduzioni per riciclo ed elementi sottili, Ecm da prove obbligatorio per maturazione a vapore.
-- Interfacce MVVM con grafica aziendale, compatibilità dei vecchi progetti e invalidazione dei risultati dopo le modifiche.
+- Nuova scheda nella schermata principale e interfaccia coerente con Muratura e cerchiatura: logo, font, colori, pannelli e campi numerici aziendali.
+- Geometria di muro, fondazione e dente, terreni e falde; disegno vettoriale quotato e diagramma delle pressioni statiche.
+- Risultati statici e sismici del motore originale: coefficienti di spinta, momenti stabilizzanti/ribaltanti e componenti di scorrimento.
+- Apertura e salvataggio dei progetti JSON e dei file .mdst originali; esportazione dei risultati TXT e JSON.
+- Validazione degli input, importazione atomica, conservazione della sessione e invalidazione dei risultati dopo ogni modifica.
+
+## Verifiche
+59 test C# superati, inclusi 13 casi confrontati con il programma originale (29 risultati e 14 vertici per caso), caso analitico di Rankine e round trip dei file. Test WPF su navigazione, sessione, layout, binding, esportazioni e risultati obsoleti. Verifiche degli altri moduli, architettura, aggiornamenti e relazioni comprese nel flusso di rilascio.
 
 ## Ambito e limiti
-Il motore sismico rimane storico: la revisione di datum/unità del reticolo, interpolazione, spettro verticale e limite inferiore di progetto non è completata. La mappa non ne costituisce validazione normativa.
-Le nuove edizioni UNI EN 206-1:2026, UNI EN 206-2:2026 e UNI 11104:2025 sono censite, ma i testi integrali non sono stati disponibili: non è dichiarata conformità completa EN 206 e non sono automatizzate le prescrizioni di durabilità.
-Neve: singola falda, TR 50 anni, Ct=1, quota fino a 1500 m; esclusi accumuli e casi speciali. Vento: TR 50 anni, quota fino a 1500 m, altezza fino a 200 m, categoria manuale. Il riciclo del calcestruzzo presuppone miscela qualificata e limiti della Tab. 11.2.III verificati; C100/115 esclusa dal modulo NTC.
-Dettagli: docs/CLIMA-SISMA-FORMULE.md. Gli altri motori storici, incluso Taglio, non sono aggiornati normativamente da questa versione.
+Le formule del programma TA-MuroDiSostegno sono conservate per confronto: non costituiscono una verifica normativa completa. Il modulo segnala il valore originale Vs = 0,209 m/s e l'anomalia di segno del peso immerso nel ramo con falda; il modello idraulico richiede revisione prima dell'uso per il dimensionamento. Le componenti di scorrimento non vengono trasformate in un esito complessivo. Escluse capacità portante, stabilità globale e armature.
+Dettagli e provenienza: docs/MURO-SOSTEGNO.md e Guida-muro-sostegno.md distribuita con il programma.
 
-Test numerici Windows/Linux, compatibilità JSON e smoke WPF superati; la mappa è simulata nei test. Il processo di rilascio ripete build, test, installazione e rimozione prima della pubblicazione.
-
-Scaricare **TA-Calcolo-Setup-1.5.0-win-x64.exe** oppure usare Verifica aggiornamenti e riavviare l'app. Il file STA-Calcolo-Update è riservato all'aggiornatore.
+## Installazione e aggiornamento
+Installer Windows x64 con runtime incluso, pacchetto per l'aggiornamento automatico e file SHA256SUMS, come nelle release precedenti. Restano disponibili le funzionalità della versione 1.5.0.
