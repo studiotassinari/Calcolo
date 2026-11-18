@@ -17,12 +17,30 @@ cp ha segno: positivo pressione, negativo depressione. cp = cd = 1 sono ipotesi 
 I vecchi JSON con i cinque campi originali vengono aperti in “Storico NTC 2008”, conservando velocità e categoria precedenti. La modifica a NTC 2018 è esplicita. Esempio Zona 3 a 1000 m: 37 m/s storico, 36,99 m/s NTC 2018.
 
 ## Spettri sismici
-q iniziale = 1,5. Il valore salvato in un vecchio progetto non viene sovrascritto.
-La scheda “Sito sulla mappa” usa OpenStreetMap: clic posiziona il marker, trascinamento sposta la mappa o il marker, rotella e pulsanti +/− regolano lo zoom, Home centra il marker. La coppia WGS84 longitudine/latitudine viene trasferita ai campi. Anche l'inserimento manuale riposiziona il marker. Nessuna conversione delle coordinate del motore sismico in Web Mercator.
+Il modulo ha una finestra MVVM dedicata (`SeismicSpectraViewModel`, `SeismicSpectraWindow`). Ogni modifica dei dati ricalcola subito tabella e grafico; con un dato non valido i risultati sono azzerati e le esportazioni disabilitate.
 
-La cartografia richiede Internet; se non disponibile restano attivi i campi manuali. Il servizio richiede solo le tessere visibili, con User-Agent identificativo e cache locale minima di sette giorni. Non sono presenti download offline o prefetch. Attribuzione: © OpenStreetMap contributors, https://www.openstreetmap.org/copyright. La cartografia non certifica la copertura del reticolo sismico storico; restano i limiti di quest'ultimo (e l'intervallo di input lon 6–19°, lat 36–48°).
+**Sito.** Il pulsante **Scelta geografica…** apre una finestra con la mappa OpenStreetMap e la **ricerca per indirizzo**. Con la conferma la finestra restituisce latitudine e longitudine WGS84, più il nome del luogo. Le coordinate si possono anche scrivere a mano.
+- La ricerca usa Nominatim (OpenStreetMap), solo in Italia. Parte soltanto premendo **Cerca indirizzo** o Invio, con al massimo una richiesta al secondo e un User-Agent identificativo, come prevede la politica d'uso del servizio.
+- La conferma è disabilitata fuori dal reticolo sismico (lon 6–19°, lat 36–48°).
 
-“Tutti gli spettri TXT (ZIP)” salva 9 file numerici: SLO, SLD, SLV, SLC elastici H/V e SLV di progetto H, più istruzioni e progetto JSON. Il motore storico non definisce altri spettri di progetto. Il verticale rimane elastico e non è etichettato come progetto. Tutti i 40 campioni nativi per serie sono inclusi, indipendentemente da selezione e periodo massimo visualizzato. Colonne TAB, punto decimale, T [s], Sa [m/s²], intestazioni commentate con #. q modifica solo il progetto orizzontale.
+**Dati e formule.** I parametri ag, F0 e Tc* vengono dal reticolo e dall'interpolazione del programma storico. Le forme spettrali sono calcolate secondo NTC 2018 §3.2.3 (`SeismicSpectra`, in `STA.Calcolo.Application`):
+- orizzontale (eq. 3.2.2) con S = Ss·ST, dove ST è il fattore topografico di Tab. 3.2.V in sommità (T1 = 1,0; T2 = T3 = 1,2; T4 = 1,4), e smorzamento η = √(10/(5+ξ)) ≥ 0,55;
+- verticale (eq. 3.2.10) con Ss = 1, TB = 0,05 s, TC = 0,15 s, TD = 1,0 s e Fv = 1,35·F0·(ag/g)^0,5. **Corregge** il motore storico, che usava i periodi e il fattore S dell'orizzontale;
+- progetto SLV con η = 1/q e limite inferiore Sd ≥ 0,2·ag (non presente nel motore storico).
+
+Con ST = 1 e ξ = 5 % l'orizzontale coincide con il motore storico (test di parità).
+
+**Unità.** Le accelerazioni sono sempre indicate in frazione di g (ag/g, amax/g, Se/g), con il valore in m/s² accanto (g = 9,81 m/s²). La tabella riporta, per SLO, SLD, SLV e SLC: TR, ag/g, ag, F0, Tc*, S, amax/g, amax, TB, TC e TD.
+
+**Grafico.** Ha l'asse principale in Se/g e l'asse secondario in m/s². Passando il mouse, una linea verticale segue il cursore e un riquadro riporta il periodo T e il valore di ogni curva, in g e in m/s². Si possono mostrare o nascondere le curve orizzontali, verticali e di progetto, ed evidenziare uno stato limite.
+
+**Richiamo da altri moduli.** `IDialogService.PickSeismic` apre gli spettri come finestra di selezione. **Usa i valori dello stato limite scelto** restituisce un `SeismicSiteSelection` con sito, ag/g, F0, Tc*, S e amax/g.
+- Il Muro di sostegno lo usa con **Parametri sismici dagli spettri…**: il campo PGA riceve amax/g = S·ag/g dello stato limite scelto (predefinito SLV).
+- Il sito scelto viene riproposto alla riapertura, ma non è salvato nel progetto del muro.
+
+**File.** I progetti restano compatibili con i JSON precedenti del modulo "sisma". I campi nuovi (topografia, smorzamento, stato evidenziato, luogo) hanno valori predefiniti se mancano. L'esportazione ZIP contiene un file TXT per ciascuna delle 9 curve, con T [s], Se/g e Se [m/s²], più il progetto e le istruzioni.
+
+La cartografia richiede Internet; se non è disponibile restano attivi i campi manuali. Le tessere sono richieste solo per l'area visibile, con cache locale di sette giorni. Attribuzione: © OpenStreetMap contributors, https://www.openstreetmap.org/copyright. La mappa non certifica la copertura del reticolo sismico storico.
 
 ## Calcestruzzo — aggiornamento NTC 2018
 Il modulo usa un motore dedicato alle proprietà progettuali del calcestruzzo di peso normale a 28 giorni, secondo §§11.2.10.1–3 e 4.1.2.1.1. Ogni risultato mostra formula, sostituzione, valore in MPa e riferimento normativo, conservati anche nell'esportazione JSON.

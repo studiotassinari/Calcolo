@@ -1,0 +1,90 @@
+<Window x:Class="STA.Calcolo.Desktop.Views.SeismicSpectraWindow"
+ xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+ xmlns:ui="clr-namespace:STA.Calcolo.Desktop.Controls"
+ Title="TA-Calcolo · Spettri sismici" Width="1400" Height="880" MinWidth="1000" MinHeight="640"
+ Language="it-IT" FontFamily="/STA.Calcolo.Desktop;component/Assets/Brand/#Acherus Grotesque" FontSize="12.5"
+ Foreground="#192845" Background="#F3F6F6" UseLayoutRounding="True">
+ <Window.Resources><ResourceDictionary><ResourceDictionary.MergedDictionaries><ResourceDictionary Source="../Themes/Tassinari.xaml"/></ResourceDictionary.MergedDictionaries>
+  <BooleanToVisibilityConverter x:Key="Visible"/>
+  <Style x:Key="ToolButton" TargetType="Button" BasedOn="{StaticResource {x:Type Button}}"><Setter Property="Padding" Value="10,5"/><Setter Property="Margin" Value="0,0,6,0"/><Setter Property="FontSize" Value="12"/></Style>
+  <Style x:Key="FieldLabel" TargetType="TextBlock"><Setter Property="VerticalAlignment" Value="Center"/><Setter Property="Foreground" Value="#344A5C"/><Setter Property="Margin" Value="0,3,8,3"/></Style>
+  <Style TargetType="TextBox" BasedOn="{StaticResource {x:Type TextBox}}"><Setter Property="MinHeight" Value="26"/><Setter Property="Padding" Value="5,2"/><Setter Property="HorizontalContentAlignment" Value="Right"/><Setter Property="Margin" Value="0,2"/></Style>
+  <Style TargetType="ComboBox" BasedOn="{StaticResource {x:Type ComboBox}}"><Setter Property="MinHeight" Value="26"/><Setter Property="Margin" Value="0,2"/></Style>
+  <Style x:Key="Kpi" TargetType="TextBlock"><Setter Property="FontSize" Value="22"/><Setter Property="FontWeight" Value="SemiBold"/></Style>
+  <Style x:Key="KpiLabel" TargetType="TextBlock"><Setter Property="FontSize" Value="11"/><Setter Property="Foreground" Value="#526778"/></Style>
+ </ResourceDictionary></Window.Resources>
+ <!-- Vista solo dichiarativa: dati, ricalcolo, scelta geografica e restituzione dei valori sono nel ViewModel. -->
+ <DockPanel Margin="12">
+  <Grid DockPanel.Dock="Top" Margin="0,0,0,10"><Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+   <StackPanel VerticalAlignment="Center" Margin="0,0,20,0"><TextBlock Text="Spettri sismici" FontSize="20" FontWeight="SemiBold"/><TextBlock Text="NTC 2018 §3.2.3 · accelerazioni in frazione di g, con il valore in m/s² accanto" Foreground="#526778" FontSize="11"/></StackPanel>
+   <WrapPanel Grid.Column="1" VerticalAlignment="Center">
+    <Button Style="{StaticResource ToolButton}" Content="Apri" Command="{Binding OpenCommand}"/><Button Style="{StaticResource ToolButton}" Content="Salva" Command="{Binding SaveCommand}"/>
+    <Button Style="{StaticResource ToolButton}" Content="Esporta spettri TXT (ZIP)" Command="{Binding ExportCommand}"/>
+    <Button x:Name="ConfirmButton" Style="{StaticResource ToolButton}" Content="Usa i valori dello stato limite scelto" Command="{Binding ConfirmCommand}" Background="#192845" BorderBrush="#192845" Visibility="{Binding PickMode, Converter={StaticResource Visible}}"/>
+    <Button Style="{StaticResource ToolButton}" Content="Annulla" Command="{Binding CancelCommand}" Visibility="{Binding PickMode, Converter={StaticResource Visible}}"/>
+   </WrapPanel>
+   <Image Grid.Column="2" Source="/STA.Calcolo.Desktop;component/Assets/Brand/Logo.png" Stretch="Uniform" Height="38" Margin="12,0,0,0"/>
+  </Grid>
+  <Border DockPanel.Dock="Bottom" Padding="10,5" Background="#EAF0F1" Margin="0,8,0,0"><TextBlock Text="{Binding Status}" Foreground="#526778" TextWrapping="Wrap" FontSize="11.5"/></Border>
+  <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="320" MinWidth="280"/><ColumnDefinition Width="8"/><ColumnDefinition/></Grid.ColumnDefinitions>
+   <ScrollViewer VerticalScrollBarVisibility="Auto"><StackPanel Margin="0,0,4,0">
+    <!-- Sito: scelta geografica in una finestra dedicata (mappa + ricerca per indirizzo) o coordinate manuali. -->
+    <Border Style="{StaticResource Panel}" Padding="10" Margin="0,0,0,8"><StackPanel>
+     <TextBlock Text="Sito" FontSize="13" FontWeight="SemiBold" Margin="0,0,0,6"/>
+     <Button x:Name="ChooseLocationButton" Content="Scelta geografica…" Command="{Binding ChooseLocationCommand}" Margin="0,0,0,8" HorizontalAlignment="Stretch"/>
+     <TextBlock Text="{Binding SiteText}" TextWrapping="Wrap" Foreground="#135F6E" Margin="0,0,0,6"/>
+     <Grid><Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="110"/></Grid.ColumnDefinitions><Grid.RowDefinitions><RowDefinition/><RowDefinition/><RowDefinition/></Grid.RowDefinitions>
+      <TextBlock Text="Luogo" Style="{StaticResource FieldLabel}"/><TextBox Grid.Column="1" Text="{Binding Place, UpdateSourceTrigger=PropertyChanged}" HorizontalContentAlignment="Left"/>
+      <TextBlock Grid.Row="1" Text="Latitudine [°]" Style="{StaticResource FieldLabel}"/><TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Latitude, UpdateSourceTrigger=PropertyChanged}"/>
+      <TextBlock Grid.Row="2" Text="Longitudine [°]" Style="{StaticResource FieldLabel}"/><TextBox Grid.Row="2" Grid.Column="1" Text="{Binding Longitude, UpdateSourceTrigger=PropertyChanged}"/>
+     </Grid>
+    </StackPanel></Border>
+    <Border Style="{StaticResource Panel}" Padding="10" Margin="0,0,0,8"><StackPanel>
+     <TextBlock Text="Opera e terreno" FontSize="13" FontWeight="SemiBold" Margin="0,0,0,6"/>
+     <Grid><Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="110"/></Grid.ColumnDefinitions><Grid.RowDefinitions><RowDefinition/><RowDefinition/><RowDefinition/><RowDefinition/><RowDefinition/><RowDefinition/></Grid.RowDefinitions>
+      <TextBlock Text="Vita nominale VN [anni]" Style="{StaticResource FieldLabel}"/><ComboBox Grid.Column="1" ItemsSource="{Binding Lives}" SelectedItem="{Binding Life}"/>
+      <TextBlock Grid.Row="1" Text="Classe d'uso" Style="{StaticResource FieldLabel}"/><ComboBox Grid.Row="1" Grid.Column="1" ItemsSource="{Binding UseClasses}" SelectedItem="{Binding UseClass}"/>
+      <TextBlock Grid.Row="2" Text="Categoria di sottosuolo" Style="{StaticResource FieldLabel}"/><ComboBox Grid.Row="2" Grid.Column="1" ItemsSource="{Binding Soils}" SelectedItem="{Binding Soil}"/>
+      <TextBlock Grid.Row="3" Text="Categoria topografica" Style="{StaticResource FieldLabel}"/><ComboBox Grid.Row="3" Grid.Column="1" ItemsSource="{Binding Topographies}" SelectedItem="{Binding Topography}"/>
+      <TextBlock Grid.Row="4" Text="Fattore di struttura q (SLV)" Style="{StaticResource FieldLabel}"/><TextBox Grid.Row="4" Grid.Column="1" Text="{Binding Q, UpdateSourceTrigger=PropertyChanged}"/>
+      <TextBlock Grid.Row="5" Text="Smorzamento ξ [%]" Style="{StaticResource FieldLabel}"/><TextBox Grid.Row="5" Grid.Column="1" Text="{Binding Damping, UpdateSourceTrigger=PropertyChanged}"/>
+     </Grid>
+    </StackPanel></Border>
+    <Border Style="{StaticResource Panel}" Padding="10" Margin="0,0,0,8"><StackPanel>
+     <TextBlock Text="Grafico" FontSize="13" FontWeight="SemiBold" Margin="0,0,0,6"/>
+     <Grid><Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="110"/></Grid.ColumnDefinitions><Grid.RowDefinitions><RowDefinition/><RowDefinition/></Grid.RowDefinitions>
+      <TextBlock Text="Stato limite evidenziato" Style="{StaticResource FieldLabel}"/><ComboBox x:Name="StateSelector" Grid.Column="1" ItemsSource="{Binding States}" SelectedItem="{Binding SelectedState}"/>
+      <TextBlock Grid.Row="1" Text="Periodo massimo [s]" Style="{StaticResource FieldLabel}"/><TextBox Grid.Row="1" Grid.Column="1" Text="{Binding MaxPeriod, UpdateSourceTrigger=PropertyChanged}"/>
+     </Grid>
+     <WrapPanel Margin="0,6,0,0"><CheckBox Content="Orizzontali" IsChecked="{Binding ShowHorizontal}" Margin="0,0,12,4"/><CheckBox Content="Verticali" IsChecked="{Binding ShowVertical}" Margin="0,0,12,4"/><CheckBox Content="Progetto SLV" IsChecked="{Binding ShowDesign}"/></WrapPanel>
+    </StackPanel></Border>
+    <Border Background="#FFF5E5" BorderBrush="#BC8135" BorderThickness="3,0,0,0" Padding="10"><TextBlock TextWrapping="Wrap" FontSize="11.5" Text="ag, F0 e Tc* dal reticolo e dall'interpolazione del programma storico (lon 6–19°, lat 36–48°); forme spettrali NTC 2018 §3.2.3 con S = Ss·ST (ST in sommità), η = √(10/(5+ξ)) e progetto SLV con η = 1/q, Sd ≥ 0,2·ag."/></Border>
+   </StackPanel></ScrollViewer>
+   <Grid Grid.Column="2"><Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+    <!-- Valori dello stato limite scelto: sempre ag/g con il campo in m/s² accanto. -->
+    <Border Style="{StaticResource Panel}" Padding="10" Margin="0,0,0,8"><StackPanel>
+     <UniformGrid Columns="4">
+      <StackPanel><TextBlock Text="ag/g" Style="{StaticResource KpiLabel}"/><TextBlock x:Name="AgGValue" Text="{Binding AgGText}" Style="{StaticResource Kpi}"/></StackPanel>
+      <StackPanel><TextBlock Text="ag [m/s²]" Style="{StaticResource KpiLabel}"/><TextBlock Text="{Binding AgText}" Style="{StaticResource Kpi}" Foreground="#526778"/></StackPanel>
+      <StackPanel><TextBlock Text="amax/g = S·ag/g" Style="{StaticResource KpiLabel}"/><TextBlock Text="{Binding AmaxGText}" Style="{StaticResource Kpi}"/></StackPanel>
+      <StackPanel><TextBlock Text="amax [m/s²]" Style="{StaticResource KpiLabel}"/><TextBlock Text="{Binding AmaxText}" Style="{StaticResource Kpi}" Foreground="#526778"/></StackPanel>
+     </UniformGrid>
+     <TextBlock Text="{Binding SummaryText}" Foreground="#526778" TextWrapping="Wrap" Margin="0,6,0,0"/>
+    </StackPanel></Border>
+    <Border Grid.Row="1" Style="{StaticResource Panel}" Padding="6" Margin="0,0,0,8"><Grid><Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition/></Grid.RowDefinitions>
+     <TextBlock Text="Passare il mouse sul grafico per leggere periodo e valori di tutte le curve (in g e in m/s²)." Foreground="#526778" FontSize="11.5" Margin="6,2,0,4"/>
+     <ui:SpectrumPlotView x:Name="SpectrumChart" Grid.Row="1" Curves="{Binding Curves}" Highlight="{Binding SelectedState}" MinHeight="260"/>
+    </Grid></Border>
+    <DataGrid x:Name="StatesGrid" Grid.Row="2" ItemsSource="{Binding Rows}" AutoGenerateColumns="False" IsReadOnly="True" CanUserAddRows="False" CanUserSortColumns="False" HeadersVisibility="Column" MinRowHeight="24">
+     <DataGrid.Columns>
+      <DataGridTextColumn Header="SL" Binding="{Binding Name}" Width="50"/><DataGridTextColumn Header="TR [anni]" Binding="{Binding Tr}" Width="*"/>
+      <DataGridTextColumn Header="ag/g" Binding="{Binding AgG}" Width="*"/><DataGridTextColumn Header="ag [m/s²]" Binding="{Binding Ag}" Width="*"/>
+      <DataGridTextColumn Header="F0" Binding="{Binding F0}" Width="*"/><DataGridTextColumn Header="Tc* [s]" Binding="{Binding TcStar}" Width="*"/>
+      <DataGridTextColumn Header="S" Binding="{Binding S}" Width="*"/><DataGridTextColumn Header="amax/g" Binding="{Binding AmaxG}" Width="*"/><DataGridTextColumn Header="amax [m/s²]" Binding="{Binding Amax}" Width="*"/>
+      <DataGridTextColumn Header="TB [s]" Binding="{Binding Tb}" Width="*"/><DataGridTextColumn Header="TC [s]" Binding="{Binding Tc}" Width="*"/><DataGridTextColumn Header="TD [s]" Binding="{Binding Td}" Width="*"/>
+     </DataGrid.Columns>
+    </DataGrid>
+   </Grid>
+  </Grid>
+ </DockPanel>
+</Window>

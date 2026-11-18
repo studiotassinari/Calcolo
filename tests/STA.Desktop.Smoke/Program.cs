@@ -46,6 +46,7 @@ internal static class Program
         ShearSmoke.Run(Render);
         // Verifica il nuovo modulo integrato e i suoi formati di progetto.
         RetainingWallSmoke.Run(Render);
+        SeismicSpectraSmoke.Run(Render);
         // Verifica le nuove interfacce senza richieste cartografiche di rete.
         ScientificSmoke.Run(Render);
         var masonry=new MasonryViewModel(files);masonry.ExampleCommand.Execute(null);masonry.CalculateCommand.Execute(null);
