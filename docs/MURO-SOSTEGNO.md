@@ -1,6 +1,6 @@
 # Muro di sostegno
 
-Modulo pubblicato in TA-Calcolo **1.5.1** a partire dal tag pubblicato **v1.5.0**, commit `fd0fa950e4877e7f6181666d1925aeddb4863626`.
+Modulo pubblicato in TA-Calcolo **1.5.1** a partire dal tag pubblicato **v1.5.0**, commit `fd0fa950e4877e7f6181666d1925aeddb4863626`. Dalla **1.6.0**: interfaccia compatta con grip, ricalcolo automatico e motore rivisto NTC 2018 predefinito.
 
 ## Utilizzo
 
