@@ -35,6 +35,10 @@ internal static class RetainingWallSmoke
             vm.ByKey["H1"].Value="6,5";Check(vm.HasResults&&vm.ExportCommand.CanExecute(null)&&vm.Geometry is not null,"Risultati non ricalcolati dopo modifica");
             Check(Math.Abs(vm.Geometry!.Wall[4].Y-7.1)<1e-10&&Math.Abs(vm.Result!.Geometry.Wall[4].Y-7.1)<1e-10,"Disegno o risultati non aggiornati");
             Check(vm.Summary.Count>0&&vm.Results.Count>vm.Summary.Count,"Sintesi non aggiornata");
+            // Motore rivisto predefinito; l'originale resta selezionabile e ricalcolato.
+            Check(vm.Engine==WallEngine.Rivisto&&vm.Design is not null&&vm.Checks.Count==2&&vm.Pressures is not null,"Motore rivisto non attivo");
+            vm.Engine=WallEngine.Originale;Check(vm.HasResults&&vm.Checks.Count==1&&vm.Notes.Contains(WallCalculator.Scope),"Motore originale non selezionabile");
+            vm.Engine=WallEngine.Rivisto;Check(vm.HasResults&&vm.Notes.Contains(WallDesignCalculator.Scope),"Ritorno al motore rivisto non riuscito");
             // Grip: trascinamento della sommità a quota 7,62 m → H1 = 7,6 − H2 = 7 m con passo 5 cm.
             vm.GripCommand.Execute(new WallGripDrag("H1",new(1,7.62),.05));Check(vm.ByKey["H1"].Value=="7"&&vm.HasResults&&Math.Abs(vm.Result!.Geometry.Wall[4].Y-7.6)<1e-10,"Grip H1 non applicato");
             vm.GripCommand.Execute(new WallGripDrag("Bf",new(.5,0),.05));Check(vm.ByKey["Bf"].Value=="4,5"&&vm.HasResults,"Grip non ammesso ha modificato il progetto");

@@ -52,7 +52,7 @@
    <TabControl x:Name="WallTabs" Grid.Column="2" Foreground="#192845" Background="White" BorderBrush="#D6E0E2">
     <TabItem Header="Sezione"><Grid Margin="8"><Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
      <TextBlock TextWrapping="Wrap" Foreground="#526778" FontSize="11.5" Margin="2,0,0,6">Trascinare i quadratini per modificare la geometria: i campi e i risultati si aggiornano subito. Passo 5 cm, 1 cm con Ctrl · Esc annulla.</TextBlock>
-     <ui:RetainingWallDrawing x:Name="WallFigure" Grid.Row="1" Geometry="{Binding Geometry}" Result="{Binding Result}" Grips="{Binding Grips}" GripCommand="{Binding GripCommand}" Parameters="{Binding ByKey}" MinHeight="240" ClipToBounds="True"/>
+     <ui:RetainingWallDrawing x:Name="WallFigure" Grid.Row="1" Geometry="{Binding Geometry}" Pressures="{Binding Pressures}" Grips="{Binding Grips}" GripCommand="{Binding GripCommand}" Parameters="{Binding ByKey}" MinHeight="240" ClipToBounds="True"/>
      <WrapPanel Grid.Row="2" Margin="2,6,0,0"><TextBlock Text="■ Muro" Foreground="#135F6E" Margin="0,0,14,0"/><TextBlock Text="■ Terreno" Foreground="#7B6341" Margin="0,0,14,0"/><TextBlock Text="━ Falda" Foreground="#226BA0" Margin="0,0,14,0"/><TextBlock Text="■ Spinta statica" Foreground="#A35B18" Margin="0,0,14,0"/><TextBlock Text="□ Grip modificabile" Foreground="#C3872A"/></WrapPanel>
     </Grid></TabItem>
     <TabItem Header="Risultati"><DockPanel Margin="8"><TextBlock DockPanel.Dock="Top" Text="{Binding ResultStatus}" Foreground="#526778" TextWrapping="Wrap" Margin="2,0,0,6"/><DataGrid x:Name="ResultsGrid" ItemsSource="{Binding Results}" AutoGenerateColumns="False" IsReadOnly="True" CanUserAddRows="False" CanUserSortColumns="False" SelectionMode="Single" MinRowHeight="26"><DataGrid.Columns><DataGridTextColumn Header="Grandezza" Binding="{Binding Label}" Width="2.5*" MinWidth="220"><DataGridTextColumn.ElementStyle><Style TargetType="TextBlock"><Setter Property="TextWrapping" Value="Wrap"/><Setter Property="Padding" Value="6,3"/></Style></DataGridTextColumn.ElementStyle></DataGridTextColumn><DataGridTextColumn Header="Statica" Binding="{Binding Static}" Width="*" MinWidth="100"/><DataGridTextColumn Header="Sisma" Binding="{Binding Seismic}" Width="*" MinWidth="90"/><DataGridTextColumn Header="Unità" Binding="{Binding Unit}" Width="0.8*" MinWidth="80"/></DataGrid.Columns></DataGrid></DockPanel></TabItem>
@@ -63,7 +63,22 @@
    <ScrollViewer Grid.Column="4" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled"><StackPanel>
     <Border Style="{StaticResource Panel}" Padding="12" Margin="0,0,0,8"><StackPanel>
      <TextBlock Text="Sintesi" FontSize="13" FontWeight="SemiBold" Margin="0,0,0,8"/>
-     <UniformGrid Columns="2"><StackPanel Margin="0,0,8,8"><TextBlock Text="Mstab/Mrib · statica" Style="{StaticResource KpiLabel}"/><TextBlock Text="{Binding StaticText}" Style="{StaticResource Kpi}"/></StackPanel><StackPanel Margin="0,0,0,8"><TextBlock Text="Mstab/Mrib · sisma" Style="{StaticResource KpiLabel}"/><TextBlock Text="{Binding SeismicText}" Style="{StaticResource Kpi}"/></StackPanel></UniformGrid>
+     <TextBlock Text="Motore di calcolo" Style="{StaticResource KpiLabel}" Margin="0,0,0,3"/>
+     <ComboBox x:Name="EngineSelector" ItemsSource="{Binding Engines}" DisplayMemberPath="Label" SelectedValuePath="Engine" SelectedValue="{Binding Engine}" Margin="0,0,0,10" AutomationProperties.Name="Motore di calcolo"/>
+     <!-- Riquadri di verifica: verde se Rd/Ed ≥ 1, rosso se < 1, neutro per i rapporti del motore originale. -->
+     <ItemsControl ItemsSource="{Binding Checks}"><ItemsControl.ItemTemplate><DataTemplate>
+      <StackPanel Margin="0,0,0,8"><TextBlock Text="{Binding Label}" Style="{StaticResource KpiLabel}"/>
+       <UniformGrid Columns="2">
+        <Border x:Name="StaticTile" Background="#EAF0F1" CornerRadius="3" Padding="6,3" Margin="0,2,4,0"><StackPanel><TextBlock Text="Statica" FontSize="10" Foreground="#526778"/><TextBlock Text="{Binding Static}" Style="{StaticResource Kpi}"/></StackPanel></Border>
+        <Border x:Name="SeismicTile" Background="#EAF0F1" CornerRadius="3" Padding="6,3" Margin="4,2,0,0"><StackPanel><TextBlock Text="Sisma" FontSize="10" Foreground="#526778"/><TextBlock Text="{Binding Seismic}" Style="{StaticResource Kpi}"/></StackPanel></Border>
+       </UniformGrid></StackPanel>
+      <DataTemplate.Triggers>
+       <DataTrigger Binding="{Binding StaticOk}" Value="True"><Setter TargetName="StaticTile" Property="Background" Value="#E3F1E6"/></DataTrigger>
+       <DataTrigger Binding="{Binding StaticOk}" Value="False"><Setter TargetName="StaticTile" Property="Background" Value="#FBE9E7"/></DataTrigger>
+       <DataTrigger Binding="{Binding SeismicOk}" Value="True"><Setter TargetName="SeismicTile" Property="Background" Value="#E3F1E6"/></DataTrigger>
+       <DataTrigger Binding="{Binding SeismicOk}" Value="False"><Setter TargetName="SeismicTile" Property="Background" Value="#FBE9E7"/></DataTrigger>
+      </DataTemplate.Triggers>
+     </DataTemplate></ItemsControl.ItemTemplate></ItemsControl>
      <TextBlock Text="Area sezione muro" Style="{StaticResource KpiLabel}"/><TextBlock Text="{Binding AreaText}" FontSize="16" FontWeight="SemiBold" Margin="0,0,0,10"/>
      <!-- Messaggio di errore evidenziato solo quando i dati non sono validi. -->
      <Border Background="#FBE9E7" BorderBrush="#B3261E" BorderThickness="3,0,0,0" Padding="8" Margin="0,0,0,10"><Border.Style><Style TargetType="Border"><Setter Property="Visibility" Value="Collapsed"/><Style.Triggers><DataTrigger Binding="{Binding InputsValid}" Value="False"><Setter Property="Visibility" Value="Visible"/></DataTrigger></Style.Triggers></Style></Border.Style><TextBlock Text="{Binding InputError}" TextWrapping="Wrap" Foreground="#7A1A14"/></Border>
@@ -76,7 +91,7 @@
      </DataTemplate></ItemsControl.ItemTemplate></ItemsControl>
      <TextBlock Text="{Binding ResultStatus}" TextWrapping="Wrap" Foreground="#526778" FontSize="11" Margin="0,8,0,0"/>
     </StackPanel></Border>
-    <Border Background="#FFF5E5" BorderBrush="#BC8135" BorderThickness="3,0,0,0" Padding="10"><TextBlock Text="Motore originale: rapporti e componenti di confronto, non una verifica normativa completa. Consultare le note di calcolo." TextWrapping="Wrap" FontSize="11.5"/></Border>
+    <Border Background="#FFF5E5" BorderBrush="#BC8135" BorderThickness="3,0,0,0" Padding="10"><TextBlock Text="Verifiche di ribaltamento e scorrimento (NTC 2018). Esclusi capacità portante, stabilità globale, cedimenti e armature: consultare le note di calcolo." TextWrapping="Wrap" FontSize="11.5"/></Border>
    </StackPanel></ScrollViewer>
   </Grid>
  </DockPanel>

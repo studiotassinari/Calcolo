@@ -21,6 +21,11 @@ public sealed class WallNumberField(WallParameter parameter) : ObservableObject,
 }
 public sealed record WallFieldGroup(string Title, IReadOnlyList<WallNumberField> Fields);
 public sealed record WallResultRow(string Label, string Static, string Seismic, string Unit);
+/// <summary>Riquadro di verifica nella sintesi: Ok null = rapporto senza esito (motore originale).</summary>
+public sealed record WallCheckTile(string Label, string Static, string Seismic, bool? StaticOk, bool? SeismicOk);
+/// <summary>Motore di calcolo selezionabile: il rivisto è predefinito, l'originale resta per il confronto.</summary>
+public enum WallEngine { Rivisto, Originale }
+public sealed record WallEngineOption(WallEngine Engine, string Label);
 
 /// <summary>
 /// Stato indipendente per ogni progetto. Ogni modifica valida di un campo o di un grip del disegno
@@ -39,15 +44,24 @@ public sealed class RetainingWallViewModel : ObservableObject
     public IReadOnlyDictionary<string,WallNumberField> ByKey { get; }
     public IReadOnlyList<WallFieldGroup> Groups { get; }
     public WallGeometry? Geometry { get; private set; }
+    /// <summary>Risultato del motore originale (sempre calcolato se possibile, per confronto ed esportazione).</summary>
     public WallResult? Result { get; private set; }
+    /// <summary>Risultato del motore rivisto NTC 2018.</summary>
+    public WallDesignResult? Design { get; private set; }
+    public IReadOnlyList<WallEngineOption> Engines { get; } = [new(WallEngine.Rivisto,"Rivisto NTC 2018"),new(WallEngine.Originale,"Originale (confronto)")];
+    private WallEngine engine = WallEngine.Rivisto;
+    public WallEngine Engine { get => engine; set { if (Set(ref engine,value)) Invalidate(); } }
     public IReadOnlyList<WallResultRow> Results { get; private set; } = [];
-    public IReadOnlyList<string> Notes => Result?.Notes ?? [WallCalculator.Scope,
-        "L'esempio riproduce i dati del programma consegnato. Controllare le unità, in particolare Vs, e le ipotesi prima del calcolo."];
-    public bool HasResults => Result is not null;
+    public IReadOnlyList<WallCheckTile> Checks { get; private set; } = [];
+    public IReadOnlyList<string> Notes => (Engine==WallEngine.Rivisto ? Design?.Notes : Result?.Notes) ?? [Engine==WallEngine.Rivisto ? WallDesignCalculator.Scope : WallCalculator.Scope,
+        "Correggere i dati evidenziati per ottenere risultati e note."];
+    public bool HasResults => Engine==WallEngine.Rivisto ? Design is not null : Result is not null;
+    /// <summary>Diagramma delle pressioni del motore selezionato.</summary>
+    public IReadOnlyList<WallPressurePoint>? Pressures => Engine==WallEngine.Rivisto ? Design?.Pressures : Result?.Pressures;
     public string AreaText => Geometry is null ? "—" : N(WallGeometry.Properties(Geometry.Wall).Area) + " m²";
-    public string StaticText => Result?.StaticRatio is double r ? N(r) : "—";
-    public string SeismicText => Result?.SeismicRatio is double r ? N(r) : "—";
-    public string ResultStatus => HasResults ? "Aggiornati a ogni modifica · rapporti del motore originale, consultare le note" : "Risultati non disponibili: correggere i dati evidenziati";
+    public string ResultStatus => !HasResults ? "Risultati non disponibili: correggere i dati evidenziati"
+        : Engine==WallEngine.Rivisto ? (Design!.AllSatisfied ? "Verifiche di ribaltamento e scorrimento soddisfatte (Rd/Ed ≥ 1)." : "Almeno una verifica non è soddisfatta (Rd/Ed < 1).")
+        : "Motore originale: rapporti di confronto senza esito normativo.";
     /// <summary>Sintesi sempre visibile accanto al disegno: aggiornata insieme alla tabella completa.</summary>
     public IReadOnlyList<WallResultRow> Summary { get; private set; } = [];
     /// <summary>Grip del disegno: posizioni e regole di conversione sono nel core, testabili senza WPF.</summary>
@@ -88,7 +102,7 @@ public sealed class RetainingWallViewModel : ObservableObject
         ExportJsonCommand = new(()=>Run(()=>
         {
             var path=files.Save("Risultati muro JSON|*.json","muro-sostegno-risultati.json");
-            if(path is not null) { files.Write(path,WallFiles.WriteResults(Document(),Result!)); Status="Dati e risultati JSON esportati."; }
+            if(path is not null) { files.Write(path,WallFiles.WriteResults(Document(),Design,Result)); Status="Dati e risultati JSON esportati."; }
         }),()=>HasResults);
         Invalidate(); if(HasResults) Status="Dati iniziali del programma originale. Modificare i campi o trascinare i grip del disegno.";
     }
@@ -119,9 +133,17 @@ public sealed class RetainingWallViewModel : ObservableObject
     }
     private void Calculate()
     {
-        Result=null; Results=[]; Summary=[]; NotifyResults();
-        Result=WallCalculator.Calculate(Document().Parameters);
-        Results=Rows(Result); Summary=SummaryRows(Result); NotifyResults(); Status="Calcolo completato. Consultare risultati e note del motore originale.";
+        Result=null; Design=null; Results=[]; Summary=[]; Checks=[]; NotifyResults();
+        var parameters=Document().Parameters;
+        // I due motori sono indipendenti: un errore di dominio dell'uno non impedisce i risultati dell'altro.
+        string? Try(Action run){ try { run(); return null; } catch(Exception ex) when(ex is ArgumentException or ArithmeticException){ return ex.Message; } }
+        var designError=Try(()=>Design=WallDesignCalculator.Calculate(parameters));
+        var originalError=Try(()=>Result=WallCalculator.Calculate(parameters));
+        var engineError=Engine==WallEngine.Rivisto?designError:originalError;
+        if(engineError is not null){NotifyResults();throw new ArgumentException(engineError);}
+        if(Engine==WallEngine.Rivisto){Results=DesignRows(Design!);Summary=DesignSummary(Design!);Checks=DesignChecks(Design!);}
+        else{Results=Rows(Result!);Summary=SummaryRows(Result!);Checks=OriginalChecks(Result!);}
+        NotifyResults(); Status="Calcolo completato.";
     }
     /// <summary>
     /// Reazione a ogni modifica: geometria e calcolo vengono rieseguiti subito.
@@ -130,7 +152,7 @@ public sealed class RetainingWallViewModel : ObservableObject
     private void Invalidate()
     {
         if(loading)return;
-        Result=null;Results=[];Summary=[];Geometry=null;
+        Result=null;Design=null;Results=[];Summary=[];Checks=[];Geometry=null;
         try { Geometry=WallGeometry.Create(Document().Parameters);InputError=""; }
         catch(ArgumentException ex) {InputError=ex.Message;}
         catch(System.IO.InvalidDataException ex) {InputError=ex.Message;}
@@ -144,7 +166,7 @@ public sealed class RetainingWallViewModel : ObservableObject
     }
     private void NotifyResults()
     {
-        foreach(var name in new[]{nameof(Result),nameof(Results),nameof(Summary),nameof(HasResults),nameof(Notes),nameof(StaticText),nameof(SeismicText),nameof(ResultStatus)})Changed(name);
+        foreach(var name in new[]{nameof(Result),nameof(Design),nameof(Pressures),nameof(Results),nameof(Summary),nameof(Checks),nameof(HasResults),nameof(Notes),nameof(ResultStatus)})Changed(name);
         ExportCommand?.Refresh();ExportJsonCommand?.Refresh();
     }
     /// <summary>
@@ -208,10 +230,61 @@ public sealed class RetainingWallViewModel : ObservableObject
         new("Resist. scorr. G1",N(r.SlidingResistance.G1,1),"—","kN/m"),
         new("Resist. scorr. G2",N(r.SlidingResistance.G2,1),"—","kN/m")
     ];
+    private static string R(double? ratio) => ratio is double r ? N(r) : "—";
+    private static string Verdict(WallCheck c) => $"{R(c.Ratio)} {(c.Satisfied ? "✓" : "✗")}";
+    private static IReadOnlyList<WallCheckTile> DesignChecks(WallDesignResult r) => [
+        new("Ribaltamento · Rd/Ed",R(r.StaticOverturning.Overturning.Ratio),R(r.SeismicOverturning.Overturning.Ratio),r.StaticOverturning.Overturning.Satisfied,r.SeismicOverturning.Overturning.Satisfied),
+        new("Scorrimento · Rd/Ed",R(r.StaticSliding.Sliding.Ratio),R(r.SeismicSliding.Sliding.Ratio),r.StaticSliding.Sliding.Satisfied,r.SeismicSliding.Sliding.Satisfied)];
+    private static IReadOnlyList<WallCheckTile> OriginalChecks(WallResult r) => [
+        new("Mstab/Mrib (originale)",R(r.StaticRatio),R(r.SeismicRatio),null,null)];
+    /// <summary>Sintesi del motore rivisto: azioni di progetto delle combinazioni determinanti.</summary>
+    private static IReadOnlyList<WallResultRow> DesignSummary(WallDesignResult r)
+    {
+        var so=r.StaticOverturning; var ss=r.StaticSliding; var eo=r.SeismicOverturning; var es=r.SeismicSliding;
+        return [
+            new("kh / kv","—",$"{N(r.Kh,3)} / ±{N(.5*r.Kh,3)}",""),
+            new("KA scorrimento",N(ss.KaSliding,3),N(es.KaSliding,3),""),
+            new("M rib. d",N(so.OverturningMoment,1),N(eo.OverturningMoment,1),"kN·m/m"),
+            new("M stab. d",N(so.StabilizingMoment,1),N(eo.StabilizingMoment,1),"kN·m/m"),
+            new("Ed scorr.",N(ss.Driving,1),N(es.Driving,1),"kN/m"),
+            new("Rd scorr.",N(ss.Sliding.Resistance/ss.Sliding.GammaR,1),N(es.Sliding.Resistance/es.Sliding.GammaR,1),"kN/m"),
+            new("Sottospinta",N(ss.Uplift,1),N(es.Uplift,1),"kN/m")];
+    }
+    /// <summary>Tabella completa del motore rivisto: statica con la combinazione propria di ogni verifica, sisma la più gravosa.</summary>
+    private static IReadOnlyList<WallResultRow> DesignRows(WallDesignResult r)
+    {
+        var so=r.StaticOverturning; var ss=r.StaticSliding; var eo=r.SeismicOverturning; var es=r.SeismicSliding;
+        return [
+            new("Combinazione · ribaltamento",so.Factors,eo.Name,""),
+            new("Combinazione · scorrimento",ss.Factors,es.Name,""),
+            new("Coefficiente sismico B_H",  "—",N(r.BH,3),"—"),
+            new("kh · kv","—",$"{N(r.Kh,4)} · {N(eo.Kv,4)}","—"),
+            new("θ = atan[kh/(1 ∓ kv)]","—",N(eo.ThetaDegrees,3),"°"),
+            new("KA ribaltamento",N(so.KaOverturning,4),N(eo.KaOverturning,4),"—"),
+            new("KA scorrimento",N(ss.KaSliding,4),N(es.KaSliding,4),"—"),
+            new("KP a valle (δ = 0)",N(ss.Kp,4),N(es.Kp,4),"—"),
+            new("Momento ribaltante di progetto",N(so.OverturningMoment),N(eo.OverturningMoment),"kN·m/m"),
+            new("Momento stabilizzante di progetto",N(so.StabilizingMoment),N(eo.StabilizingMoment),"kN·m/m"),
+            new("γR ribaltamento",N(so.Overturning.GammaR),N(eo.Overturning.GammaR),"—"),
+            new("Ribaltamento · Mstab/(γR·Mrib)",Verdict(so.Overturning),Verdict(eo.Overturning),"—"),
+            new("Spinta del terreno (orizzontale)",N(ss.EarthThrust),N(es.EarthThrust),"kN/m"),
+            new("Spinta del sovraccarico",N(ss.SurchargeThrust),N(es.SurchargeThrust),"kN/m"),
+            new("Spinta dell'acqua a monte",N(ss.WaterBack),N(es.WaterBack),"kN/m"),
+            new("Spinta dell'acqua a valle",N(ss.WaterFront),N(es.WaterFront),"kN/m"),
+            new("Forze d'inerzia",N(ss.Inertia),N(es.Inertia),"kN/m"),
+            new("Sottospinta",N(ss.Uplift),N(es.Uplift),"kN/m"),
+            new("Azione orizzontale di progetto Ed",N(ss.Driving),N(es.Driving),"kN/m"),
+            new("Azione normale di progetto N",N(ss.Normal),N(es.Normal),"kN/m"),
+            new("Resistenza passiva a valle",N(ss.Passive),N(es.Passive),"kN/m"),
+            new("Resistenza di progetto Rd",N(ss.Sliding.Resistance/ss.Sliding.GammaR),N(es.Sliding.Resistance/es.Sliding.GammaR),"kN/m"),
+            new("Scorrimento · Rd/Ed",Verdict(ss.Sliding),Verdict(es.Sliding),"—"),
+            new("Area muro",N(r.Wall.Area),"—","m²"),
+            new("Baricentro muro · x; y",$"{N(r.Wall.Centroid.X)}; {N(r.Wall.Centroid.Y)}","—","m")];
+    }
     private string Report()
     {
-        if(Result is null)throw new InvalidOperationException("Calcolare prima i risultati.");
-        var sb=new StringBuilder($"TA-Calcolo · {Title}\nCalcolato il {DateTime.Now:dd/MM/yyyy HH:mm}\n\nINPUT\n");
+        if(!HasResults)throw new InvalidOperationException("Calcolare prima i risultati.");
+        var sb=new StringBuilder($"TA-Calcolo · {Title}\nCalcolato il {DateTime.Now:dd/MM/yyyy HH:mm}\nMotore: {Engines.Single(e=>e.Engine==Engine).Label}\n\nINPUT\n");
         foreach(var p in WallParameters.All)sb.AppendLine($"{p.Label}: {ByKey[p.Key].Value} {p.Unit}");
         sb.AppendLine("\nRISULTATI PER METRO DI SVILUPPO\nGrandezza\tStatica\tSisma\tUnità");
         foreach(var row in Results)sb.AppendLine($"{row.Label}\t{row.Static}\t{row.Seismic}\t{row.Unit}");

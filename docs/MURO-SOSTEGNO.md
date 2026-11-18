@@ -22,6 +22,29 @@ La scheda **Note di calcolo** riporta le limitazioni applicabili. Il modulo cons
 
 Punto e virgola decimale sono accettati. Gli input errati non sono rimpiazzati da valori predefiniti. Un file incompleto, di un altro modulo o non valido viene rifiutato prima di modificare il progetto aperto.
 
+## Motore rivisto NTC 2018 (predefinito)
+
+Nella Sintesi si sceglie il **motore di calcolo**: *Rivisto NTC 2018* (predefinito) oppure *Originale (confronto)*. Il motore originale resta identico al sorgente e coperto dalle fixture di parità; il rivisto (`WallDesignCalculator`, `src/STA.MuroSostegno.Core/WallDesign.cs`) corregge le anomalie emerse dall'analisi:
+
+| # | Anomalia del sorgente | Correzione nel motore rivisto |
+|---|---|---|
+| 1 | Spinta allo scorrimento su H1, al ribaltamento sull'altezza fino alla base del dente | Stessa altezza per entrambe: dalla superficie a monte in x = Bf alla base del dente |
+| 2 | Acqua nello scorrimento come `(Qf − y)·10/2`, sommata anche alla resistenza; Qfa ignorata | Spinte idrostatiche γw·h²/2 a monte (Qfp) e a valle (Qfa), sottospinta con quota piezometrica lineare fra valle e monte, γ′ = γ − γw sotto falda |
+| 3 | Resistenza "Q" pari alla spinta del sovraccarico | Il sovraccarico è solo un'azione (spinta); il suo peso non è portato in conto |
+| 4 | KP con la pendenza a monte Itp | KP con la pendenza a valle It (negativa per la passiva), δ = 0 |
+| 5 | Poligono immerso chiuso sull'origine, peso immerso con segno errato | Nessun poligono immerso: l'acqua agisce come pressioni sul contorno |
+| 6 | G moltiplicato per g (Vs scalato di √g); B_H discontinuo (0,35/0,4) | H/(Vs·Tm) senza g; B_H continuo da 1 a 0,4 (da confermare sulla fonte) |
+| 7 | Nessuna inerzia, nessun kv | Inerzie kh·W di muro e terreni, kv = ±0,5·kh con θ = atan[kh/(1 ∓ kv)]; si riporta il verso più gravoso |
+| 8 | Coefficienti A1 anche in sisma, terreno come G2 | Ribaltamento EQU+M2 (γR 1,15), scorrimento A1+M1+R3 (γR 1,1), sisma γ = 1, M1 (γR 1,0); terreno e acqua come G1 |
+
+**Ribaltamento** attorno al piede anteriore: per ogni azione il coefficiente è scelto in base all'effetto netto; la componente verticale della spinta (tan δ) agisce in x = Bf. Verifica: Mstab,d/(γR·Mrib,d) ≥ 1.
+
+**Scorrimento** sul piano orizzontale per la base del dente (il blocco include il terreno fra base e piano): Rd = N·tan φ′d/γR + 50 % della passiva a valle/γR,valle (1,4 statica, 1,2 sisma); verifica Rd/Ed ≥ 1.
+
+**Limiti:** formule di spinta (F.1)–(F.4) del sorgente sul piano virtuale verticale, interpretate come componente orizzontale; distribuzione della spinta sismica uguale alla statica; nessuna sovrappressione idrodinamica; c′ non utilizzata; esclusi capacità portante, stabilità globale, cedimenti e armature. Il valore di esempio Vs = 0,209 (m/s nel sorgente, probabilmente km/s) porta B_H al minimo: inserire Vs in m/s.
+
+Test: caso di Rankine con formule chiuse per ribaltamento EQU+M2 e scorrimento A1+M1+R3; falda simmetrica (spinte d'acqua e sottospinta in forma chiusa); sovraccarico solo come azione; KP con It; B_H continuo; domini sismici non validi rifiutati.
+
 ## Provenienza e ambito numerico
 
 Sorgente consegnato: `TA-MuroDiSostegno-master.zip`, repository di origine `robetass/TA-MuroDiSostegno`.

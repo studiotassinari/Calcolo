@@ -60,6 +60,43 @@ internal static class RetainingWallTests
             d["Qfp"]=-1;d["Vs"]=209;r=WallCalculator.Calculate(d);Check(!r.Notes.Any(n=>n.Contains("anomalia")||n.Contains("0,209")),"Note non aggiornate");
             Check(r.Pressures.Count==4,"Diagramma incompleto");Near(r.Pressures[0].Value,r.Static.Active*d["Sovraccarico"]);
         });
+        test("Muro rivisto · caso Rankine: spinte, ribaltamento EQU+M2 e scorrimento A1+M1+R3 calcolati a mano",()=>
+        {
+            // Terreno orizzontale, δ = 0, niente dente, acqua, sovraccarico e sisma: formule chiuse indipendenti dal motore.
+            var d=WallParameters.Defaults();d["Delta_T_M"]=0;d["Itp"]=0;d["It"]=0;d["PGA"]=0;d["Sovraccarico"]=0;d["Qfp"]=-10;d["Qfa"]=-10;d["H4"]=0;
+            var r=WallDesignCalculator.Calculate(d);var g=r.Geometry;const double gamma=19;
+            var h=d["H2"]+d["Htp"];var hp=d["H2"]+d["Hta"]; // spinta da y = 6,6 a 0; passiva da y = 1,6 a 0
+            var phiD=Math.Atan(Math.Tan(Math.PI/6)/1.25);var kaD=(1-Math.Sin(phiD))/(1+Math.Sin(phiD));
+            var sumWx=r.Wall.Area*25*r.Wall.Centroid.X+r.FrontSoil.Area*gamma*r.FrontSoil.Centroid.X+r.BackSoil.Area*gamma*r.BackSoil.Centroid.X;
+            var o=r.StaticOverturning;Near(o.KaOverturning,kaD);Near(o.OverturningMoment,1.1*kaD*gamma*Math.Pow(h,3)/6);Near(o.StabilizingMoment,.9*sumWx);
+            Near(o.Overturning.Ratio!.Value,.9*sumWx/(1.15*1.1*kaD*gamma*Math.Pow(h,3)/6));
+            var s=r.StaticSliding;Near(s.KaSliding,1d/3);Near(s.Kp,3);
+            var weight=r.Wall.Area*25+(r.FrontSoil.Area+r.BackSoil.Area)*gamma;
+            Near(s.Driving,1.3*gamma*h*h/6);Near(s.Normal,weight);Near(s.Passive,3*gamma*hp*hp/2);
+            Near(s.Sliding.Resistance,weight*Math.Tan(Math.PI/6)+.5*s.Passive*1.1/1.4);
+            Check(r.SeismicSliding.Kh==0&&Math.Abs(r.SeismicSliding.Driving-gamma*h*h/6)<1e-9,"Sisma nullo non coincidente con la statica a γ = 1");
+        });
+        test("Muro rivisto · acqua idrostatica, sovraccarico come sola azione, KP con pendenza a valle, sisma",()=>
+        {
+            var d=WallParameters.Defaults();d["Delta_T_M"]=0;d["Itp"]=0;d["It"]=0;d["PGA"]=0;d["Sovraccarico"]=0;d["H4"]=0;d["Qfp"]=1;d["Qfa"]=1;
+            var r=WallDesignCalculator.Calculate(d).StaticSliding;const double gw=WallDesignCalculator.GammaW;
+            // Falda a quota 1 m su entrambi i lati, base a y = 0: spinte d'acqua γw·h²/2 uguali e sottospinta uniforme γw·h·Bf.
+            Near(r.WaterBack,gw/2);Near(r.WaterFront,gw/2);Near(r.Uplift,gw*1*4.5);
+            // Terreno a monte: γ·(6,6−1) sopra falda + γ′ sotto falda.
+            var sigma=19*5.6;Near(r.EarthThrust,(sigma*5.6/2+sigma*1+(19-gw)*.5)/3);
+            // Il sovraccarico aumenta la spinta ma non la resistenza (correzione dell'anomalia del sorgente).
+            var noQ=WallDesignCalculator.Calculate(d).StaticSliding;d["Sovraccarico"]=10;var withQ=WallDesignCalculator.Calculate(d).StaticSliding;
+            Near(withQ.SurchargeThrust,10*6.6/3);Check(withQ.Driving>noQ.Driving&&withQ.Sliding.Resistance>=noQ.Sliding.Resistance,"Sovraccarico trattato come resistenza");
+            // KP dipende dalla pendenza a valle It, non da quella a monte Itp.
+            d["Itp"]=20;var kpBack=WallDesignCalculator.Calculate(d).StaticSliding.Kp;d["It"]=20;var kpFront=WallDesignCalculator.Calculate(d).StaticSliding.Kp;
+            Near(kpBack,3);Check(kpFront<3,"KP non ridotto dalla pendenza a valle");
+            // Sisma: kv in entrambi i versi, inerzie presenti; αH senza fattore g e B_H continuo.
+            d=WallParameters.Defaults();d["Vs"]=200;var s=WallDesignCalculator.Calculate(d);
+            var ratio=6/(.3*200);Near(s.BH,1-(1-.4)/(.4-.05)*(ratio-.05));Near(s.Kh,s.BH*.2);
+            Check(s.Cases.Count(c=>c.Kv!=0)==2&&s.SeismicSliding.Inertia>0,"Combinazioni sismiche incomplete");
+            d["Vs"]=6/(.3*.4);Near(WallDesignCalculator.SeismicCoefficient(d).BH,.4);d["Vs"]=6/(.3*.3999999);Check(Math.Abs(WallDesignCalculator.SeismicCoefficient(d).BH-.4)<1e-5,"B_H discontinuo");
+            d["PGA"]=3;Reject(()=>WallDesignCalculator.Calculate(d));
+        });
         test("Muro · grip del disegno: posizione ↔ parametri, aggancio e rifiuto geometrie non ammesse",()=>
         {
             var d=WallParameters.Defaults();var g=WallGeometry.Create(d);

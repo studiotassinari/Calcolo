@@ -34,9 +34,10 @@ public sealed class RetainingWallDrawing : FrameworkElement
 
     public RetainingWallDrawing() { Focusable=true; FocusVisualStyle=null; }
     public static readonly DependencyProperty GeometryProperty = DependencyProperty.Register(nameof(Geometry),typeof(WallGeometry),typeof(RetainingWallDrawing),new FrameworkPropertyMetadata(null,FrameworkPropertyMetadataOptions.AffectsRender));
-    public static readonly DependencyProperty ResultProperty = DependencyProperty.Register(nameof(Result),typeof(WallResult),typeof(RetainingWallDrawing),new FrameworkPropertyMetadata(null,FrameworkPropertyMetadataOptions.AffectsRender));
+    /// <summary>Diagramma delle pressioni del motore selezionato (quote assolute in m, valori in kPa).</summary>
+    public static readonly DependencyProperty PressuresProperty = DependencyProperty.Register(nameof(Pressures),typeof(IReadOnlyList<WallPressurePoint>),typeof(RetainingWallDrawing),new FrameworkPropertyMetadata(null,FrameworkPropertyMetadataOptions.AffectsRender));
     public WallGeometry? Geometry {get=>(WallGeometry?)GetValue(GeometryProperty);set=>SetValue(GeometryProperty,value);}
-    public WallResult? Result {get=>(WallResult?)GetValue(ResultProperty);set=>SetValue(ResultProperty,value);}
+    public IReadOnlyList<WallPressurePoint>? Pressures {get=>(IReadOnlyList<WallPressurePoint>?)GetValue(PressuresProperty);set=>SetValue(PressuresProperty,value);}
     private static Brush Color(string value) => new SolidColorBrush((System.Windows.Media.Color)ColorConverter.ConvertFromString(value));
     private static readonly Brush Navy=Color("#192845"),Teal=Color("#135F6E"),Water=Color("#226BA0"),Amber=Color("#A35B18");
     private static string N(double value) => value.ToString("0.##",CultureInfo.GetCultureInfo("it-IT"));
@@ -100,10 +101,9 @@ public sealed class RetainingWallDrawing : FrameworkElement
         var tooth=Map(g.Wall[12]);Text("H4 "+N(g.Wall[13].Y-g.Wall[12].Y),tooth.X-58,tooth.Y+5,Navy,10);
         var crest=Map(g.Wall[6]);Text("Terreno a monte",crest.X+12,crest.Y+18,Color("#7B6341"),10);
         DrawGrips(dc,g,v,Text);
-        if(Result is {} result)
+        if(Pressures is {} rows)
         {
-            // Diagramma storico: σ = KA (γ z + q). I valori derivano dagli input del risultato, non da campi modificati.
-            var rows=result.Pressures;
+            // Diagramma statico σ = KA (σ′v + q) del motore selezionato, aggiornato a ogni ricalcolo.
             if(rows.Count>0 && rows.Max(p=>p.Value)>0)
             {
                 var x=Math.Min(width-86,Map(new(b+.35,0)).X);var max=rows.Max(p=>p.Value);
