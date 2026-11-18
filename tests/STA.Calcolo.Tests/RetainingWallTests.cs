@@ -97,6 +97,38 @@ internal static class RetainingWallTests
             d["Vs"]=6/(.3*.4);Near(WallDesignCalculator.SeismicCoefficient(d).BH,.4);d["Vs"]=6/(.3*.3999999);Check(Math.Abs(WallDesignCalculator.SeismicCoefficient(d).BH-.4)<1e-5,"B_H discontinuo");
             d["PGA"]=3;Reject(()=>WallDesignCalculator.Calculate(d));
         });
+        test("Muro rivisto · pressione sul terreno di fondazione (Navier e base parzializzata)",()=>
+        {
+            // Carico verticale di 100 kN/m su base B = 3 m, a varie distanze dal piede: valori in forma chiusa.
+            WallBasePressure At(double x)=>WallDesignCalculator.BasePressure([new("N","G",0,-100,x,1)],3);
+            var c=At(1.5);Near(c.SigmaToe!.Value,100d/3);Near(c.SigmaHeel!.Value,100d/3);Check(c.InCore,"Carico centrato fuori nocciolo");
+            var k=At(1);Near(k.SigmaToe!.Value,200d/3);Near(k.SigmaHeel!.Value,0);Check(k.InCore,"Limite del nocciolo");
+            var t=At(.5);Near(t.SigmaToe!.Value,2*100/1.5);Near(t.ContactLength,1.5);Check(!t.InCore,"Parzializzazione non rilevata");
+            var h=At(2.5);Near(h.SigmaHeel!.Value,2*100/1.5);Near(h.SigmaToe!.Value,0);
+            Check(At(-.1).SigmaToe is null&&WallDesignCalculator.BasePressure([new("T","G",0,50,1,1)],3).SigmaToe is null,"Risultante fuori base accettata");
+            // Una forza orizzontale verso valle sposta la risultante verso il piede: u = x − H·y/N.
+            var shifted=WallDesignCalculator.BasePressure([new("N","G",0,-100,1.5,1),new("H","G",-20,0,3,2.5)],3);Near(shifted.U,1.5-20*2.5/100);
+        });
+        test("Muro rivisto · forze e diagrammi coerenti con le verifiche",()=>
+        {
+            var d=WallParameters.Defaults();d["Vs"]=200;var r=WallDesignCalculator.Calculate(d);
+            foreach(var c in r.Cases)
+            {
+                // Con il dente sul tallone il piano di spinta del ribaltamento coincide con quello dello scorrimento.
+                var earth=c.Forces.Single(f=>f.Name=="Spinta del terreno");Near(-earth.Fx,c.GammaBaseG*c.EarthThrust);
+                Near(earth.Fy,earth.Fx*Math.Tan(Math.Atan(Math.Tan(15*Math.PI/180)/(c.Factors=="EQU + M2"?1.25:1))));
+                // Area del diagramma a monte (lineare a tratti) = spinta del terreno + sovraccarico.
+                var a=c.Diagrams.Active;double area=0;for(var i=0;i+1<a.Count;i++)area+=(a[i].Value+a[i+1].Value)/2*(a[i].Elevation-a[i+1].Elevation);
+                Near(area,c.EarthThrust+c.SurchargeThrust);
+                var p=c.Diagrams.Passive;double passive=0;for(var i=0;i+1<p.Count;i++)passive+=(p[i].Value+p[i+1].Value)/2*(p[i].Elevation-p[i+1].Elevation);
+                Near(passive,c.Passive);
+                // La pressione di contatto equilibra la risultante verticale delle forze esposte.
+                var b=c.Diagrams.Base;Near(b.N,-c.Forces.Sum(f=>f.Fy));
+                if(b.SigmaToe is double s0&&b.SigmaHeel is double s1&&b.InCore)Near((s0+s1)/2*b.B,b.N);
+            }
+            Check(r.Service.Kh==0&&r.Service.GammaBaseG==1&&r.StaticBase.GammaBaseG==1.3&&r.SeismicBase.Kh>0,"Combinazioni della pressione sul terreno errate");
+            Check(r.Service.Forces.Any(f=>f.Name=="Sottospinta")&&r.SeismicSliding.Forces.Any(f=>f.Kind=="E"),"Forze principali mancanti");
+        });
         test("Muro · grip del disegno: posizione ↔ parametri, aggancio e rifiuto geometrie non ammesse",()=>
         {
             var d=WallParameters.Defaults();var g=WallGeometry.Create(d);
@@ -109,6 +141,9 @@ internal static class RetainingWallTests
             // Spostamento con aggancio a 5 cm lungo il solo asse del grip.
             var h1=WallEditing.Drag(d,"H1",new(9,7.62),.05)!;Near(h1["H1"],7);Check(h1.Count(p=>p.Value!=d[p.Key])==1,"H1 modifica altri parametri");
             var s2=WallEditing.Drag(d,"S2",new(2.03,99),.05)!;Near(s2["S2"],.85);
+            // H1 sotto il terreno a monte (Htp = 6 m): il terreno scende con la sommità invece di bloccare il grip.
+            var low=WallEditing.Drag(d,"H1",new(1,.6+4.5),.05)!;Near(low["H1"],4.5);Near(low["Htp"],4.5);Near(low["Hta"],1);
+            var lower=WallEditing.Drag(d,"H1",new(1,.6+.8),.05)!;Near(lower["H1"],.8);Near(lower["Htp"],.8);Near(lower["Hta"],.8);
             // Bf trascina con sé il dente quando è allineato al bordo posteriore (Xd + S3 = Bf nei dati di esempio).
             var bf=WallEditing.Drag(d,"Bf",new(5,0),.05)!;Near(bf["Bf"],5);Near(bf["Xd"],4.5);
             // H2 = H3: la base resta orizzontale.

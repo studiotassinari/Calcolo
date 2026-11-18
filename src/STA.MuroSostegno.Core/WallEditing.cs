@@ -30,7 +30,7 @@ public static class WallEditing
     /// <summary>Elenco dei grip disponibili, nell'ordine in cui vengono disegnati e cercati dal mouse.</summary>
     public static IReadOnlyList<WallGrip> Grips { get; } = [
         // Paramento: altezza in sommità, spessore in testa e spiombamento del lato a valle.
-        new("H1","H1","m",WallGripAxis.Vertical,g=>Mid(g.Wall[4],g.Wall[5]),(d,p)=>One("H1",M(p.Y-d["H2"]))),
+        new("H1","H1","m",WallGripAxis.Vertical,g=>Mid(g.Wall[4],g.Wall[5]),ApplyH1),
         new("S1","S1","m",WallGripAxis.Horizontal,g=>g.Wall[5],(d,p)=>One("S1",M(p.X-d["Ba"]-d["Ds1"]))),
         new("Ds1","Ds1","m",WallGripAxis.Horizontal,g=>g.Wall[4],(d,p)=>One("Ds1",M(p.X-d["Ba"]))),
         // Base del paramento: lo sporto Ba sposta il muro, S2 ne varia lo spessore alla base.
@@ -53,6 +53,19 @@ public static class WallEditing
         new("Qfa","Qfa","m",WallGripAxis.Vertical,g=>new WallPoint(-.35,g.FrontWater),(d,p)=>One("Qfa",M(p.Y))),
         new("Qfp","Qfp","m",WallGripAxis.Vertical,g=>new WallPoint(g.Wall[8].X+.35,g.BackWater),(d,p)=>One("Qfp",M(p.Y)))
     ];
+
+    /// <summary>
+    /// Abbassando la sommità sotto il terreno, le altezze Htp e Hta (che non possono superare H1)
+    /// scendono insieme al muro: il trascinamento resta continuo invece di essere rifiutato.
+    /// </summary>
+    private static IReadOnlyDictionary<string,double> ApplyH1(IReadOnlyDictionary<string,double> d,WallPoint p)
+    {
+        var h1=M(p.Y-d["H2"]); var result=One("H1",h1);
+        if (h1<=0) return result; // H1 non positiva: la validazione rifiuta il trascinamento
+        if (d["Htp"]>h1) result["Htp"]=h1;
+        if (d["Hta"]>h1) result["Hta"]=h1;
+        return result;
+    }
 
     private static WallPoint Mid(WallPoint a,WallPoint b) => new((a.X+b.X)/2,(a.Y+b.Y)/2);
 

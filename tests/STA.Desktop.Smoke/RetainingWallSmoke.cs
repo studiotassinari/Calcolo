@@ -39,6 +39,15 @@ internal static class RetainingWallSmoke
             Check(vm.Engine==WallEngine.Rivisto&&vm.Design is not null&&vm.Checks.Count==2&&vm.Pressures is not null,"Motore rivisto non attivo");
             vm.Engine=WallEngine.Originale;Check(vm.HasResults&&vm.Checks.Count==1&&vm.Notes.Contains(WallCalculator.Scope),"Motore originale non selezionabile");
             vm.Engine=WallEngine.Rivisto;Check(vm.HasResults&&vm.Notes.Contains(WallDesignCalculator.Scope),"Ritorno al motore rivisto non riuscito");
+            // Forze e diagrammi della combinazione disegnata; relazione con figure prodotte dal controllo WPF.
+            Check(vm.DrawingForces is {Count:>3}&&vm.DrawingDiagrams is not null&&vm.DrawingCases.Count==5,"Forze o diagrammi assenti");
+            vm.DrawingCase=vm.DrawingCases[1];Check(vm.DrawingDiagrams!.Base.N>0,"Combinazione del disegno non applicata");
+            files.NextSave="wall-report.pdf";vm.PdfReportCommand.Execute(null);Check(files.Binary.TryGetValue("wall-report.pdf",out var pdf)&&pdf.Length>50000,"Relazione PDF mancante: "+vm.Status);
+            files.NextSave="wall-report.docx";vm.WordReportCommand.Execute(null);Check(files.Binary.TryGetValue("wall-report.docx",out var docx)&&docx.Length>50000,"Relazione Word mancante: "+vm.Status);
+            // Figure reali della relazione salvate fra gli artefatti della CI per il controllo visivo.
+            System.IO.Directory.CreateDirectory("artifacts");
+            foreach(var (key,png) in STA.Calcolo.Desktop.Services.RetainingWallReportService.Figures(vm.Design!))
+            {Check(png.Length>20000,"Figura della relazione vuota: "+key);System.IO.File.WriteAllBytes($"artifacts/muro-figura-{key}.png",png);}
             // Grip: trascinamento della sommità a quota 7,62 m → H1 = 7,6 − H2 = 7 m con passo 5 cm.
             vm.GripCommand.Execute(new WallGripDrag("H1",new(1,7.62),.05));Check(vm.ByKey["H1"].Value=="7"&&vm.HasResults&&Math.Abs(vm.Result!.Geometry.Wall[4].Y-7.6)<1e-10,"Grip H1 non applicato");
             vm.GripCommand.Execute(new WallGripDrag("Bf",new(.5,0),.05));Check(vm.ByKey["Bf"].Value=="4,5"&&vm.HasResults,"Grip non ammesso ha modificato il progetto");

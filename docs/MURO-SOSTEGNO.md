@@ -45,6 +45,37 @@ Nella Sintesi si sceglie il **motore di calcolo**: *Rivisto NTC 2018* (predefini
 
 Test: caso di Rankine con formule chiuse per ribaltamento EQU+M2 e scorrimento A1+M1+R3; falda simmetrica (spinte d'acqua e sottospinta in forma chiusa); sovraccarico solo come azione; KP con It; B_H continuo; domini sismici non validi rifiutati.
 
+## Forze, diagrammi e pressione sul terreno
+
+Sopra il disegno si sceglie la **combinazione** da rappresentare (esercizio caratteristica, EQU, A1, sisma con kv verso l'alto o verso il basso) e si attivano **Forze** e **Diagrammi delle pressioni**:
+
+- frecce proporzionali alle azioni di progetto della combinazione: pesi (Wm, Wv, Wt), spinte del terreno, del sovraccarico e dell'acqua (Sa, Sq, Sw), sottospinta (U), inerzie sismiche (kh·W) e reazione del terreno N;
+- diagrammi: spinta attiva σa e pressione dell'acqua u sul piano x = Bf, resistenza passiva σp sul piano x = 0, pressione di contatto sul terreno di fondazione sotto la base.
+
+**Pressione sul terreno di fondazione** (`WallDesignCalculator.BasePressure`): distribuzione lineare con terreno non reagente a trazione. La risultante verticale N, al netto della sottospinta, agisce a distanza u = −ΣMz/N dal piede, con eccentricità e = B/2 − u. Per |e| ≤ B/6 si ha σ = N/B·(1 ± 6e/B); oltre il nocciolo la base è parzializzata, con σmax = 2N/(3u). Combinazioni: caratteristica (SLE), A1 con permanenti ×1,3 e variabili ×1,5 (SLU), sisma più gravosa. La capacità portante non è verificata.
+
+**Grip H1:** abbassando la sommità sotto il terreno, Htp e Hta scendono insieme a H1 e il trascinamento continua.
+
+## Relazione di calcolo
+
+**Relazione Word** e **Relazione PDF** (motore rivisto) producono 13 pagine A4:
+
+1. inquadramento normativo (NTC 2018, Circolare 2019) e coefficienti parziali;
+2. geometria con la figura della sezione e dello schema di calcolo (piano di spinta virtuale, piano passivo, piano di scorrimento, polo di ribaltamento, nocciolo);
+3. dati dei materiali, del terreno e dell'azione sismica;
+4. coefficiente sismico;
+5. coefficienti di spinta;
+6. azioni statiche con la figura delle forze e dei diagrammi;
+7. ribaltamento;
+8. schema delle azioni rispetto al polo di ribaltamento (figura);
+9. scorrimento;
+10. pressione sul terreno;
+11. diagrammi delle pressioni sul muro e sul terreno (figura);
+12. azioni sismiche con figura;
+13. riepilogo delle verifiche e limiti.
+
+Le formule sono numerate e hanno la sostituzione numerica. Sono scritte in una notazione strutturata (`ReportMath`: frazioni, radici, apici, pedici): nel Word diventano equazioni native di Office modificabili, nel PDF sono impaginate con righe di frazione proporzionate al contenuto. Le figure sono generate dal disegno della finestra (`RetainingWallReportService`). Il costruttore `RetainingWallReportBuilder` è portabile e testato in `STA.Reporting.Tests` con figure sintetiche. Gli scrittori Word e PDF supportano ora figure PNG (`ReportFigure`).
+
 ## Provenienza e ambito numerico
 
 Sorgente consegnato: `TA-MuroDiSostegno-master.zip`, repository di origine `robetass/TA-MuroDiSostegno`.

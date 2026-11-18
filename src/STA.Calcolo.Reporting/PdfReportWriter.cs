@@ -23,14 +23,38 @@ public static class PdfReportWriter
                 y+=Text(g,content.Title,Margin,y,Width,17,true,Navy)+6;
                 y+=Text(g,report.Title+" · "+report.Created.ToString("dd/MM/yyyy"),Margin,y,Width,9,false,Muted)+14;
                 foreach(var table in content.Tables){y+=Text(g,table.Title,Margin,y,Width,12,true,Navy)+8;y=Table(g,table,Margin,y,Width)+16;}
+                // Figure a tutta larghezza: l'altezza segue il rapporto d'aspetto del PNG.
+                foreach(var figure in content.Figures??[])
+                {
+                    y+=Text(g,figure.Title,Margin,y,Width,12,true,Navy)+6;
+                    using var figureStream=new MemoryStream(figure.Png);using var image=XImage.FromStream(figureStream);
+                    var figureWidth=Width*Math.Clamp(figure.Scale,.2,1);var figureX=Margin+(Width-figureWidth)/2;
+                    var figureHeight=figureWidth/figure.AspectRatio;Ensure(y+figureHeight);
+                    g.DrawImage(image,figureX,y,figureWidth,figureHeight);g.DrawRectangle(new XPen(Line,.5),figureX,y,figureWidth,figureHeight);y+=figureHeight+4;
+                    y+=Text(g,figure.Caption,Margin,y,Width,8.5,false,Muted)+12;
+                }
                 foreach(var equation in content.Equations??[])
                 {
                     y+=Text(g,equation.Title,Margin,y,Width,11,true,Navy)+12;
+                    if(equation.Formula is {} formula)
+                    {
+                        // Formula impaginata: frazioni centrate con riga lunga quanto il termine più largo.
+                        y+=ReportMath.DrawPdf(g,formula,Margin+12,y,Width-24,11,Navy)+10;
+                        y+=Text(g,equation.Explanation,Margin,y,Width,9,false,Muted)+8;
+                        if(equation.Substitution.Length>0)y+=Text(g,equation.Substitution,Margin,y,Width,9,true,Navy)+8;
+                        y+=14;continue;
+                    }
                     double leftWidth=90, formulaWidth=Width-leftWidth;
                     double numeratorHeight=Text(g,equation.Numerator,Margin+leftWidth,y,formulaWidth,10,false,Navy);
                     Text(g,equation.Left+" =",Margin,y+(equation.Denominator.Length>0?numeratorHeight:0),leftWidth-8,11,true,Navy);
                     y+=numeratorHeight+5;
-                    if(equation.Denominator.Length>0){g.DrawLine(new XPen(Navy,.7),Margin+leftWidth,y,Margin+Width,y);y+=5;y+=Text(g,equation.Denominator,Margin+leftWidth,y,formulaWidth,10,false,Navy);}
+                    if(equation.Denominator.Length>0)
+                    {
+                        // Riga di frazione lunga quanto il termine più largo (non più a tutta larghezza).
+                        var lineFont=new XFont("Arial",10,XFontStyleEx.Regular);
+                        var lineWidth=Math.Min(formulaWidth,Math.Max(g.MeasureString(equation.Numerator,lineFont).Width,g.MeasureString(equation.Denominator,lineFont).Width)+8);
+                        g.DrawLine(new XPen(Navy,.7),Margin+leftWidth,y,Margin+leftWidth+lineWidth,y);y+=5;y+=Text(g,equation.Denominator,Margin+leftWidth,y,formulaWidth,10,false,Navy);
+                    }
                     y+=12;y+=Text(g,equation.Explanation,Margin,y,Width,9,false,Muted)+8;
                     if(equation.Substitution.Length>0)y+=Text(g,equation.Substitution,Margin,y,Width,9,true,Navy)+8;
                     y+=14;

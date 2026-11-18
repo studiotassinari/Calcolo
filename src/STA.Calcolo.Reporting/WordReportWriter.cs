@@ -17,11 +17,15 @@ public static class WordReportWriter
             void Entry(string name,string text){using var writer=new StreamWriter(zip.CreateEntry(name).Open(),new UTF8Encoding(false));writer.Write(text);}
             Entry("[Content_Types].xml","<Types xmlns=\"http://schemas.openxmlformats.org/package/2006/content-types\"><Default Extension=\"rels\" ContentType=\"application/vnd.openxmlformats-package.relationships+xml\"/><Default Extension=\"xml\" ContentType=\"application/xml\"/><Default Extension=\"png\" ContentType=\"image/png\"/><Override PartName=\"/word/document.xml\" ContentType=\"application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml\"/><Override PartName=\"/word/styles.xml\" ContentType=\"application/vnd.openxmlformats-officedocument.wordprocessingml.styles+xml\"/><Override PartName=\"/word/footer.xml\" ContentType=\"application/vnd.openxmlformats-officedocument.wordprocessingml.footer+xml\"/></Types>");
             Entry("_rels/.rels","<Relationships xmlns=\"http://schemas.openxmlformats.org/package/2006/relationships\"><Relationship Id=\"rDoc\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument\" Target=\"word/document.xml\"/></Relationships>");
-            Entry("word/_rels/document.xml.rels","<Relationships xmlns=\"http://schemas.openxmlformats.org/package/2006/relationships\"><Relationship Id=\"rLogo\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/image\" Target=\"media/logo.png\"/><Relationship Id=\"rStyles\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles\" Target=\"styles.xml\"/><Relationship Id=\"rFooter\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/footer\" Target=\"footer.xml\"/></Relationships>");
+            // Le figure delle pagine diventano immagini incorporate, numerate nell'ordine del documento.
+            var figures=document.Pages.SelectMany(page=>page.Figures??[]).ToList();
+            var figureRelations=string.Concat(figures.Select((_,i)=>$"<Relationship Id=\"rFig{i+1}\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/image\" Target=\"media/figure{i+1}.png\"/>"));
+            Entry("word/_rels/document.xml.rels","<Relationships xmlns=\"http://schemas.openxmlformats.org/package/2006/relationships\"><Relationship Id=\"rLogo\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/image\" Target=\"media/logo.png\"/><Relationship Id=\"rStyles\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles\" Target=\"styles.xml\"/><Relationship Id=\"rFooter\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/footer\" Target=\"footer.xml\"/>"+figureRelations+"</Relationships>");
+            for(int i=0;i<figures.Count;i++)using(var figureStream=zip.CreateEntry($"word/media/figure{i+1}.png").Open())figureStream.Write(figures[i].Png);
             using(var stream=zip.CreateEntry("word/media/logo.png").Open())stream.Write(logo);
             Entry("word/styles.xml",$"<w:styles xmlns:w=\"{W}\"><w:docDefaults><w:rPrDefault><w:rPr><w:rFonts w:ascii=\"Arial\" w:hAnsi=\"Arial\"/><w:sz w:val=\"18\"/><w:lang w:val=\"it-IT\"/></w:rPr></w:rPrDefault></w:docDefaults><w:style w:type=\"paragraph\" w:styleId=\"Title\"><w:name w:val=\"Title\"/><w:rPr><w:b/><w:sz w:val=\"32\"/><w:color w:val=\"192845\"/></w:rPr></w:style></w:styles>");
             Entry("word/footer.xml",$"<w:ftr xmlns:w=\"{W}\"><w:p><w:pPr><w:jc w:val=\"right\"/></w:pPr>{Run("TA-Calcolo · Tassinari Associati · pagina ",16,false,"526778")}<w:fldSimple w:instr=\"PAGE\"/></w:p></w:ftr>");
-            var body=new StringBuilder();int index=0;
+            var body=new StringBuilder();int index=0;int figureIndex=0;
             foreach(var page in document.Pages)
             {
                 if(index>0)body.Append("<w:p><w:r><w:br w:type=\"page\"/></w:r></w:p>");
@@ -29,12 +33,20 @@ public static class WordReportWriter
                 body.Append($"<w:p><w:pPr><w:pStyle w:val=\"Title\"/><w:spacing w:after=\"80\"/></w:pPr>{Run(page.Title,30,true)}</w:p>");
                 body.Append(P(document.Title+" · "+document.Created.ToString("dd/MM/yyyy"),17,false,"","526778",100));
                 foreach(var table in page.Tables){body.Append(P(table.Title,22,true,"","192845",80));body.Append(Table(table));body.Append(P("",4,false,"","192845",100));}
+                foreach(var figure in page.Figures??[])
+                {
+                    body.Append(P(figure.Title,22,true,"","192845",80));
+                    body.Append(Figure(++figureIndex,figure.AspectRatio,figure.Scale));
+                    body.Append(P(figure.Caption,16,false,"","526778",140));
+                }
                 foreach(var equation in page.Equations??[])
                 {
                     body.Append(P(equation.Title,22,true,"EAF0F1"));
                     string MathRun(string value)=>"<m:r><m:t>"+E(value)+"</m:t></m:r>";
                     string expression=equation.Denominator.Length==0?MathRun(equation.Numerator):"<m:f><m:num>"+MathRun(equation.Numerator)+"</m:num><m:den>"+MathRun(equation.Denominator)+"</m:den></m:f>";
-                    body.Append("<w:p><m:oMathPara xmlns:m=\"http://schemas.openxmlformats.org/officeDocument/2006/math\"><m:oMath>"+MathRun(equation.Left+" = ")+expression+"</m:oMath></m:oMathPara></w:p>");
+                    // Con la notazione strutturata l'intera equazione è matematica nativa di Word (frazioni, radici, indici).
+                    var math=equation.Formula is {} formula?ReportMath.Omml(formula):MathRun(equation.Left+" = ")+expression;
+                    body.Append("<w:p><m:oMathPara xmlns:m=\"http://schemas.openxmlformats.org/officeDocument/2006/math\"><m:oMath>"+math+"</m:oMath></m:oMathPara></w:p>");
                     body.Append(P(equation.Explanation,18));
                     if(equation.Substitution.Length>0)body.Append(P(equation.Substitution,18,true));
                     body.Append(P("",8));
@@ -77,6 +89,12 @@ public static class WordReportWriter
             s.Append("</w:tr>");rowIndex++;
         }
         return s.Append("</w:tbl>").ToString();
+    }
+    /// <summary>Immagine in linea a tutta larghezza del testo (7,09 in = 6 480 000 EMU) con altezza dal rapporto d'aspetto.</summary>
+    private static string Figure(int number,double aspect,double scale)
+    {
+        long width=(long)(6480000*Math.Clamp(scale,.2,1));long height=(long)(width/aspect);int id=1000+number;
+        return $"<w:p><w:pPr><w:spacing w:after=\"60\"/><w:jc w:val=\"center\"/></w:pPr><w:r><w:drawing><wp:inline xmlns:wp=\"http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing\"><wp:extent cx=\"{width}\" cy=\"{height}\"/><wp:docPr id=\"{id}\" name=\"Figura {number}\"/><a:graphic xmlns:a=\"http://schemas.openxmlformats.org/drawingml/2006/main\"><a:graphicData uri=\"http://schemas.openxmlformats.org/drawingml/2006/picture\"><pic:pic xmlns:pic=\"http://schemas.openxmlformats.org/drawingml/2006/picture\"><pic:nvPicPr><pic:cNvPr id=\"{id}\" name=\"figure{number}.png\"/><pic:cNvPicPr/></pic:nvPicPr><pic:blipFill><a:blip r:embed=\"rFig{number}\"/><a:stretch><a:fillRect/></a:stretch></pic:blipFill><pic:spPr><a:xfrm><a:off x=\"0\" y=\"0\"/><a:ext cx=\"{width}\" cy=\"{height}\"/></a:xfrm><a:prstGeom prst=\"rect\"><a:avLst/></a:prstGeom></pic:spPr></pic:pic></a:graphicData></a:graphic></wp:inline></w:drawing></w:r></w:p>";
     }
     private static string Logo(int id)=>$"<w:p><w:pPr><w:spacing w:after=\"100\"/></w:pPr><w:r><w:drawing><wp:inline xmlns:wp=\"http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing\"><wp:extent cx=\"2000000\" cy=\"427700\"/><wp:docPr id=\"{id}\" name=\"Tassinari Associati\"/><a:graphic xmlns:a=\"http://schemas.openxmlformats.org/drawingml/2006/main\"><a:graphicData uri=\"http://schemas.openxmlformats.org/drawingml/2006/picture\"><pic:pic xmlns:pic=\"http://schemas.openxmlformats.org/drawingml/2006/picture\"><pic:nvPicPr><pic:cNvPr id=\"{id}\" name=\"Logo.png\"/><pic:cNvPicPr/></pic:nvPicPr><pic:blipFill><a:blip r:embed=\"rLogo\"/><a:stretch><a:fillRect/></a:stretch></pic:blipFill><pic:spPr><a:xfrm><a:off x=\"0\" y=\"0\"/><a:ext cx=\"2000000\" cy=\"427700\"/></a:xfrm><a:prstGeom prst=\"rect\"><a:avLst/></a:prstGeom></pic:spPr></pic:pic></a:graphicData></a:graphic></wp:inline></w:drawing></w:r></w:p>";
 }
