@@ -45,3 +45,5 @@ foreach(var (name,p) in new[]{("piu-cerchiature",multi),("esempio",example),("20
     Directory.CreateDirectory("artifacts/reports");File.WriteAllBytes($"artifacts/reports/test-{name}.pdf",pdf);File.WriteAllBytes($"artifacts/reports/test-{name}.docx",docx);
     Console.WriteLine($"PASS relazione {name}: {data.Pages.Count} pagine A4, dati, margini, DOCX modificabile e PDF");
 }
+// Relazione del muro di sostegno (motore rivisto NTC 2018).
+RetainingWallReportChecks.Run(logo,regular,bold);

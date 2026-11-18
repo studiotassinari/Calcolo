@@ -38,8 +38,19 @@ public sealed class RetainingWallDrawing : FrameworkElement
     public static readonly DependencyProperty PressuresProperty = DependencyProperty.Register(nameof(Pressures),typeof(IReadOnlyList<WallPressurePoint>),typeof(RetainingWallDrawing),new FrameworkPropertyMetadata(null,FrameworkPropertyMetadataOptions.AffectsRender));
     public WallGeometry? Geometry {get=>(WallGeometry?)GetValue(GeometryProperty);set=>SetValue(GeometryProperty,value);}
     public IReadOnlyList<WallPressurePoint>? Pressures {get=>(IReadOnlyList<WallPressurePoint>?)GetValue(PressuresProperty);set=>SetValue(PressuresProperty,value);}
+    /// <summary>Forze della combinazione selezionata (motore rivisto): frecce proporzionali all'intensità.</summary>
+    public static readonly DependencyProperty ForcesProperty = DependencyProperty.Register(nameof(Forces),typeof(IReadOnlyList<WallForce>),typeof(RetainingWallDrawing),new FrameworkPropertyMetadata(null,FrameworkPropertyMetadataOptions.AffectsRender));
+    public IReadOnlyList<WallForce>? Forces {get=>(IReadOnlyList<WallForce>?)GetValue(ForcesProperty);set=>SetValue(ForcesProperty,value);}
+    /// <summary>Diagrammi della combinazione selezionata: spinta attiva, acqua, passiva e pressione sul terreno di fondazione.</summary>
+    public static readonly DependencyProperty DiagramsProperty = DependencyProperty.Register(nameof(Diagrams),typeof(WallDiagrams),typeof(RetainingWallDrawing),new FrameworkPropertyMetadata(null,FrameworkPropertyMetadataOptions.AffectsRender));
+    public WallDiagrams? Diagrams {get=>(WallDiagrams?)GetValue(DiagramsProperty);set=>SetValue(DiagramsProperty,value);}
+    public static readonly DependencyProperty ShowForcesProperty = DependencyProperty.Register(nameof(ShowForces),typeof(bool),typeof(RetainingWallDrawing),new FrameworkPropertyMetadata(true,FrameworkPropertyMetadataOptions.AffectsRender));
+    public bool ShowForces {get=>(bool)GetValue(ShowForcesProperty);set=>SetValue(ShowForcesProperty,value);}
+    public static readonly DependencyProperty ShowDiagramsProperty = DependencyProperty.Register(nameof(ShowDiagrams),typeof(bool),typeof(RetainingWallDrawing),new FrameworkPropertyMetadata(true,FrameworkPropertyMetadataOptions.AffectsRender));
+    public bool ShowDiagrams {get=>(bool)GetValue(ShowDiagramsProperty);set=>SetValue(ShowDiagramsProperty,value);}
     private static Brush Color(string value) => new SolidColorBrush((System.Windows.Media.Color)ColorConverter.ConvertFromString(value));
-    private static readonly Brush Navy=Color("#192845"),Teal=Color("#135F6E"),Water=Color("#226BA0"),Amber=Color("#A35B18");
+    private static readonly Brush Navy=Color("#192845"),Teal=Color("#135F6E"),Water=Color("#226BA0"),Amber=Color("#A35B18"),
+        Passive=Color("#2E7D4F"),Bearing=Color("#6B4C9A"),Variable=Color("#C3872A"),Seismic=Color("#B3261E");
     private static string N(double value) => value.ToString("0.##",CultureInfo.GetCultureInfo("it-IT"));
     protected override void OnRender(DrawingContext dc)
     {
@@ -55,9 +66,12 @@ public sealed class RetainingWallDrawing : FrameworkElement
         if(Geometry is not {} g) {Text("Correggere i parametri per visualizzare la sezione.",12,30,Navy);return;}
         var all=g.Wall.Concat(g.FrontSoil).Concat(g.BackSoil).ToArray();
         var minY=all.Min(p=>p.Y);var maxY=all.Max(p=>p.Y);var b=g.Wall[8].X;
-        var scale=Math.Min((width-150)/(b+1),(height-100)/Math.Max(.1,maxY-minY));
+        // Spazi riservati ai diagrammi: passiva a sinistra, spinte a destra, pressione sul terreno sotto la base.
+        var diagrams=ShowDiagrams&&Diagrams is not null;
+        double marginLeft=diagrams?120:60,marginRight=diagrams?150:90,marginBottom=diagrams?110:62;
+        var scale=Math.Min((width-marginLeft-marginRight)/(b+.7),(height-40-marginBottom)/Math.Max(.1,maxY-minY));
         if(!double.IsFinite(scale)||scale<=0)return;
-        var left=60+(width-150-(b+1)*scale)/2;var top=38+(height-100-(maxY-minY)*scale)/2;
+        var left=marginLeft+.35*scale+(width-marginLeft-marginRight-(b+.7)*scale)/2;var top=40+(height-40-marginBottom-(maxY-minY)*scale)/2;
         view=frozen??new View(left,top,maxY,scale);var v=view.Value;
         scale=v.Scale;left=v.Left;
         Point Map(WallPoint p)=>v.Map(p);
@@ -93,15 +107,17 @@ public sealed class RetainingWallDrawing : FrameworkElement
             dc.DrawLine(dim,new(x-4,p.Y+3),new(x+4,p.Y-3));dc.DrawLine(dim,new(x-4,q.Y+3),new(x+4,q.Y-3));Text(label,x-50,(p.Y+q.Y)/2-8,Navy);
         }
         var bottom=Map(new(0,minY)).Y;
-        H(g.Wall[0],g.Wall[9],bottom+29,"Bf "+N(b)+" m");
+        H(g.Wall[0],g.Wall[9],bottom+(diagrams?86:29),"Bf "+N(b)+" m");
         H(g.Wall[4],g.Wall[5],Map(g.Wall[4]).Y-23,"S1 "+N(g.Wall[5].X-g.Wall[4].X));
         V(g.Wall[1],g.Wall[4],left-17,"H1 "+N(g.Wall[4].Y-g.Wall[1].Y));
         // Dimensioni secondarie inserite nel disegno senza sovrapporre il diagramma di pressione.
         var basePoint=Map(g.Wall[2]);Text("Ba "+N(g.Wall[2].X),left+5,basePoint.Y+4,Navy,10);
         var tooth=Map(g.Wall[12]);Text("H4 "+N(g.Wall[13].Y-g.Wall[12].Y),tooth.X-58,tooth.Y+5,Navy,10);
         var crest=Map(g.Wall[6]);Text("Terreno a monte",crest.X+12,crest.Y+18,Color("#7B6341"),10);
+        if(diagrams)DrawDiagrams(dc,g,v,Diagrams!,bottom,Text);
+        if(ShowForces&&Forces is {Count:>0} forces)DrawForces(dc,v,forces,Diagrams?.Base,Text);
         DrawGrips(dc,g,v,Text);
-        if(Pressures is {} rows)
+        if(!diagrams&&Pressures is {} rows)
         {
             // Diagramma statico σ = KA (σ′v + q) del motore selezionato, aggiornato a ogni ricalcolo.
             if(rows.Count>0 && rows.Max(p=>p.Value)>0)
@@ -118,6 +134,84 @@ public sealed class RetainingWallDrawing : FrameworkElement
                 Text(N(rows[^1].Value)+" kPa",x,Map(new(0,rows[^1].Elevation)).Y+6,Amber,10);
             }
         }
+    }
+
+    /// <summary>
+    /// Diagrammi di pressione con un'unica scala orizzontale [kPa → px] per spinta attiva, acqua e passiva,
+    /// così le intensità sono confrontabili; la pressione sul terreno ha una propria scala verticale.
+    /// </summary>
+    private void DrawDiagrams(DrawingContext dc,WallGeometry g,View v,WallDiagrams d,double bottom,Action<string,double,double,Brush,double> text)
+    {
+        var b=g.Wall[8].X;
+        var max=new[]{d.Active,d.WaterBack,d.Passive,d.WaterFront}.SelectMany(x=>x).Select(p=>p.Value).DefaultIfEmpty(0).Max();
+        if(max>1e-9)
+        {
+            var k=62/max; // px per kPa
+            double Vertical(IReadOnlyList<WallPressurePoint> rows,double x0,int direction,Brush stroke,string fill,string label)
+            {
+                if(rows.Count<2||rows.Max(p=>p.Value)<=1e-9)return x0;
+                var shape=new StreamGeometry();using(var c=shape.Open())
+                {
+                    c.BeginFigure(new(x0,v.Map(new(0,rows[0].Elevation)).Y),true,true);
+                    foreach(var p in rows)c.LineTo(new(x0+direction*k*p.Value,v.Map(new(0,p.Elevation)).Y),true,false);
+                    c.LineTo(new(x0,v.Map(new(0,rows[^1].Elevation)).Y),true,false);
+                }
+                shape.Freeze();dc.DrawGeometry(Color(fill),new Pen(stroke,1.3),shape);
+                var peak=rows.MaxBy(p=>p.Value)!;var py=v.Map(new(0,peak.Elevation)).Y;
+                text($"{label} {N(peak.Value)} kPa",direction>0?x0+4:x0-k*peak.Value-4,py+4,stroke,10);
+                return x0+direction*(k*rows.Max(p=>p.Value)+10);
+            }
+            // A monte: terreno + sovraccarico, poi acqua affiancata; a valle: passiva e acqua verso sinistra.
+            var right=Vertical(d.Active,v.Map(new(b,0)).X+2,1,Amber,"#F4DBC0","σa");
+            Vertical(d.WaterBack,right,1,Water,"#D6E6F2","u");
+            var leftEdge=Vertical(d.Passive,v.Map(new(0,0)).X-2,-1,Passive,"#D8EBDD","σp");
+            Vertical(d.WaterFront,leftEdge,-1,Water,"#D6E6F2","u");
+        }
+        // Pressione sul terreno di fondazione sotto il piano più basso del muro.
+        var basePressure=d.Base;var y0=bottom+10;
+        if(basePressure.Points.Count>=2&&basePressure.SigmaMax is double smax&&smax>1e-9)
+        {
+            var kb=44/smax;var shape=new StreamGeometry();using(var c=shape.Open())
+            {
+                c.BeginFigure(new(v.Map(new(0,0)).X,y0),true,true);
+                foreach(var p in basePressure.Points)c.LineTo(new(v.Map(new(p.X,0)).X,y0+kb*p.Value),true,false);
+                c.LineTo(new(v.Map(new(b,0)).X,y0),true,false);
+            }
+            shape.Freeze();dc.DrawGeometry(Color("#E7DFF0"),new Pen(Bearing,1.3),shape);
+            text($"σ terreno: valle {N(basePressure.SigmaToe!.Value)} · monte {N(basePressure.SigmaHeel!.Value)} kPa · e = {N(basePressure.Eccentricity)} m{(basePressure.InCore?"":" (base parzializzata)")}",v.Map(new(0,0)).X,y0+kb*smax+4,Bearing,10);
+        }
+        else text("Pressione sul terreno non definita: risultante fuori dalla base",v.Map(new(0,0)).X,y0+4,Seismic,10);
+    }
+
+    /// <summary>Sigle brevi delle forze, come nella relazione di calcolo.</summary>
+    private static string Symbol(string name) => name switch
+    {
+        "Peso del muro"=>"Wm","Peso del terreno a valle"=>"Wv","Peso del terreno a monte"=>"Wt","Forze d'inerzia (kh·W)"=>"kh·W",
+        "Spinta del terreno"=>"Sa","Spinta del sovraccarico"=>"Sq","Spinta dell'acqua a monte"=>"Sw","Spinta dell'acqua a valle"=>"Sw,v",
+        "Sottospinta"=>"U",_=>"Sw,d"
+    };
+    /// <summary>Frecce con la punta nel punto di applicazione e lunghezza proporzionale all'intensità; reazione N del terreno in viola.</summary>
+    private void DrawForces(DrawingContext dc,View v,IReadOnlyList<WallForce> forces,WallBasePressure? basePressure,Action<string,double,double,Brush,double> text)
+    {
+        var max=forces.Max(f=>f.Magnitude);if(max<=1e-9)return;
+        void Arrow(Point head,double dx,double dy,double magnitude,Brush brush,string label)
+        {
+            // dx, dy: direzione nel piano del disegno (y verso l'alto), convertita in pixel (y verso il basso).
+            var length=20+70*magnitude/max;var u=new Vector(dx,-dy);u.Normalize();
+            var tail=head-u*length;var pen=new Pen(brush,1.8);dc.DrawLine(pen,tail,head);
+            var n=new Vector(-u.Y,u.X);var tip=new StreamGeometry();
+            using(var c=tip.Open()){c.BeginFigure(head,true,true);c.LineTo(head-u*9+n*4,true,false);c.LineTo(head-u*9-n*4,true,false);}
+            tip.Freeze();dc.DrawGeometry(brush,null,tip);
+            text(label,tail.X+(u.X>0?-46:4),tail.Y+(u.Y>0?-16:2),brush,10);
+        }
+        foreach(var f in forces)
+        {
+            if(f.Magnitude<.01*max)continue; // forze trascurabili omesse per leggibilità
+            var brush=f.Kind=="E"?Seismic:f.Kind=="Q"?Variable:f.Name.Contains("acqua")||f.Name=="Sottospinta"?Water:Navy;
+            Arrow(v.Map(new(f.X,f.Y)),f.Fx,f.Fy,f.Magnitude,brush,$"{Symbol(f.Name)} {N(Math.Round(f.Magnitude,1))}");
+        }
+        // Reazione del terreno: risultante N applicata a distanza u dal piede.
+        if(basePressure is {SigmaToe:not null} bp)Arrow(v.Map(new(bp.U,0)),0,1,Math.Min(bp.N,max),Bearing,$"N {N(Math.Round(bp.N,1))}");
     }
 
     /// <summary>Grip: quadrato bianco bordato; il grip sotto il mouse o trascinato è pieno e mostra il valore.</summary>

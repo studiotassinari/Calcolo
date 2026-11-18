@@ -27,7 +27,42 @@ public sealed record WallFactors(string Name, double G1Fav, double G1Sfav, doubl
     public static WallFactors A1M1 { get; } = new("A1 + M1 + R3", 1, 1.3, 0, 1.5, 1);
     /// <summary>Sisma (§7.11.6): azioni con γ = 1, parametri M1; il sovraccarico è già ridotto da ψ.</summary>
     public static WallFactors Seismic { get; } = new("Sisma, γ = 1, M1", 1, 1, 0, 1, 1);
+    /// <summary>Combinazione caratteristica (rara) di esercizio: tutti i coefficienti unitari; usata per le pressioni sul terreno.</summary>
+    public static WallFactors Characteristic { get; } = new("Caratteristica (SLE)", 1, 1, 0, 1, 1);
 }
+
+/// <summary>
+/// Azione risultante applicata al blocco muro + terreni sovrastanti (valori di progetto della combinazione,
+/// con i coefficienti usati per la pressione sul terreno). Fx positivo verso monte (+x), Fy positivo verso l'alto,
+/// punto di applicazione (X; Y) in metri. Kind: "G" permanenti e acqua, "Q" variabili, "E" inerzie sismiche.
+/// </summary>
+public sealed record WallForce(string Name, string Kind, double Fx, double Fy, double X, double Y)
+{
+    /// <summary>Momento attorno al piede anteriore (origine), positivo se ribaltante (antiorario) [kN·m/m].</summary>
+    public double Mz => X * Fy - Y * Fx;
+    public double Magnitude => Math.Sqrt(Fx * Fx + Fy * Fy);
+}
+
+/// <summary>Punto di un diagramma di pressione lungo la base: ascissa in m, pressione in kPa.</summary>
+public sealed record WallBasePoint(double X, double Value);
+
+/// <summary>
+/// Pressione di contatto sul terreno di fondazione (distribuzione lineare, terreno non reagente a trazione).
+/// N risultante verticale (sottospinta già detratta), U distanza della risultante dal piede, e eccentricità
+/// rispetto al centro della base (positiva verso valle), B larghezza della base, ContactLength lunghezza reagente.
+/// SigmaToe/SigmaHeel null se la risultante cade fuori dalla base o N ≤ 0.
+/// </summary>
+public sealed record WallBasePressure(double N, double U, double Eccentricity, double B, double ContactLength,
+    double? SigmaToe, double? SigmaHeel, IReadOnlyList<WallBasePoint> Points)
+{
+    public bool InCore => SigmaToe is not null && Math.Abs(Eccentricity) <= B / 6 + 1e-12;
+    public double? SigmaMax => SigmaToe is double a && SigmaHeel is double b ? Math.Max(a, b) : null;
+}
+
+/// <summary>Diagrammi di una combinazione: pressioni orizzontali a monte (terreno + sovraccarico) e dell'acqua sul piano x = Bf,
+/// resistenza passiva e acqua a valle sul piano x = 0 (quote in m, kPa), pressione di contatto sulla base.</summary>
+public sealed record WallDiagrams(IReadOnlyList<WallPressurePoint> Active, IReadOnlyList<WallPressurePoint> WaterBack,
+    IReadOnlyList<WallPressurePoint> Passive, IReadOnlyList<WallPressurePoint> WaterFront, WallBasePressure Base);
 
 /// <summary>Verifica Ed ≤ Rd/γR. Ratio = Rd/(γR·Ed): verificata se ≥ 1; null se l'azione è nulla o favorevole.</summary>
 public sealed record WallCheck(double Demand, double Resistance, double GammaR)
@@ -40,12 +75,14 @@ public sealed record WallCheck(double Demand, double Resistance, double GammaR)
 public sealed record WallDesignCase(string Name, string Factors, double Kh, double Kv, double ThetaDegrees,
     double KaOverturning, double KaSliding, double Kp, double EarthThrust, double SurchargeThrust, double WaterBack,
     double WaterFront, double Uplift, double Inertia, double Normal, double Passive, double Driving,
-    double StabilizingMoment, double OverturningMoment, WallCheck Overturning, WallCheck Sliding);
+    double StabilizingMoment, double OverturningMoment, WallCheck Overturning, WallCheck Sliding,
+    IReadOnlyList<WallForce> Forces, WallDiagrams Diagrams, double GammaBaseG, double GammaBaseQ);
 
 public sealed record WallDesignResult(WallGeometry Geometry, PolygonProperties Wall, PolygonProperties FrontSoil,
     PolygonProperties BackSoil, double Kh, double BH, IReadOnlyList<WallDesignCase> Cases,
     WallDesignCase StaticOverturning, WallDesignCase StaticSliding, WallDesignCase SeismicOverturning, WallDesignCase SeismicSliding,
-    IReadOnlyList<WallPressurePoint> Pressures, IReadOnlyList<string> Notes)
+    IReadOnlyList<WallPressurePoint> Pressures, IReadOnlyList<string> Notes,
+    WallDesignCase Service, WallDesignCase StaticBase, WallDesignCase SeismicBase)
 {
     public bool AllSatisfied => StaticOverturning.Overturning.Satisfied && StaticSliding.Sliding.Satisfied
         && SeismicOverturning.Overturning.Satisfied && SeismicSliding.Sliding.Satisfied;
@@ -74,12 +111,16 @@ public static class WallDesignCalculator
             Evaluate(d, g, "Statica · ribaltamento", WallFactors.Equ, 0, 0, q, GammaROverturningStatic, GammaRSlidingStatic, GammaRPassiveStatic),
             Evaluate(d, g, "Statica · scorrimento", WallFactors.A1M1, 0, 0, q, GammaROverturningStatic, GammaRSlidingStatic, GammaRPassiveStatic),
             Evaluate(d, g, "Sisma · kv verso l'alto", WallFactors.Seismic, kh, kv, qSeismic, GammaROverturningSeismic, GammaRSlidingSeismic, GammaRPassiveSeismic),
-            Evaluate(d, g, "Sisma · kv verso il basso", WallFactors.Seismic, kh, -kv, qSeismic, GammaROverturningSeismic, GammaRSlidingSeismic, GammaRPassiveSeismic)];
+            Evaluate(d, g, "Sisma · kv verso il basso", WallFactors.Seismic, kh, -kv, qSeismic, GammaROverturningSeismic, GammaRSlidingSeismic, GammaRPassiveSeismic),
+            Evaluate(d, g, "Esercizio · caratteristica", WallFactors.Characteristic, 0, 0, q, GammaROverturningStatic, GammaRSlidingStatic, GammaRPassiveStatic)];
         // Fra i due segni di kv si riporta la combinazione più gravosa per ciascuna verifica.
         static double Worst(WallCheck c) => c.Ratio ?? double.MaxValue;
-        var seismicOverturning = cases[2..].MinBy(c => Worst(c.Overturning))!;
-        var seismicSliding = cases[2..].MinBy(c => Worst(c.Sliding))!;
-        return new(g, wall, front, back, kh, bh, cases, cases[0], cases[1], seismicOverturning, seismicSliding, Pressures(d, g), Notes(d, kh));
+        var seismicOverturning = cases[2..4].MinBy(c => Worst(c.Overturning))!;
+        var seismicSliding = cases[2..4].MinBy(c => Worst(c.Sliding))!;
+        // Pressione sul terreno sismica: la combinazione con la pressione massima (o con la risultante fuori base).
+        var seismicBase = cases[2..4].MaxBy(c => c.Diagrams.Base.SigmaMax ?? double.MaxValue)!;
+        return new(g, wall, front, back, kh, bh, cases, cases[0], cases[1], seismicOverturning, seismicSliding, Pressures(d, g), Notes(d, kh),
+            cases[4], cases[1], seismicBase);
     }
 
     /// <summary>
@@ -235,9 +276,77 @@ public static class WallDesignCalculator
         // Rd = N·tanφ′d/γR + quota passiva/γR,valle, espresse come un'unica resistenza equivalente rispetto a γR dello scorrimento.
         var resistance = Math.Max(0, normal) * Math.Tan(phi) + PassiveShare * passive * gammaRSliding / gammaRPassive;
 
+        // ── Azioni risultanti sul blocco muro + terreni (contorno reale) per pressione sul terreno, disegno e relazione.
+        // Pressione sul terreno: approccio 2 (A1) con tutte le azioni permanenti ×1,3 ("single source") e variabili ×1,5;
+        // combinazioni caratteristica e sismica con coefficienti unitari.
+        var gBase = f == WallFactors.A1M1 ? f.G1Sfav : 1.0; var gQ = f == WallFactors.A1M1 ? f.QSfav : 1.0;
+        var forces = new List<WallForce>();
+        string[] names = ["Peso del muro", "Peso del terreno a valle", "Peso del terreno a monte"];
+        double inertiaX = 0, inertiaY = 0;
+        for (var i = 0; i < bodies.Count; i++)
+        {
+            var (p, gbody) = bodies[i]; var weight = p.Area * gbody;
+            if (weight > 1e-9) forces.Add(new(names[i], "G", 0, -gBase * weight * gravity, p.Centroid.X, p.Centroid.Y));
+            inertiaX += kh * weight * p.Centroid.X; inertiaY += kh * weight * p.Centroid.Y;
+        }
+        if (inertia > 1e-9) forces.Add(new("Forze d'inerzia (kh·W)", "E", -inertia, 0, inertiaX / inertia, inertiaY / inertia));
+        void Thrust(string label, string kind, (double F, double M) r, double factor, double x, double sign, bool vertical)
+        {
+            if (r.F <= 1e-9) return;
+            // sign = −1: spinta verso valle (piano a monte); +1: verso monte (piano a valle).
+            forces.Add(new(label, kind, sign * factor * r.F, vertical ? -factor * r.F * tanDelta : 0, x, r.M / r.F));
+        }
+        Thrust("Spinta del terreno", "G", earthO, gBase, bf, -1, true);
+        Thrust("Spinta del sovraccarico", "Q", surchargeO, gQ, bf, -1, true);
+        Thrust("Spinta dell'acqua a monte", "G", waterO, gBase, bf, -1, false);
+        Thrust("Spinta dell'acqua a valle", "G", frontWaterO, gBase, 0, 1, false);
+        if (uplift > 1e-9) { var xu = upliftM / uplift; forces.Add(new("Sottospinta", "G", 0, gBase * uplift, xu, Contour(xu))); }
+        if (!toothAtToe) Thrust("Acqua sul dente (valle)", "G", Resultant(y => Pore(y, Head(w[12].X)), yMin, w[13].Y), gBase, w[12].X, 1, false);
+        if (!toothAtHeel) Thrust("Acqua sul dente (monte)", "G", Resultant(y => Pore(y, Head(w[11].X)), yMin, w[10].Y), gBase, w[11].X, -1, false);
+        var basePressure = BasePressure(forces, bf);
+
+        // Diagrammi (pressioni della combinazione, senza coefficienti sulle azioni): piano a monte fino al piano di scorrimento.
+        double[] BackLevels(double bottom, double surface, double water) =>
+            new[] { surface, water, bottom }.Where(y => y <= surface && y >= bottom).Distinct().OrderDescending().ToArray();
+        var backLevels = BackLevels(yMin, top, waterBack);
+        var frontLevels = BackLevels(yMin, frontTop, waterFront);
+        var diagrams = new WallDiagrams(
+            backLevels.Select(y => new WallPressurePoint(y, EarthP(y) + SurchargeP(y))).ToArray(),
+            waterBack > yMin ? BackLevels(yMin, waterBack, waterBack).Select(y => new WallPressurePoint(y, WaterP(y))).ToArray() : [],
+            frontLevels.Select(y => new WallPressurePoint(y, kp * gravity * SigmaV(y, frontTop, waterFront, gamma))).ToArray(),
+            waterFront > yMin ? BackLevels(yMin, waterFront, waterFront).Select(y => new WallPressurePoint(y, Pore(y, waterFront))).ToArray() : [],
+            basePressure);
+
         return new(name, f.Name, kh, kvSigned, theta * 180 / Math.PI, ka, kaSliding, kp, earthS.F, surchargeS.F, waterS.F, frontWaterS.F,
             upliftS, inertia, normal, passive, driving, overturning.Stabilizing, overturning.Overturning,
-            new(overturning.Overturning, overturning.Stabilizing, gammaROverturning), new(driving, resistance, gammaRSliding));
+            new(overturning.Overturning, overturning.Stabilizing, gammaROverturning), new(driving, resistance, gammaRSliding),
+            forces, diagrams, gBase, gQ);
+    }
+
+    /// <summary>
+    /// Pressione di contatto con distribuzione lineare (Navier) sulla base di larghezza B = Bf, misurata dal piede.
+    /// Equilibrio dei momenti attorno al piede: la reazione verticale N agisce a distanza u = −ΣMz/N.
+    /// |e| ≤ B/6: trapezio σ = N/B·(1 ± 6e/B). Oltre il nocciolo: triangolo di lunghezza 3u (o 3(B−u)), σmax = 2N/(3u).
+    /// Si trascura il momento della reazione orizzontale (base del muro a quota y = 0 del piede).
+    /// </summary>
+    public static WallBasePressure BasePressure(IReadOnlyList<WallForce> forces, double b)
+    {
+        var n = -forces.Sum(f => f.Fy); var m = forces.Sum(f => f.Mz);
+        if (n <= 1e-9) return new(n, double.NaN, double.NaN, b, 0, null, null, []);
+        var u = -m / n; var e = b / 2 - u;
+        if (u <= 0 || u >= b) return new(n, u, e, b, 0, null, null, []);
+        if (Math.Abs(e) <= b / 6)
+        {
+            double toe = n / b * (1 + 6 * e / b), heel = n / b * (1 - 6 * e / b);
+            return new(n, u, e, b, b, toe, heel, [new(0, toe), new(b, heel)]);
+        }
+        if (e > 0)
+        {
+            var length = 3 * u; var max = 2 * n / length;
+            return new(n, u, e, b, length, max, 0, [new(0, max), new(length, 0), new(b, 0)]);
+        }
+        var back = 3 * (b - u); var maxHeel = 2 * n / back;
+        return new(n, u, e, b, back, 0, maxHeel, [new(0, 0), new(b - back, 0), new(b, maxHeel)]);
     }
 
     /// <summary>Diagramma della pressione orizzontale statica caratteristica (terreno + sovraccarico, M1) sul piano x = Bf.</summary>
@@ -256,7 +365,7 @@ public static class WallDesignCalculator
             "Ribaltamento attorno al piede anteriore (origine). Per ogni azione il coefficiente parziale è scelto in base all'effetto netto (favorevole/sfavorevole).",
             "Scorrimento sul piano orizzontale per la base del dente, con resistenza N·tan φ′ e il 50 % della resistenza passiva a valle (γR = 1,4 statica, 1,2 sisma). Il peso del sovraccarico non è portato in conto.",
             "Acqua: pressioni idrostatiche a monte (Qfp) e a valle (Qfa), sottospinta con quota piezometrica lineare fra valle e monte; terreno sotto falda con γ′ = γ − γw (γsat ≈ γ). Assenti sovrappressioni idrodinamiche in sisma.",
-            "Sisma: kh = αH = B_H·PGA/χ (PGA = amax/g comprensiva dell'amplificazione locale), kv = ±0,5·kh, θ = atan[kh/(1 ∓ kv)], inerzie di muro e terreno sulla mensola. La spinta sismica segue la distribuzione della statica.",
+            "Sisma: kh = αH = B_H·PGA/χ (PGA = amax/g comprensiva dell'amplificazione locale), kv = ±0,5·kh, θ = atan[kh/(1 ± kv)], inerzie di muro e terreno sulla mensola. La spinta sismica segue la distribuzione della statica.",
             "La coesione c′ₖ non è utilizzata (a favore di sicurezza).",
             "Il ramo di B_H fra H/(Vs·Tm) = 0,05 e 0,4 è stato reso continuo (fino a 0,4): verificare la fonte normativa del coefficiente."];
         if (d["Vs"] < 10) notes.Add("Vs è inferiore a 10 m/s: il valore 0,209 del programma originale è probabilmente in km/s. Con Vs in m/s B_H assume il valore minimo 0,4.");

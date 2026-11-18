@@ -23,6 +23,15 @@ public static class PdfReportWriter
                 y+=Text(g,content.Title,Margin,y,Width,17,true,Navy)+6;
                 y+=Text(g,report.Title+" · "+report.Created.ToString("dd/MM/yyyy"),Margin,y,Width,9,false,Muted)+14;
                 foreach(var table in content.Tables){y+=Text(g,table.Title,Margin,y,Width,12,true,Navy)+8;y=Table(g,table,Margin,y,Width)+16;}
+                // Figure a tutta larghezza: l'altezza segue il rapporto d'aspetto del PNG.
+                foreach(var figure in content.Figures??[])
+                {
+                    y+=Text(g,figure.Title,Margin,y,Width,12,true,Navy)+6;
+                    using var figureStream=new MemoryStream(figure.Png);using var image=XImage.FromStream(figureStream);
+                    var figureHeight=Width/figure.AspectRatio;Ensure(y+figureHeight);
+                    g.DrawImage(image,Margin,y,Width,figureHeight);g.DrawRectangle(new XPen(Line,.5),Margin,y,Width,figureHeight);y+=figureHeight+4;
+                    y+=Text(g,figure.Caption,Margin,y,Width,8.5,false,Muted)+12;
+                }
                 foreach(var equation in content.Equations??[])
                 {
                     y+=Text(g,equation.Title,Margin,y,Width,11,true,Navy)+12;

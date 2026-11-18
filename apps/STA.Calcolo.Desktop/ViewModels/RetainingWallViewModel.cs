@@ -56,6 +56,18 @@ public sealed class RetainingWallViewModel : ObservableObject
     public IReadOnlyList<string> Notes => (Engine==WallEngine.Rivisto ? Design?.Notes : Result?.Notes) ?? [Engine==WallEngine.Rivisto ? WallDesignCalculator.Scope : WallCalculator.Scope,
         "Correggere i dati evidenziati per ottenere risultati e note."];
     public bool HasResults => Engine==WallEngine.Rivisto ? Design is not null : Result is not null;
+    /// <summary>Combinazioni disponibili per il disegno di forze e diagrammi (motore rivisto).</summary>
+    public IReadOnlyList<string> DrawingCases => Design?.Cases.Select(c=>c.Name).ToArray() ?? [];
+    private string drawingCase = "Esercizio · caratteristica";
+    /// <summary>Nome della combinazione disegnata: conservato fra un ricalcolo e l'altro.</summary>
+    public string DrawingCase { get => drawingCase; set { if (value is not null && Set(ref drawingCase,value)) NotifyDrawing(); } }
+    private WallDesignCase? SelectedCase => Engine==WallEngine.Rivisto ? Design?.Cases.FirstOrDefault(c=>c.Name==DrawingCase) ?? Design?.Service : null;
+    public IReadOnlyList<WallForce>? DrawingForces => SelectedCase?.Forces;
+    public WallDiagrams? DrawingDiagrams => SelectedCase?.Diagrams;
+    private bool showForces = true, showDiagrams = true;
+    public bool ShowForces { get => showForces; set => Set(ref showForces,value); }
+    public bool ShowDiagrams { get => showDiagrams; set => Set(ref showDiagrams,value); }
+    private void NotifyDrawing() { foreach(var name in new[]{nameof(DrawingCases),nameof(DrawingCase),nameof(DrawingForces),nameof(DrawingDiagrams)}) Changed(name); }
     /// <summary>Diagramma delle pressioni del motore selezionato.</summary>
     public IReadOnlyList<WallPressurePoint>? Pressures => Engine==WallEngine.Rivisto ? Design?.Pressures : Result?.Pressures;
     public string AreaText => Geometry is null ? "—" : N(WallGeometry.Properties(Geometry.Wall).Area) + " m²";
@@ -74,12 +86,17 @@ public sealed class RetainingWallViewModel : ObservableObject
     public RelayCommand OpenCommand { get; }
     public RelayCommand ExportCommand { get; }
     public RelayCommand ExportJsonCommand { get; }
+    /// <summary>Relazione di calcolo completa (solo motore rivisto): Word modificabile e PDF.</summary>
+    public RelayCommand WordReportCommand { get; }
+    public RelayCommand PdfReportCommand { get; }
+    private readonly IRetainingWallReportService reports;
+    private bool CanReport => Engine==WallEngine.Rivisto && Design is not null;
     private static readonly CultureInfo Italian = CultureInfo.GetCultureInfo("it-IT");
     private static string N(double value, int digits=2) => value.ToString("F"+digits,Italian);
 
-    public RetainingWallViewModel(IFileService files)
+    public RetainingWallViewModel(IFileService files, IRetainingWallReportService? reportService = null)
     {
-        this.files=files;
+        this.files=files; reports=reportService ?? new RetainingWallReportService();
         ByKey = WallParameters.All.ToDictionary(p=>p.Key,p=>new WallNumberField(p));
         Groups = WallParameters.All.GroupBy(p=>p.Group).Select(g=>new WallFieldGroup(g.Key,g.Select(p=>ByKey[p.Key]).ToArray())).ToArray();
         foreach (var field in ByKey.Values) field.PropertyChanged += (_,e) => { if(e.PropertyName==nameof(WallNumberField.Value)) Invalidate(); };
@@ -104,6 +121,18 @@ public sealed class RetainingWallViewModel : ObservableObject
             var path=files.Save("Risultati muro JSON|*.json","muro-sostegno-risultati.json");
             if(path is not null) { files.Write(path,WallFiles.WriteResults(Document(),Design,Result)); Status="Dati e risultati JSON esportati."; }
         }),()=>HasResults);
+        WordReportCommand = new(()=>Run(()=>
+        {
+            var doc=Document();var data=reports.Word(doc,Design!);
+            var path=files.Save("Relazione Word|*.docx","relazione-muro-sostegno.docx");
+            if(path is not null) { files.WriteBytes(path,data); Status="Relazione di calcolo Word salvata (A4, formule modificabili)."; }
+        }),()=>CanReport);
+        PdfReportCommand = new(()=>Run(()=>
+        {
+            var doc=Document();var data=reports.Pdf(doc,Design!);
+            var path=files.Save("Relazione PDF|*.pdf","relazione-muro-sostegno.pdf");
+            if(path is not null) { files.WriteBytes(path,data); Status="Relazione di calcolo PDF salvata (A4)."; }
+        }),()=>CanReport);
         Invalidate(); if(HasResults) Status="Dati iniziali del programma originale. Modificare i campi o trascinare i grip del disegno.";
     }
     public WallDocument Document()
@@ -167,7 +196,8 @@ public sealed class RetainingWallViewModel : ObservableObject
     private void NotifyResults()
     {
         foreach(var name in new[]{nameof(Result),nameof(Design),nameof(Pressures),nameof(Results),nameof(Summary),nameof(Checks),nameof(HasResults),nameof(Notes),nameof(ResultStatus)})Changed(name);
-        ExportCommand?.Refresh();ExportJsonCommand?.Refresh();
+        ExportCommand?.Refresh();ExportJsonCommand?.Refresh();WordReportCommand?.Refresh();PdfReportCommand?.Refresh();
+        NotifyDrawing();
     }
     /// <summary>
     /// Applica un trascinamento: i nuovi valori sono scritti nei campi come se fossero digitati,
@@ -248,8 +278,11 @@ public sealed class RetainingWallViewModel : ObservableObject
             new("M stab. d",N(so.StabilizingMoment,1),N(eo.StabilizingMoment,1),"kN·m/m"),
             new("Ed scorr.",N(ss.Driving,1),N(es.Driving,1),"kN/m"),
             new("Rd scorr.",N(ss.Sliding.Resistance/ss.Sliding.GammaR,1),N(es.Sliding.Resistance/es.Sliding.GammaR,1),"kN/m"),
-            new("Sottospinta",N(ss.Uplift,1),N(es.Uplift,1),"kN/m")];
+            new("Sottospinta",N(ss.Uplift,1),N(es.Uplift,1),"kN/m"),
+            new("σ terreno max SLU",Sigma(r.StaticBase.Diagrams.Base.SigmaMax,0),Sigma(r.SeismicBase.Diagrams.Base.SigmaMax,0),"kPa"),
+            new("σ terreno SLE valle/monte",$"{Sigma(r.Service.Diagrams.Base.SigmaToe,0)} / {Sigma(r.Service.Diagrams.Base.SigmaHeel,0)}","—","kPa")];
     }
+    private static string Sigma(double? value,int digits=2) => value is double v ? N(v,digits) : "fuori base";
     /// <summary>Tabella completa del motore rivisto: statica con la combinazione propria di ogni verifica, sisma la più gravosa.</summary>
     private static IReadOnlyList<WallResultRow> DesignRows(WallDesignResult r)
     {
@@ -278,6 +311,13 @@ public sealed class RetainingWallViewModel : ObservableObject
             new("Resistenza passiva a valle",N(ss.Passive),N(es.Passive),"kN/m"),
             new("Resistenza di progetto Rd",N(ss.Sliding.Resistance/ss.Sliding.GammaR),N(es.Sliding.Resistance/es.Sliding.GammaR),"kN/m"),
             new("Scorrimento · Rd/Ed",Verdict(ss.Sliding),Verdict(es.Sliding),"—"),
+            new("Pressione sul terreno · combinazione",r.StaticBase.Name+" (G ×1,3; Q ×1,5)",r.SeismicBase.Name,""),
+            new("Risultante verticale N",N(r.StaticBase.Diagrams.Base.N),N(r.SeismicBase.Diagrams.Base.N),"kN/m"),
+            new("Eccentricità e (B/6 = "+N(r.Geometry.Wall[8].X/6)+" m)",N(r.StaticBase.Diagrams.Base.Eccentricity),N(r.SeismicBase.Diagrams.Base.Eccentricity),"m"),
+            new("σ terreno lato valle",Sigma(r.StaticBase.Diagrams.Base.SigmaToe),Sigma(r.SeismicBase.Diagrams.Base.SigmaToe),"kPa"),
+            new("σ terreno lato monte",Sigma(r.StaticBase.Diagrams.Base.SigmaHeel),Sigma(r.SeismicBase.Diagrams.Base.SigmaHeel),"kPa"),
+            new("Base reagente",N(r.StaticBase.Diagrams.Base.ContactLength),N(r.SeismicBase.Diagrams.Base.ContactLength),"m"),
+            new("σ terreno in esercizio (caratteristica) valle / monte",$"{Sigma(r.Service.Diagrams.Base.SigmaToe)} / {Sigma(r.Service.Diagrams.Base.SigmaHeel)}","—","kPa"),
             new("Area muro",N(r.Wall.Area),"—","m²"),
             new("Baricentro muro · x; y",$"{N(r.Wall.Centroid.X)}; {N(r.Wall.Centroid.Y)}","—","m")];
     }
