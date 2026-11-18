@@ -156,6 +156,33 @@ public static class RetainingWallReportBuilder
             ["Pressione sul terreno SLU / sisma", "A1 · " + eb.Name, $"{S(sb.Diagrams.Base.SigmaMax)} / {S(eb.Diagrams.Base.SigmaMax)} kPa", "Da confrontare con la capacità portante"]]);
         var page11 = new ReportPage("Riepilogo e limiti del calcolo", [summary], [], r.Notes.Skip(1).Append("I risultati corrispondono agli input riportati; le modifiche al documento Word non ricalcolano il progetto.").ToArray(), "135F6E");
 
-        return new(document.Title, created, [page1, page2, page3, page4, page5, page6, page7, page8, page9, page10, page11]);
+        // Ogni equazione riceve la sua forma strutturata (frazioni, radici, indici) per Word e PDF.
+        ReportPage WithFormulas(ReportPage page) => page with { Equations = page.Equations?.Select(e =>
+            Formulas.TryGetValue(e.Title[..(e.Title.IndexOf(')') + 1)], out var f) ? e with { Formula = f } : e).ToArray() };
+        return new(document.Title, created, new[] { page1, page2, page3, page4, page5, page6, page7, page8, page9, page10, page11 }.Select(WithFormulas).ToArray());
     }
+
+    /// <summary>Formule nella notazione di <see cref="ReportMath"/>, indicizzate con il numero dell'equazione.</summary>
+    private static readonly Dictionary<string, string> Formulas = new()
+    {
+        ["(1)"] = @"ρ_{H} = \frac{H_{1}}{V_{s} · T_{m}}",
+        ["(2)"] = @"B_{H} = 1 − (1 − 0,4) · \frac{ρ_{H} − 0,05}{0,4 − 0,05}",
+        ["(3)"] = @"k_{h} = \frac{B_{H} · PGA}{χ}",
+        ["(4)"] = @"k_{v} = ±0,5 · k_{h}      θ = atan \frac{k_{h}}{1 ± k_{v}}",
+        ["(5)"] = @"K_{A} = \frac{cos δ · [cos δ − \sqrt{sin^{2}φ′ − sin^{2}δ}] · cos β}{[cos(β + θ) + \sqrt{sin^{2}φ′ − sin^{2}(β + θ)}] · cos θ} · e^{−2 ψ_{A} tan φ′}",
+        ["(6)"] = @"K_{P} = \frac{cos δ · [cos δ + \sqrt{sin^{2}φ′ − sin^{2}δ}] · cos β}{[cos(β − θ) − \sqrt{sin^{2}φ′ − sin^{2}(β − θ)}] · cos θ} · e^{+2 ψ_{P} tan φ′}",
+        ["(7)"] = @"S_{a} = ∫ K_{A} (1 ± k_{v}) (σ′_{v} + q) dz      S_{w} = \frac{γ_{w} · h_{w}^{2}}{2}",
+        ["(8)"] = @"M_{rib,d} = Σ γ_{F,i} · M_{z,i}",
+        ["(9)"] = @"M_{stab,d} = Σ γ_{F,i} · |M_{z,i}|",
+        ["(10)"] = @"\frac{R_{d}}{E_{d}} = \frac{M_{stab,d}}{γ_{R} · M_{rib,d}} ≥ 1",
+        ["(11)"] = @"\frac{R_{d}}{E_{d}} = \frac{M_{stab,d}}{γ_{R} · M_{rib,d}} ≥ 1",
+        ["(12)"] = @"E_{d} = γ_{G1} · (S_{a} + S_{w}) + γ_{Q} · S_{q} − γ_{G1,fav} · S_{w,v}",
+        ["(13)"] = @"N = γ_{G1,fav} · ΣW + tan δ_{d} · (γ_{G1} · S_{a} + γ_{Q} · S_{q}) − γ_{G1} · U",
+        ["(14)"] = @"R_{d} = \frac{N · tan φ′_{d}}{γ_{R}} + \frac{0,5 · S_{p}}{γ_{R,valle}}",
+        ["(15)"] = @"\frac{R_{d}}{E_{d}} ≥ 1",
+        ["(16)"] = @"\frac{R_{d}}{E_{d}} = \frac{\frac{N · tan φ′}{γ_{R}} + \frac{0,5 · S_{p}}{γ_{R,valle}}}{E_{d}} ≥ 1",
+        ["(17)"] = @"u = \frac{−Σ M_{z,i}}{N}",
+        ["(18)"] = @"e = \frac{B}{2} − u",
+        ["(19)"] = @"σ_{valle,monte} = \frac{N}{B} · (1 ± \frac{6 e}{B})      σ_{max} = \frac{2 N}{3 u}"
+    };
 }

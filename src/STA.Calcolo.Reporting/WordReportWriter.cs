@@ -44,7 +44,9 @@ public static class WordReportWriter
                     body.Append(P(equation.Title,22,true,"EAF0F1"));
                     string MathRun(string value)=>"<m:r><m:t>"+E(value)+"</m:t></m:r>";
                     string expression=equation.Denominator.Length==0?MathRun(equation.Numerator):"<m:f><m:num>"+MathRun(equation.Numerator)+"</m:num><m:den>"+MathRun(equation.Denominator)+"</m:den></m:f>";
-                    body.Append("<w:p><m:oMathPara xmlns:m=\"http://schemas.openxmlformats.org/officeDocument/2006/math\"><m:oMath>"+MathRun(equation.Left+" = ")+expression+"</m:oMath></m:oMathPara></w:p>");
+                    // Con la notazione strutturata l'intera equazione è matematica nativa di Word (frazioni, radici, indici).
+                    var math=equation.Formula is {} formula?ReportMath.Omml(formula):MathRun(equation.Left+" = ")+expression;
+                    body.Append("<w:p><m:oMathPara xmlns:m=\"http://schemas.openxmlformats.org/officeDocument/2006/math\"><m:oMath>"+math+"</m:oMath></m:oMathPara></w:p>");
                     body.Append(P(equation.Explanation,18));
                     if(equation.Substitution.Length>0)body.Append(P(equation.Substitution,18,true));
                     body.Append(P("",8));
