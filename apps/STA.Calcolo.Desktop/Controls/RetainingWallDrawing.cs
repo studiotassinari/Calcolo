@@ -1,12 +1,38 @@
 using System.Globalization;
 using System.Windows;
+using System.Windows.Input;
 using System.Windows.Media;
 using STA.MuroSostegno.Core;
 namespace STA.Calcolo.Desktop.Controls;
 
-/// <summary>Disegno WPF vettoriale con scala identica sui due assi. Non esegue verifiche strutturali.</summary>
+/// <summary>
+/// Disegno WPF vettoriale con scala identica sui due assi. Non esegue verifiche strutturali.
+/// I grip (quadratini) si trascinano col mouse: il controllo converte la posizione in metri e invia
+/// una <see cref="WallGripDrag"/> a GripCommand; i valori cambiano soltanto nel ViewModel.
+/// Passo di aggancio 5 cm, 1 cm tenendo premuto Ctrl; Esc annulla il trascinamento in corso.
+/// </summary>
 public sealed class RetainingWallDrawing : FrameworkElement
 {
+    public static readonly DependencyProperty GripsProperty = DependencyProperty.Register(nameof(Grips),typeof(IReadOnlyList<WallGrip>),typeof(RetainingWallDrawing),new FrameworkPropertyMetadata(null,FrameworkPropertyMetadataOptions.AffectsRender));
+    public static readonly DependencyProperty GripCommandProperty = DependencyProperty.Register(nameof(GripCommand),typeof(ICommand),typeof(RetainingWallDrawing));
+    public static readonly DependencyProperty ParametersProperty = DependencyProperty.Register(nameof(Parameters),typeof(IReadOnlyDictionary<string,ViewModels.WallNumberField>),typeof(RetainingWallDrawing),new FrameworkPropertyMetadata(null,FrameworkPropertyMetadataOptions.AffectsRender));
+    public IReadOnlyList<WallGrip>? Grips {get=>(IReadOnlyList<WallGrip>?)GetValue(GripsProperty);set=>SetValue(GripsProperty,value);}
+    public ICommand? GripCommand {get=>(ICommand?)GetValue(GripCommandProperty);set=>SetValue(GripCommandProperty,value);}
+    /// <summary>Campi del ViewModel: servono solo a mostrare il valore corrente accanto al grip attivo.</summary>
+    public IReadOnlyDictionary<string,ViewModels.WallNumberField>? Parameters {get=>(IReadOnlyDictionary<string,ViewModels.WallNumberField>?)GetValue(ParametersProperty);set=>SetValue(ParametersProperty,value);}
+
+    /// <summary>Trasformazione metri → pixel. Durante il trascinamento resta bloccata per evitare che il disegno "scappi" sotto il mouse.</summary>
+    private readonly record struct View(double Left,double Top,double MaxY,double Scale)
+    {
+        public Point Map(WallPoint p) => new(Left+p.X*Scale,Top+(MaxY-p.Y)*Scale);
+        public WallPoint Unmap(Point p) => new((p.X-Left)/Scale,MaxY-(p.Y-Top)/Scale);
+    }
+    private View? view, frozen;
+    private string? hover, active;
+    private Dictionary<string,string>? before; // valori all'inizio del trascinamento, per l'annullamento con Esc
+    private const double GripRadius = 6;
+
+    public RetainingWallDrawing() { Focusable=true; FocusVisualStyle=null; }
     public static readonly DependencyProperty GeometryProperty = DependencyProperty.Register(nameof(Geometry),typeof(WallGeometry),typeof(RetainingWallDrawing),new FrameworkPropertyMetadata(null,FrameworkPropertyMetadataOptions.AffectsRender));
     public static readonly DependencyProperty ResultProperty = DependencyProperty.Register(nameof(Result),typeof(WallResult),typeof(RetainingWallDrawing),new FrameworkPropertyMetadata(null,FrameworkPropertyMetadataOptions.AffectsRender));
     public WallGeometry? Geometry {get=>(WallGeometry?)GetValue(GeometryProperty);set=>SetValue(GeometryProperty,value);}
@@ -31,7 +57,9 @@ public sealed class RetainingWallDrawing : FrameworkElement
         var scale=Math.Min((width-150)/(b+1),(height-100)/Math.Max(.1,maxY-minY));
         if(!double.IsFinite(scale)||scale<=0)return;
         var left=60+(width-150-(b+1)*scale)/2;var top=38+(height-100-(maxY-minY)*scale)/2;
-        Point Map(WallPoint p)=>new(left+p.X*scale,top+(maxY-p.Y)*scale);
+        view=frozen??new View(left,top,maxY,scale);var v=view.Value;
+        scale=v.Scale;left=v.Left;
+        Point Map(WallPoint p)=>v.Map(p);
         void Poly(IEnumerable<WallPoint> points,Brush fill,Brush stroke)
         {
             var ps=points.Select(Map).ToArray();var shape=new StreamGeometry();
@@ -71,6 +99,7 @@ public sealed class RetainingWallDrawing : FrameworkElement
         var basePoint=Map(g.Wall[2]);Text("Ba "+N(g.Wall[2].X),left+5,basePoint.Y+4,Navy,10);
         var tooth=Map(g.Wall[12]);Text("H4 "+N(g.Wall[13].Y-g.Wall[12].Y),tooth.X-58,tooth.Y+5,Navy,10);
         var crest=Map(g.Wall[6]);Text("Terreno a monte",crest.X+12,crest.Y+18,Color("#7B6341"),10);
+        DrawGrips(dc,g,v,Text);
         if(Result is {} result)
         {
             // Diagramma storico: σ = KA (γ z + q). I valori derivano dagli input del risultato, non da campi modificati.
@@ -89,5 +118,74 @@ public sealed class RetainingWallDrawing : FrameworkElement
                 Text(N(rows[^1].Value)+" kPa",x,Map(new(0,rows[^1].Elevation)).Y+6,Amber,10);
             }
         }
+    }
+
+    /// <summary>Grip: quadrato bianco bordato; il grip sotto il mouse o trascinato è pieno e mostra il valore.</summary>
+    private void DrawGrips(DrawingContext dc,WallGeometry g,View v,Action<string,double,double,Brush,double> text)
+    {
+        if(Grips is not {} grips||GripCommand is null)return;
+        var accent=Color("#C3872A");var pen=new Pen(Navy,1.2);
+        foreach(var grip in grips)
+        {
+            var p=v.Map(grip.Anchor(g));
+            if(p.X<0||p.Y<0||p.X>ActualWidth||p.Y>ActualHeight)continue;
+            var on=grip.Id==active||(active is null&&grip.Id==hover);
+            var r=on?GripRadius+1:GripRadius-1;
+            dc.DrawRectangle(on?accent:Brushes.White,pen,new Rect(p.X-r,p.Y-r,2*r,2*r));
+            if(!on)continue;
+            var value=Parameters is {} fields&&fields.TryGetValue(grip.Key,out var f)?f.Value:"";
+            var arrow=grip.Axis==WallGripAxis.Horizontal?"↔":"↕";
+            text($"{arrow} {grip.Key} = {value} {grip.Unit}",p.X+10,p.Y-24,accent,12);
+        }
+    }
+    private string? HitGrip(Point mouse)
+    {
+        if(Grips is not {} grips||Geometry is not {} g||view is not {} v)return null;
+        // Il grip più vicino entro una tolleranza leggermente più ampia del disegno, comoda anche su schermi ad alta risoluzione.
+        return grips.Select(grip=>(grip.Id,Distance:(v.Map(grip.Anchor(g))-mouse).Length))
+            .Where(x=>x.Distance<=GripRadius+4).OrderBy(x=>x.Distance).Select(x=>x.Id).FirstOrDefault();
+    }
+    protected override void OnMouseMove(MouseEventArgs e)
+    {
+        base.OnMouseMove(e);var mouse=e.GetPosition(this);
+        if(active is not null&&frozen is {} v)
+        {
+            var step=Keyboard.Modifiers.HasFlag(ModifierKeys.Control)?.01:.05;
+            var request=new WallGripDrag(active,v.Unmap(mouse),step);
+            if(GripCommand?.CanExecute(request)==true)GripCommand.Execute(request);
+            InvalidateVisual();return;
+        }
+        var hit=HitGrip(mouse);
+        if(hit!=hover){hover=hit;InvalidateVisual();}
+        var axis=Grips?.FirstOrDefault(x=>x.Id==hit)?.Axis;
+        Cursor=axis switch{WallGripAxis.Horizontal=>Cursors.SizeWE,WallGripAxis.Vertical=>Cursors.SizeNS,_=>null};
+        ToolTip=hit is null?null:$"Trascinare per modificare {hit} · Ctrl: passo 1 cm · Esc: annulla";
+    }
+    protected override void OnMouseLeftButtonDown(MouseButtonEventArgs e)
+    {
+        base.OnMouseLeftButtonDown(e);
+        var hit=HitGrip(e.GetPosition(this));
+        if(hit is null||view is null)return;
+        active=hit;frozen=view;Focus();CaptureMouse();
+        before=Parameters?.ToDictionary(p=>p.Key,p=>p.Value.Value);
+        e.Handled=true;InvalidateVisual();
+    }
+    protected override void OnMouseLeftButtonUp(MouseButtonEventArgs e){base.OnMouseLeftButtonUp(e);EndDrag();}
+    protected override void OnLostMouseCapture(MouseEventArgs e){base.OnLostMouseCapture(e);EndDrag();}
+    protected override void OnMouseLeave(MouseEventArgs e){base.OnMouseLeave(e);if(active is null&&hover is not null){hover=null;InvalidateVisual();}}
+    protected override void OnKeyDown(KeyEventArgs e)
+    {
+        base.OnKeyDown(e);
+        if(e.Key!=Key.Escape||active is null)return;
+        // Annulla: ripristina i valori testuali come erano al momento della pressione del mouse.
+        if(before is not null&&Parameters is {} fields)foreach(var (key,value) in before)if(fields[key].Value!=value)fields[key].Value=value;
+        EndDrag();e.Handled=true;
+    }
+    private void EndDrag()
+    {
+        if(active is null)return;
+        active=null;frozen=null;before=null;
+        if(IsMouseCaptured)ReleaseMouseCapture();
+        InvalidateVisual();
     }
 }

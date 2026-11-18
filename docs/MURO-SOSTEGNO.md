@@ -6,18 +6,21 @@ Modulo pubblicato in TA-Calcolo **1.5.1** a partire dal tag pubblicato **v1.5.0*
 
 La nuova scheda **Muro di sostegno** segue le schede esistenti nella schermata principale. La finestra riprende il tema di Muratura e cerchiatura: Acherus Grotesque, logo aziendale, blu e petrolio, pannelli bianchi e campi numerici gialli.
 
-Gli input sono suddivisi in Geometria, Materiali e carichi, Terreno e falda, Sisma. Il disegno vettoriale mostra muro, dente, terreni, falde e quote principali con la medesima scala sui due assi. Dopo il calcolo compare anche il diagramma delle pressioni statiche.
+La finestra è su tre colonne ridimensionabili: a sinistra i dati, in righe compatte (etichetta, campo giallo, unità) raggruppate in sezioni richiudibili (Geometria, Materiali e carichi, Terreno e falda, Sisma); al centro il disegno con le schede Risultati e Note di calcolo; a destra una **Sintesi** sempre visibile (rapporti Mstab/Mrib, area, KA/KP, momenti e componenti di scorrimento).
+
+**Calcolo automatico (MVVM).** Ogni modifica valida di un campo ricalcola subito geometria, risultati, sintesi e diagramma delle pressioni. Con un dato non valido i risultati vengono azzerati, l'errore compare nella Sintesi e le esportazioni sono disabilitate. Il pulsante **Ricalcola** riesegue il calcolo ma non è più necessario.
+
+**Grip sul disegno.** I quadratini sul disegno si trascinano col mouse e scrivono i valori nei campi corrispondenti: H1, S1, Ds1 (sommità), Ba, S2 (base del paramento), Bf, H2, H3 (fondazione), H4, Xd, S3 (dente), Hta, It, Htp, Itp (terreni), Qfa, Qfp (falde). Il passo è di 5 cm, oppure di 1 cm tenendo premuto Ctrl; Esc annulla il trascinamento in corso. Durante il trascinamento la scala del disegno resta bloccata. Una posizione che produce una geometria non ammessa viene rifiutata e il valore resta invariato. Se il dente è allineato al bordo posteriore, trascinando Bf il dente si sposta con il bordo; se H2 = H3, trascinando H2 la base resta orizzontale. Le regole dei grip sono in `WallEditing` (core), indipendenti da WPF e coperte dai test.
 
 - **Apri progetto** legge JSON e i file `.mdst` del programma originale.
 - **Salva progetto** conserva parametri e titolo nel JSON versionato del modulo.
 - **Salva .mdst** produce il formato compatibile con il programma originale; questo formato non conserva il titolo.
-- **Calcola** aggiorna i rapporti e la tabella dei risultati statici e sismici.
 - **Esporta risultati** produce un testo con tutti gli input, i risultati e le note del motore.
 - **Esporta JSON** produce input e risultati numerici utilizzabili da altri programmi.
 
 La scheda **Note di calcolo** riporta le limitazioni applicabili. Il modulo conserva il progetto quando si chiude e si riapre la finestra nella stessa sessione. Salvare su file prima di chiudere TA-Calcolo.
 
-Punto e virgola decimale sono accettati. Ogni modifica invalida immediatamente i risultati e disabilita l'esportazione. Gli input errati non sono rimpiazzati da valori predefiniti. Un file incompleto, di un altro modulo o non valido viene rifiutato prima di modificare il progetto aperto.
+Punto e virgola decimale sono accettati. Gli input errati non sono rimpiazzati da valori predefiniti. Un file incompleto, di un altro modulo o non valido viene rifiutato prima di modificare il progetto aperto.
 
 ## Provenienza e ambito numerico
 

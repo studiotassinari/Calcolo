@@ -22,7 +22,11 @@ public sealed class WallNumberField(WallParameter parameter) : ObservableObject,
 public sealed record WallFieldGroup(string Title, IReadOnlyList<WallNumberField> Fields);
 public sealed record WallResultRow(string Label, string Static, string Seismic, string Unit);
 
-/// <summary>Stato indipendente per ogni progetto: invalidazione immediata di risultati ed esportazioni dopo ogni modifica.</summary>
+/// <summary>
+/// Stato indipendente per ogni progetto. Ogni modifica valida di un campo o di un grip del disegno
+/// ricalcola subito geometria e risultati (MVVM: le viste osservano soltanto le proprietà).
+/// Un input non valido azzera i risultati e disabilita le esportazioni, senza sostituire valori.
+/// </summary>
 public sealed class RetainingWallViewModel : ObservableObject
 {
     private readonly IFileService files;
@@ -43,7 +47,12 @@ public sealed class RetainingWallViewModel : ObservableObject
     public string AreaText => Geometry is null ? "—" : N(WallGeometry.Properties(Geometry.Wall).Area) + " m²";
     public string StaticText => Result?.StaticRatio is double r ? N(r) : "—";
     public string SeismicText => Result?.SeismicRatio is double r ? N(r) : "—";
-    public string ResultStatus => HasResults ? "Rapporti del motore originale · consultare le note di calcolo" : "Risultati da calcolare";
+    public string ResultStatus => HasResults ? "Aggiornati a ogni modifica · rapporti del motore originale, consultare le note" : "Risultati non disponibili: correggere i dati evidenziati";
+    /// <summary>Sintesi sempre visibile accanto al disegno: aggiornata insieme alla tabella completa.</summary>
+    public IReadOnlyList<WallResultRow> Summary { get; private set; } = [];
+    /// <summary>Grip del disegno: posizioni e regole di conversione sono nel core, testabili senza WPF.</summary>
+    public IReadOnlyList<WallGrip> Grips => WallEditing.Grips;
+    public ParameterCommand<WallGripDrag> GripCommand { get; }
     public RelayCommand CalculateCommand { get; }
     public RelayCommand ExampleCommand { get; }
     public RelayCommand SaveCommand { get; }
@@ -60,12 +69,14 @@ public sealed class RetainingWallViewModel : ObservableObject
         ByKey = WallParameters.All.ToDictionary(p=>p.Key,p=>new WallNumberField(p));
         Groups = WallParameters.All.GroupBy(p=>p.Group).Select(g=>new WallFieldGroup(g.Key,g.Select(p=>ByKey[p.Key]).ToArray())).ToArray();
         foreach (var field in ByKey.Values) field.PropertyChanged += (_,e) => { if(e.PropertyName==nameof(WallNumberField.Value)) Invalidate(); };
+        // Il ricalcolo è automatico; il comando resta per forzarlo e per compatibilità con i flussi esistenti.
         CalculateCommand = new(()=>Run(Calculate),()=>InputsValid);
+        GripCommand = new(Drag,_=>InputsValid);
         ExampleCommand = new(()=>Load(WallFiles.Example()));
         OpenCommand = new(()=>Run(()=>
         {
             var path=files.Open("Progetto muro di sostegno|*.json;*.mdst");
-            if(path is not null) { var doc=WallFiles.Read(files.Read(path)); Load(doc); Status="Progetto aperto. Premere Calcola."; }
+            if(path is not null) { var doc=WallFiles.Read(files.Read(path)); Load(doc); if(HasResults) Status="Progetto aperto e calcolato."; }
         }));
         SaveCommand = new(()=>Run(()=>Save(false)),()=>InputsValid);
         SaveMdstCommand = new(()=>Run(()=>Save(true)),()=>InputsValid);
@@ -79,7 +90,7 @@ public sealed class RetainingWallViewModel : ObservableObject
             var path=files.Save("Risultati muro JSON|*.json","muro-sostegno-risultati.json");
             if(path is not null) { files.Write(path,WallFiles.WriteResults(Document(),Result!)); Status="Dati e risultati JSON esportati."; }
         }),()=>HasResults);
-        Invalidate(); Status="Dati iniziali del programma originale. Modificare i parametri oppure aprire un file .mdst.";
+        Invalidate(); if(HasResults) Status="Dati iniziali del programma originale. Modificare i campi o trascinare i grip del disegno.";
     }
     public WallDocument Document()
     {
@@ -98,7 +109,7 @@ public sealed class RetainingWallViewModel : ObservableObject
         // La rappresentazione più breve conserva il double senza esporre code come 0,59999999999999998.
         try { Title=doc.Title; foreach(var (key,field) in ByKey) field.Value=doc.Parameters[key].ToString("G",Italian); }
         finally { loading=false; }
-        Invalidate(); Status="Progetto caricato. Premere Calcola.";
+        Invalidate(); if(HasResults) Status="Progetto caricato e calcolato.";
     }
     private void Save(bool mdst)
     {
@@ -108,25 +119,51 @@ public sealed class RetainingWallViewModel : ObservableObject
     }
     private void Calculate()
     {
-        Result=null; Results=[]; NotifyResults();
+        Result=null; Results=[]; Summary=[]; NotifyResults();
         Result=WallCalculator.Calculate(Document().Parameters);
-        Results=Rows(Result); NotifyResults(); Status="Calcolo completato. Consultare risultati e note del motore originale.";
+        Results=Rows(Result); Summary=SummaryRows(Result); NotifyResults(); Status="Calcolo completato. Consultare risultati e note del motore originale.";
     }
+    /// <summary>
+    /// Reazione a ogni modifica: geometria e calcolo vengono rieseguiti subito.
+    /// Il calcolo dura pochi microsecondi, quindi è eseguito in modo sincrono ad ogni carattere digitato.
+    /// </summary>
     private void Invalidate()
     {
         if(loading)return;
-        Result=null;Results=[];Geometry=null;
+        Result=null;Results=[];Summary=[];Geometry=null;
         try { Geometry=WallGeometry.Create(Document().Parameters);InputError=""; }
         catch(ArgumentException ex) {InputError=ex.Message;}
         catch(System.IO.InvalidDataException ex) {InputError=ex.Message;}
-        Changed(nameof(Geometry));Changed(nameof(AreaText));NotifyResults();
-        CalculateCommand?.Refresh();SaveCommand?.Refresh();SaveMdstCommand?.Refresh();
-        Status=InputsValid?"Dati modificati: premere Calcola.":InputError;
+        Changed(nameof(Geometry));Changed(nameof(AreaText));
+        CalculateCommand?.Refresh();SaveCommand?.Refresh();SaveMdstCommand?.Refresh();GripCommand?.Refresh();
+        if(!InputsValid){NotifyResults();Status=InputError;return;}
+        // Errori di dominio del motore (radicandi negativi, divisioni nulle): risultati assenti e messaggio visibile.
+        Run(Calculate);
+        if(!HasResults)NotifyResults();
+        else Status="Risultati aggiornati.";
     }
     private void NotifyResults()
     {
-        foreach(var name in new[]{nameof(Result),nameof(Results),nameof(HasResults),nameof(Notes),nameof(StaticText),nameof(SeismicText),nameof(ResultStatus)})Changed(name);
+        foreach(var name in new[]{nameof(Result),nameof(Results),nameof(Summary),nameof(HasResults),nameof(Notes),nameof(StaticText),nameof(SeismicText),nameof(ResultStatus)})Changed(name);
         ExportCommand?.Refresh();ExportJsonCommand?.Refresh();
+    }
+    /// <summary>
+    /// Applica un trascinamento: i nuovi valori sono scritti nei campi come se fossero digitati,
+    /// con un solo ricalcolo finale. Un trascinamento non ammesso lascia invariati campi e risultati.
+    /// </summary>
+    private void Drag(WallGripDrag drag)
+    {
+        Dictionary<string,double> current;
+        try { current=Document().Parameters; } catch(ArgumentException) { return; }
+        var next=WallEditing.Drag(current,drag.Id,drag.Target,drag.Step);
+        if(next is null) { Status=$"{drag.Id}: posizione non ammessa dalla geometria, valore invariato."; return; }
+        var changed=next.Where(p=>current[p.Key]!=p.Value).ToArray();
+        if(changed.Length==0)return;
+        loading=true;
+        try { foreach(var (key,value) in changed) ByKey[key].Value=value.ToString("G",Italian); }
+        finally { loading=false; }
+        Invalidate();
+        if(HasResults) Status=string.Join(" · ",changed.Select(p=>$"{p.Key} = {ByKey[p.Key].Value} {ByKey[p.Key].Unit}"))+" (dal disegno)";
     }
     private void Run(Action action)
     {
@@ -159,6 +196,17 @@ public sealed class RetainingWallViewModel : ObservableObject
         new("Baricentro terreno anteriore · x; y",$"{N(r.FrontSoil.Centroid.X)}; {N(r.FrontSoil.Centroid.Y)}","—","m"),
         new("Area terreno posteriore",N(r.BackSoil.Area),"—","m²"),
         new("Baricentro terreno posteriore · x; y",$"{N(r.BackSoil.Centroid.X)}; {N(r.BackSoil.Centroid.Y)}","—","m")
+    ];
+    /// <summary>Grandezze principali per il pannello di sintesi; la tabella completa resta nella scheda Risultati.</summary>
+    private static IReadOnlyList<WallResultRow> SummaryRows(WallResult r) => [
+        new("KA",N(r.Static.Active,3),N(r.Seismic.Active,3),""),
+        new("KP",N(r.Static.Passive,3),N(r.Seismic.Passive,3),""),
+        new("M stab. A1",N(r.Stabilizing,1),N(r.Stabilizing,1),"kN·m/m"),
+        new("M rib. A1",N(r.OverturningStatic,1),N(r.Overturning,1),"kN·m/m"),
+        new("Mstab/Mrib",r.StaticRatio is double a?N(a):"—",r.SeismicRatio is double b?N(b):"—",""),
+        new("Spinta scorr. G2","—",N(r.SlidingThrust.G2,1),"kN/m"),
+        new("Resist. scorr. G1",N(r.SlidingResistance.G1,1),"—","kN/m"),
+        new("Resist. scorr. G2",N(r.SlidingResistance.G2,1),"—","kN/m")
     ];
     private string Report()
     {

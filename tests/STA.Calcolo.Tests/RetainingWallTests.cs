@@ -60,5 +60,28 @@ internal static class RetainingWallTests
             d["Qfp"]=-1;d["Vs"]=209;r=WallCalculator.Calculate(d);Check(!r.Notes.Any(n=>n.Contains("anomalia")||n.Contains("0,209")),"Note non aggiornate");
             Check(r.Pressures.Count==4,"Diagramma incompleto");Near(r.Pressures[0].Value,r.Static.Active*d["Sovraccarico"]);
         });
+        test("Muro · grip del disegno: posizione ↔ parametri, aggancio e rifiuto geometrie non ammesse",()=>
+        {
+            var d=WallParameters.Defaults();var g=WallGeometry.Create(d);
+            // Ogni grip, rilasciato nella propria posizione, deve restituire gli stessi parametri (andata e ritorno).
+            foreach(var grip in WallEditing.Grips)
+            {
+                var next=WallEditing.Drag(d,grip.Id,grip.Anchor(g),.001);Check(next is not null,$"Grip {grip.Id} rifiutato nella posizione iniziale");
+                foreach(var (key,value) in d)Check(Math.Abs(next![key]-value)<1e-3,$"Grip {grip.Id} altera {key}: {next[key]} ≠ {value}");
+            }
+            // Spostamento con aggancio a 5 cm lungo il solo asse del grip.
+            var h1=WallEditing.Drag(d,"H1",new(9,7.62),.05)!;Near(h1["H1"],7);Check(h1.Count(p=>p.Value!=d[p.Key])==1,"H1 modifica altri parametri");
+            var s2=WallEditing.Drag(d,"S2",new(2.03,99),.05)!;Near(s2["S2"],.85);
+            // Bf trascina con sé il dente quando è allineato al bordo posteriore (Xd + S3 = Bf nei dati di esempio).
+            var bf=WallEditing.Drag(d,"Bf",new(5,0),.05)!;Near(bf["Bf"],5);Near(bf["Xd"],4.5);
+            // H2 = H3: la base resta orizzontale.
+            var h2=WallEditing.Drag(d,"H2",new(0,.8),.05)!;Near(h2["H2"],.8);Near(h2["H3"],.8);
+            // Pendenza posteriore dal punto estremo della superficie.
+            var itp=WallEditing.Drag(d,"Itp",new(4.5,6.6+.54),.01)!;Near(itp["Itp"],20);
+            // Geometrie non ammesse: nessun valore restituito.
+            Check(WallEditing.Drag(d,"Bf",new(.5,0),.05) is null,"Bf minore di Ba + S2 accettato");
+            Check(WallEditing.Drag(d,"H1",new(0,-3),.05) is null,"H1 negativa accettata");
+            Check(WallEditing.Drag(d,"Sconosciuto",new(0,0),.05) is null,"Grip inesistente accettato");
+        });
     }
 }
