@@ -1,17 +1,17 @@
-TA-Calcolo 1.5.1: nuovo modulo Muro di sostegno, integrato sulla base della release 1.5.0.
+TA-Calcolo 1.6.0: Muro di sostegno con motore rivisto NTC 2018, modifica grafica della sezione e ricalcolo automatico.
 
-- Nuova scheda nella schermata principale e interfaccia coerente con Muratura e cerchiatura: logo, font, colori, pannelli e campi numerici aziendali.
-- Geometria di muro, fondazione e dente, terreni e falde; disegno vettoriale quotato e diagramma delle pressioni statiche.
-- Risultati statici e sismici del motore originale: coefficienti di spinta, momenti stabilizzanti/ribaltanti e componenti di scorrimento.
-- Apertura e salvataggio dei progetti JSON e dei file .mdst originali; esportazione dei risultati TXT e JSON.
-- Validazione degli input, importazione atomica, conservazione della sessione e invalidazione dei risultati dopo ogni modifica.
+- **Motore rivisto NTC 2018 (predefinito).** Ribaltamento EQU + M2 (γR 1,15), scorrimento A1 + M1 + R3 (γR 1,1, 50 % della resistenza passiva a valle con γR 1,4), sisma pseudostatico con γ = 1, M1, kv = ±0,5·kh e forze d'inerzia di muro e terreno. Esito Rd/Ed con riquadri verdi/rossi.
+- **Correzioni rispetto al programma originale:** stessa altezza di spinta per ribaltamento e scorrimento; spinte idrostatiche a monte e a valle e sottospinta lineare; sovraccarico solo come azione; KP con la pendenza a valle; eliminati il poligono immerso errato e l'errore di segno sul peso; coefficiente sismico senza il fattore g spurio e B_H continuo.
+- **Motore originale ancora disponibile** per confronto dal selettore nella Sintesi; l'esportazione JSON contiene i risultati di entrambi.
+- **Interfaccia più compatta:** tre colonne ridimensionabili, dati in righe con gruppi richiudibili, sintesi sempre visibile accanto al disegno.
+- **Grip sul disegno:** trascinando i quadratini si modificano H1, S1, Ds1, Ba, S2, Bf, H2, H3, H4, Xd, S3, Hta, It, Htp, Itp, Qfa e Qfp (passo 5 cm, 1 cm con Ctrl, Esc annulla); le posizioni non ammesse sono rifiutate.
+- **Ricalcolo automatico:** risultati, sintesi e diagramma si aggiornano a ogni modifica dei campi.
 
 ## Verifiche
-59 test C# superati, inclusi 13 casi confrontati con il programma originale (29 risultati e 14 vertici per caso), caso analitico di Rankine e round trip dei file. Test WPF su navigazione, sessione, layout, binding, esportazioni e risultati obsoleti. Verifiche degli altri moduli, architettura, aggiornamenti e relazioni comprese nel flusso di rilascio.
+62 test C# superati: i 13 casi di parità con il programma originale, il caso di Rankine con formule chiuse per ribaltamento EQU + M2 e scorrimento A1 + M1 + R3, falda simmetrica (spinte d'acqua e sottospinta), sovraccarico, KP, coefficiente sismico e grip. Test WPF su ricalcolo automatico, grip, selezione del motore, file ed esportazioni.
 
 ## Ambito e limiti
-Le formule del programma TA-MuroDiSostegno sono conservate per confronto: non costituiscono una verifica normativa completa. Il modulo segnala il valore originale Vs = 0,209 m/s e l'anomalia di segno del peso immerso nel ramo con falda; il modello idraulico richiede revisione prima dell'uso per il dimensionamento. Le componenti di scorrimento non vengono trasformate in un esito complessivo. Escluse capacità portante, stabilità globale e armature.
-Dettagli e provenienza: docs/MURO-SOSTEGNO.md e Guida-muro-sostegno.md distribuita con il programma.
+Escluse capacità portante, stabilità globale, cedimenti e armature. La distribuzione della spinta sismica segue quella statica e non sono considerate sovrappressioni idrodinamiche. Il tratto variabile di B_H va confermato sulla fonte normativa. Il valore di esempio Vs = 0,209 del programma originale porta B_H al minimo: inserire Vs in m/s. Dettagli: docs/MURO-SOSTEGNO.md e Guida-muro-sostegno.md distribuita con il programma.
 
 ## Installazione e aggiornamento
-Installer Windows x64 con runtime incluso, pacchetto per l'aggiornamento automatico e file SHA256SUMS, come nelle release precedenti. Restano disponibili le funzionalità della versione 1.5.0.
+Installer Windows x64 con runtime incluso, pacchetto per l'aggiornamento automatico e file SHA256SUMS, come nelle release precedenti. I progetti JSON e .mdst esistenti restano compatibili.

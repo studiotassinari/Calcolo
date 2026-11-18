@@ -17,8 +17,9 @@ public static class WallFiles
         WallValidation.Validate(doc.Parameters);
     }
     public static string Write(WallDocument doc) { Validate(doc); return JsonSerializer.Serialize(doc,Json); }
-    public static string WriteResults(WallDocument doc, WallResult result)
-    { Validate(doc); return JsonSerializer.Serialize(new { Input=doc, Result=result },Json); }
+    /// <summary>Input e risultati di entrambi i motori: Design = motore rivisto NTC 2018, Result = motore originale (null se non calcolabile).</summary>
+    public static string WriteResults(WallDocument doc, WallDesignResult? design, WallResult? result)
+    { Validate(doc); return JsonSerializer.Serialize(new { Input=doc, Design=design, Result=result },Json); }
     public static WallDocument Read(string text)
     {
         var trimmed = text.TrimStart('\uFEFF',' ','\t','\r','\n');

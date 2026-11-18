@@ -62,4 +62,4 @@ La versione **1.3.0** aggiunge relazioni Word/PDF A4 con margini e risultati rag
 
 Il modulo TaglioClsRect è integrato nella schermata iniziale: travi e pareti, quote H/b editabili direttamente sulla sezione vettoriale, input .tgl e JSON, risultati e relazione Word con grafica TA. Motore portabile separato dalla UI MVVM. [Guida, compatibilità e limiti delle formule migrate](docs/TAGLIO-CLS.md).
 
-Il modulo **Muro di sostegno** della versione **1.5.1**, integrato sulla base della release 1.5.0, riprende la grafica di Muratura e cerchiatura e legge i progetti `.mdst` originali. [Guida e limiti del motore](docs/MURO-SOSTEGNO.md).
+Il modulo **Muro di sostegno** (introdotto nella 1.5.1, motore rivisto NTC 2018 dalla **1.6.0**) verifica ribaltamento e scorrimento, si modifica anche trascinando i grip del disegno e legge i progetti `.mdst` originali. [Guida e limiti del motore](docs/MURO-SOSTEGNO.md).
