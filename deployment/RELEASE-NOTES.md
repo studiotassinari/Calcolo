@@ -1,17 +1,16 @@
-TA-Calcolo 1.6.0: Muro di sostegno con motore rivisto NTC 2018, modifica grafica della sezione e ricalcolo automatico.
+TA-Calcolo 1.7.0: Muro di sostegno con forze e diagrammi nel disegno, pressione sul terreno di fondazione e relazione di calcolo.
 
-- **Motore rivisto NTC 2018 (predefinito).** Ribaltamento EQU + M2 (γR 1,15), scorrimento A1 + M1 + R3 (γR 1,1, 50 % della resistenza passiva a valle con γR 1,4), sisma pseudostatico con γ = 1, M1, kv = ±0,5·kh e forze d'inerzia di muro e terreno. Esito Rd/Ed con riquadri verdi/rossi.
-- **Correzioni rispetto al programma originale:** stessa altezza di spinta per ribaltamento e scorrimento; spinte idrostatiche a monte e a valle e sottospinta lineare; sovraccarico solo come azione; KP con la pendenza a valle; eliminati il poligono immerso errato e l'errore di segno sul peso; coefficiente sismico senza il fattore g spurio e B_H continuo.
-- **Motore originale ancora disponibile** per confronto dal selettore nella Sintesi; l'esportazione JSON contiene i risultati di entrambi.
-- **Interfaccia più compatta:** tre colonne ridimensionabili, dati in righe con gruppi richiudibili, sintesi sempre visibile accanto al disegno.
-- **Grip sul disegno:** trascinando i quadratini si modificano H1, S1, Ds1, Ba, S2, Bf, H2, H3, H4, Xd, S3, Hta, It, Htp, Itp, Qfa e Qfp (passo 5 cm, 1 cm con Ctrl, Esc annulla); le posizioni non ammesse sono rifiutate.
-- **Ricalcolo automatico:** risultati, sintesi e diagramma si aggiornano a ogni modifica dei campi.
+- **Relazione di calcolo Word e PDF** (13 pagine A4): inquadramento normativo (NTC 2018, Circolare 2019) e coefficienti parziali, dati, 19 formule numerate con sostituzione numerica, cinque figure generate dal disegno (sezione e schema di calcolo, azioni statiche, azioni rispetto al polo di ribaltamento, diagrammi delle pressioni, azioni sismiche) e riepilogo delle verifiche.
+- **Formule native di Word:** frazioni, radici, apici e pedici sono equazioni di Office modificabili; nel PDF le righe di frazione sono proporzionate al contenuto (anche nelle relazioni di Muratura).
+- **Forze e diagrammi nel disegno:** frecce proporzionali alle azioni della combinazione scelta (esercizio, EQU, A1, sisma), diagrammi della spinta attiva, dell'acqua, della resistenza passiva e della pressione sul terreno.
+- **Pressione sul terreno di fondazione:** distribuzione lineare con base parzializzata oltre il nocciolo centrale, in esercizio, allo SLU (A1) e in sisma; risultati nella sintesi e nella tabella.
+- **Grip H1:** abbassando la sommità sotto il terreno, le altezze del terreno a monte e a valle scendono insieme al muro.
 
 ## Verifiche
-62 test C# superati: i 13 casi di parità con il programma originale, il caso di Rankine con formule chiuse per ribaltamento EQU + M2 e scorrimento A1 + M1 + R3, falda simmetrica (spinte d'acqua e sottospinta), sovraccarico, KP, coefficiente sismico e grip. Test WPF su ricalcolo automatico, grip, selezione del motore, file ed esportazioni.
+64 test C# del core: pressione sul terreno in forma chiusa (trapezio, nocciolo, base parzializzata, risultante fuori base), coerenza fra forze, diagrammi e verifiche, grip. Relazioni su tre casi con controllo dell'impaginazione A4, delle figure e delle equazioni native di Word. Test WPF su relazione, figure, combinazione disegnata e livelli.
 
 ## Ambito e limiti
-Escluse capacità portante, stabilità globale, cedimenti e armature. La distribuzione della spinta sismica segue quella statica e non sono considerate sovrappressioni idrodinamiche. Il tratto variabile di B_H va confermato sulla fonte normativa. Il valore di esempio Vs = 0,209 del programma originale porta B_H al minimo: inserire Vs in m/s. Dettagli: docs/MURO-SOSTEGNO.md e Guida-muro-sostegno.md distribuita con il programma.
+La capacità portante non è verificata: le pressioni sul terreno vanno confrontate con la resistenza del terreno di fondazione. Esclusi stabilità globale, cedimenti e armature. Restano valide le ipotesi del motore rivisto descritte in docs/MURO-SOSTEGNO.md.
 
 ## Installazione e aggiornamento
-Installer Windows x64 con runtime incluso, pacchetto per l'aggiornamento automatico e file SHA256SUMS, come nelle release precedenti. I progetti JSON e .mdst esistenti restano compatibili.
+Installer Windows x64 con runtime incluso, pacchetto per l'aggiornamento automatico e file SHA256SUMS. I progetti JSON e .mdst esistenti restano compatibili.

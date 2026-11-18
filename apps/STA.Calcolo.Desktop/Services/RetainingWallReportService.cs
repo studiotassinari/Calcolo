@@ -30,13 +30,13 @@ public sealed class RetainingWallReportService : IRetainingWallReportService
         using var memory = new MemoryStream(); stream.CopyTo(memory); return memory.ToArray();
     }
 
-    /// <summary>Rende il disegno in PNG; forze e diagrammi assenti per la sola sezione geometrica.</summary>
-    public static byte[] Render(WallGeometry geometry, WallDesignCase? designCase)
+    /// <summary>Rende il disegno in PNG con i livelli richiesti (forze, diagrammi, schema di calcolo).</summary>
+    public static byte[] Render(WallGeometry geometry, WallDesignCase? designCase, bool forces = true, bool diagrams = true, bool scheme = false)
     {
         var drawing = new RetainingWallDrawing
         {
             Geometry = geometry, Forces = designCase?.Forces, Diagrams = designCase?.Diagrams,
-            ShowForces = designCase is not null, ShowDiagrams = designCase is not null
+            ShowForces = forces && designCase is not null, ShowDiagrams = diagrams && designCase is not null, ShowScheme = scheme
         };
         var size = new Size(FigureWidth, FigureHeight);
         drawing.Measure(size); drawing.Arrange(new Rect(size)); drawing.UpdateLayout();
@@ -46,16 +46,18 @@ public sealed class RetainingWallReportService : IRetainingWallReportService
         using var output = new MemoryStream(); encoder.Save(output); return output.ToArray();
     }
 
-    private static ReportDocument Build(WallDocument document, WallDesignResult result)
+    /// <summary>Figure della relazione, con le chiavi attese da RetainingWallReportBuilder.</summary>
+    public static Dictionary<string, byte[]> Figures(WallDesignResult result) => new()
     {
-        var figures = new Dictionary<string, byte[]>
-        {
-            ["sezione"] = Render(result.Geometry, null),
-            ["statica"] = Render(result.Geometry, result.StaticBase),
-            ["sisma"] = Render(result.Geometry, result.SeismicBase)
-        };
-        return RetainingWallReportBuilder.Build(document, result, figures, DateTime.Now);
-    }
+        ["sezione"] = Render(result.Geometry, null, scheme: true),
+        ["statica"] = Render(result.Geometry, result.StaticBase),
+        ["ribaltamento"] = Render(result.Geometry, result.StaticOverturning, diagrams: false, scheme: true),
+        ["pressione"] = Render(result.Geometry, result.StaticBase, forces: false),
+        ["sisma"] = Render(result.Geometry, result.SeismicBase)
+    };
+
+    private static ReportDocument Build(WallDocument document, WallDesignResult result) =>
+        RetainingWallReportBuilder.Build(document, result, Figures(result), DateTime.Now);
 
     public byte[] Word(WallDocument document, WallDesignResult result) => WordReportWriter.Write(Build(document, result), Logo());
 

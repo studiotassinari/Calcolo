@@ -58,21 +58,23 @@ Sopra il disegno si sceglie la **combinazione** da rappresentare (esercizio cara
 
 ## Relazione di calcolo
 
-**Relazione Word** e **Relazione PDF** (motore rivisto) producono 11 pagine A4:
+**Relazione Word** e **Relazione PDF** (motore rivisto) producono 13 pagine A4:
 
 1. inquadramento normativo (NTC 2018, Circolare 2019) e coefficienti parziali;
-2. geometria con figura della sezione;
+2. geometria con la figura della sezione e dello schema di calcolo (piano di spinta virtuale, piano passivo, piano di scorrimento, polo di ribaltamento, nocciolo);
 3. dati dei materiali, del terreno e dell'azione sismica;
 4. coefficiente sismico;
 5. coefficienti di spinta;
-6. azioni statiche con figura delle forze e dei diagrammi;
+6. azioni statiche con la figura delle forze e dei diagrammi;
 7. ribaltamento;
-8. scorrimento;
-9. pressione sul terreno;
-10. azioni sismiche con figura;
-11. riepilogo delle verifiche e limiti.
+8. schema delle azioni rispetto al polo di ribaltamento (figura);
+9. scorrimento;
+10. pressione sul terreno;
+11. diagrammi delle pressioni sul muro e sul terreno (figura);
+12. azioni sismiche con figura;
+13. riepilogo delle verifiche e limiti.
 
-Le formule sono numerate e hanno la sostituzione numerica; nel Word sono equazioni Office modificabili. Le figure sono generate dal disegno della finestra (`RetainingWallReportService`). Il costruttore `RetainingWallReportBuilder` è portabile e testato in `STA.Reporting.Tests` con figure sintetiche. Gli scrittori Word e PDF supportano ora figure PNG (`ReportFigure`).
+Le formule sono numerate e hanno la sostituzione numerica. Sono scritte in una notazione strutturata (`ReportMath`: frazioni, radici, apici, pedici): nel Word diventano equazioni native di Office modificabili, nel PDF sono impaginate con righe di frazione proporzionate al contenuto. Le figure sono generate dal disegno della finestra (`RetainingWallReportService`). Il costruttore `RetainingWallReportBuilder` è portabile e testato in `STA.Reporting.Tests` con figure sintetiche. Gli scrittori Word e PDF supportano ora figure PNG (`ReportFigure`).
 
 ## Provenienza e ambito numerico
 

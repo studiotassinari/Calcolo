@@ -28,8 +28,9 @@ public static class PdfReportWriter
                 {
                     y+=Text(g,figure.Title,Margin,y,Width,12,true,Navy)+6;
                     using var figureStream=new MemoryStream(figure.Png);using var image=XImage.FromStream(figureStream);
-                    var figureHeight=Width/figure.AspectRatio;Ensure(y+figureHeight);
-                    g.DrawImage(image,Margin,y,Width,figureHeight);g.DrawRectangle(new XPen(Line,.5),Margin,y,Width,figureHeight);y+=figureHeight+4;
+                    var figureWidth=Width*Math.Clamp(figure.Scale,.2,1);var figureX=Margin+(Width-figureWidth)/2;
+                    var figureHeight=figureWidth/figure.AspectRatio;Ensure(y+figureHeight);
+                    g.DrawImage(image,figureX,y,figureWidth,figureHeight);g.DrawRectangle(new XPen(Line,.5),figureX,y,figureWidth,figureHeight);y+=figureHeight+4;
                     y+=Text(g,figure.Caption,Margin,y,Width,8.5,false,Muted)+12;
                 }
                 foreach(var equation in content.Equations??[])

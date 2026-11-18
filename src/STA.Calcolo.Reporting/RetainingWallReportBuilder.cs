@@ -21,8 +21,8 @@ public static class RetainingWallReportBuilder
     {
         WallFiles.Validate(document);
         var d = document.Parameters;
-        ReportFigure[] Figure(string key, string title, string caption) =>
-            figures.TryGetValue(key, out var png) && png.Length > 0 ? [new(title, png, caption)] : [];
+        ReportFigure[] Figure(string key, string title, string caption, double scale = 1) =>
+            figures.TryGetValue(key, out var png) && png.Length > 0 ? [new(title, png, caption, scale)] : [];
         var so = r.StaticOverturning; var ss = r.StaticSliding; var eo = r.SeismicOverturning; var es = r.SeismicSliding;
         var sb = r.StaticBase; var eb = r.SeismicBase; var sv = r.Service;
         var b = r.Geometry.Wall[8].X;
@@ -53,7 +53,7 @@ public static class RetainingWallReportBuilder
         var geometryRows = geometryKeys.Select(Row).Chunk(2).Select(pair => pair.Length == 2 ? new[] { pair[0][0], pair[0][1], pair[1][0], pair[1][1] } : [pair[0][0], pair[0][1], "", ""]).ToArray();
         var page2 = new ReportPage("Geometria della sezione", [new("Dati geometrici", ["Parametro", "Valore", "Parametro", "Valore"], geometryRows)], [],
             ["Origine nello spigolo anteriore inferiore della fondazione; x verso monte, y verso l'alto. Quote di falda assolute rispetto all'origine."],
-            "192845", null, Figure("sezione", "Figura 1 · Sezione del muro", "Geometria, terreni e falde con le quote principali (scala uguale sui due assi)."));
+            "192845", null, Figure("sezione", "Figura 1 · Sezione e schema di calcolo", "Geometria, terreni e falde; tratteggiati il piano di spinta virtuale (x = Bf), il piano della resistenza passiva (x = 0) e il piano di scorrimento per la base del dente; O polo di ribaltamento; tacche del nocciolo centrale B/3."));
 
         // ── 3. Materiali, terreno e azione sismica (dati).
         var otherKeys = WallParameters.All.Where(p => p.Group != "Geometria").Select(p => p.Key);
@@ -111,6 +111,12 @@ public static class RetainingWallReportBuilder
                     $"{N(so.StabilizingMoment, 1)} / ({N(so.Overturning.GammaR)} × {N(so.OverturningMoment, 1)}) = {Verdict(so.Overturning)}"),
                 new("(11) Verifica sismica (" + eo.Name + ")", "Rd / Ed", "Mstab,d", "γR · Mrib,d", "NTC 2018 Tab. 7.11.III: γR = 1,0; azioni con γ = 1, inerzie kh·W.",
                     $"{N(eo.StabilizingMoment, 1)} / ({N(eo.Overturning.GammaR)} × {N(eo.OverturningMoment, 1)}) = {Verdict(eo.Overturning)}")]);
+        // Pagina illustrativa dedicata: la figura a tutta larghezza non entra con le formule della verifica.
+        var page7b = new ReportPage("Verifica a ribaltamento · schema delle azioni", [new("Momenti di progetto attorno al polo O", ["Combinazione", "Mstab,d [kN·m/m]", "Mrib,d [kN·m/m]", "Rd/Ed"], [
+                [so.Name + " (" + so.Factors + ")", N(so.StabilizingMoment, 1), N(so.OverturningMoment, 1), N(so.Overturning.Ratio ?? double.NaN)],
+                [eo.Name, N(eo.StabilizingMoment, 1), N(eo.OverturningMoment, 1), N(eo.Overturning.Ratio ?? double.NaN)]])], [],
+            ["La figura riporta le azioni della combinazione EQU + M2 con i valori di progetto usati per la pressione sul terreno; i momenti di verifica applicano i coefficienti in base all'effetto di ciascuna azione."],
+            "192845", null, Figure("ribaltamento", "Figura 3 · Azioni rispetto al polo di ribaltamento", "Forze della combinazione EQU + M2; O polo di ribaltamento nel piede anteriore, tratteggiati i piani di spinta e di scorrimento."));
 
         // ── 8. Scorrimento.
         double Rd(WallDesignCase c) => c.Sliding.Resistance / c.Sliding.GammaR;
@@ -141,11 +147,14 @@ public static class RetainingWallReportBuilder
                     $"SLU (A1): u = {N(-sb.Forces.Sum(f => f.Mz), 1)} / {N(sb.Diagrams.Base.N, 1)} = {N(sb.Diagrams.Base.U, 3)} m"),
                 new("(18) Eccentricità", "e", "B / 2 − u", "", "Positiva verso valle.", $"SLU (A1): e = {N(b / 2, 3)} − {N(sb.Diagrams.Base.U, 3)} = {N(sb.Diagrams.Base.Eccentricity, 3)} m"),
                 new("(19) Pressione di contatto (Navier)", "σ", "N", "B", "· (1 ± 6e/B) se |e| ≤ B/6, altrimenti σmax = 2N/(3u) su 3u. Valori SLE e sisma in tabella.", "SLU (A1): " + Sigma(sb.Diagrams.Base))]);
+        var page9b = new ReportPage("Diagrammi delle pressioni", [], [], [
+            $"Statica A1: spinta del terreno {N(sb.EarthThrust, 1)} kN/m, acqua a monte {N(sb.WaterBack, 1)} kN/m, resistenza passiva {N(sb.Passive, 1)} kN/m (in verifica il {N(WallDesignCalculator.PassiveShare * 100, 0)} %), pressione sul terreno {S(sb.Diagrams.Base.SigmaToe)} / {S(sb.Diagrams.Base.SigmaHeel)} kPa (valle / monte)."],
+            "192845", null, Figure("pressione", "Figura 4 · Pressioni sul muro e sul terreno di fondazione (SLU, A1)", "Spinta attiva σa e pressione dell'acqua u sul piano a monte, resistenza passiva σp sul piano a valle, pressione di contatto σ sotto la base con l'eccentricità e."));
 
         // ── 10. Azioni sismiche.
         var page10 = new ReportPage("Azioni sul muro · combinazione sismica", [Forces(eb, $"Azioni sismiche ({eb.Name}, kh = {N(eb.Kh, 4)}, kv = {N(eb.Kv, 4)})")], [], [
             "Inerzie orizzontali kh·W applicate nel baricentro delle masse; spinta sismica con θ = atan[kh/(1 ± kv)]."],
-            "192845", null, Figure("sisma", "Figura 3 · Forze e diagrammi di pressione in condizioni sismiche", "Combinazione sismica più gravosa per la pressione sul terreno."));
+            "192845", null, Figure("sisma", "Figura 5 · Forze e diagrammi di pressione in condizioni sismiche", "Combinazione sismica più gravosa per la pressione sul terreno."));
 
         // ── 11. Riepilogo.
         var summary = new ReportTable("Riepilogo delle verifiche", ["Verifica", "Combinazione", "Rd/Ed", "Esito"], [
@@ -159,7 +168,7 @@ public static class RetainingWallReportBuilder
         // Ogni equazione riceve la sua forma strutturata (frazioni, radici, indici) per Word e PDF.
         ReportPage WithFormulas(ReportPage page) => page with { Equations = page.Equations?.Select(e =>
             Formulas.TryGetValue(e.Title[..(e.Title.IndexOf(')') + 1)], out var f) ? e with { Formula = f } : e).ToArray() };
-        return new(document.Title, created, new[] { page1, page2, page3, page4, page5, page6, page7, page8, page9, page10, page11 }.Select(WithFormulas).ToArray());
+        return new(document.Title, created, new[] { page1, page2, page3, page4, page5, page6, page7, page7b, page8, page9, page9b, page10, page11 }.Select(WithFormulas).ToArray());
     }
 
     /// <summary>Formule nella notazione di <see cref="ReportMath"/>, indicizzate con il numero dell'equazione.</summary>

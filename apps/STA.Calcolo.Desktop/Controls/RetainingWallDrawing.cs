@@ -48,6 +48,9 @@ public sealed class RetainingWallDrawing : FrameworkElement
     public bool ShowForces {get=>(bool)GetValue(ShowForcesProperty);set=>SetValue(ShowForcesProperty,value);}
     public static readonly DependencyProperty ShowDiagramsProperty = DependencyProperty.Register(nameof(ShowDiagrams),typeof(bool),typeof(RetainingWallDrawing),new FrameworkPropertyMetadata(true,FrameworkPropertyMetadataOptions.AffectsRender));
     public bool ShowDiagrams {get=>(bool)GetValue(ShowDiagramsProperty);set=>SetValue(ShowDiagramsProperty,value);}
+    /// <summary>Schema di calcolo: piano di spinta virtuale, piano passivo, piano di scorrimento, polo di ribaltamento e nocciolo (figure della relazione).</summary>
+    public static readonly DependencyProperty ShowSchemeProperty = DependencyProperty.Register(nameof(ShowScheme),typeof(bool),typeof(RetainingWallDrawing),new FrameworkPropertyMetadata(false,FrameworkPropertyMetadataOptions.AffectsRender));
+    public bool ShowScheme {get=>(bool)GetValue(ShowSchemeProperty);set=>SetValue(ShowSchemeProperty,value);}
     private static Brush Color(string value) => new SolidColorBrush((System.Windows.Media.Color)ColorConverter.ConvertFromString(value));
     private static readonly Brush Navy=Color("#192845"),Teal=Color("#135F6E"),Water=Color("#226BA0"),Amber=Color("#A35B18"),
         Passive=Color("#2E7D4F"),Bearing=Color("#6B4C9A"),Variable=Color("#C3872A"),Seismic=Color("#B3261E");
@@ -114,6 +117,7 @@ public sealed class RetainingWallDrawing : FrameworkElement
         var basePoint=Map(g.Wall[2]);Text("Ba "+N(g.Wall[2].X),left+5,basePoint.Y+4,Navy,10);
         var tooth=Map(g.Wall[12]);Text("H4 "+N(g.Wall[13].Y-g.Wall[12].Y),tooth.X-58,tooth.Y+5,Navy,10);
         var crest=Map(g.Wall[6]);Text("Terreno a monte",crest.X+12,crest.Y+18,Color("#7B6341"),10);
+        if(ShowScheme)DrawScheme(dc,g,v,Text);
         if(diagrams)DrawDiagrams(dc,g,v,Diagrams!,bottom,Text);
         if(ShowForces&&Forces is {Count:>0} forces)DrawForces(dc,v,forces,Diagrams?.Base,Text);
         DrawGrips(dc,g,v,Text);
@@ -231,6 +235,25 @@ public sealed class RetainingWallDrawing : FrameworkElement
             var arrow=grip.Axis==WallGripAxis.Horizontal?"↔":"↕";
             text($"{arrow} {grip.Key} = {value} {grip.Unit}",p.X+10,p.Y-24,accent,12);
         }
+    }
+    /// <summary>
+    /// Elementi del modello di calcolo (stessi del motore rivisto): piano virtuale x = Bf su cui agisce la spinta,
+    /// piano x = 0 della resistenza passiva, piano orizzontale di scorrimento per la base del dente,
+    /// polo di ribaltamento O nel piede e limiti del nocciolo centrale (B/3, 2B/3) sulla base.
+    /// </summary>
+    private void DrawScheme(DrawingContext dc,WallGeometry g,View v,Action<string,double,double,Brush,double> text)
+    {
+        var accent=Color("#7A3E9D");var pen=new Pen(accent,1.3){DashStyle=new DashStyle([6,3],0)};
+        var b=g.Wall[8].X;var yMin=g.Wall[11].Y;var top=g.BackSoil[2].Y;var frontTop=g.FrontSoil[3].Y;
+        Point P(double x,double y)=>v.Map(new(x,y));
+        dc.DrawLine(pen,P(b,yMin),P(b,top));text("piano di spinta virtuale (x = Bf)",P(b,top).X+6,P(b,top).Y-4,accent,10);
+        dc.DrawLine(pen,P(0,yMin),P(0,frontTop));text("piano della resistenza passiva",P(0,frontTop).X-150,P(0,frontTop).Y-18,accent,10);
+        dc.DrawLine(pen,P(-.3,yMin),P(b+.3,yMin));text("piano di scorrimento",P(b/2,yMin).X-45,P(b/2,yMin).Y+3,accent,10);
+        var o=P(0,0);dc.DrawEllipse(Brushes.White,new Pen(accent,1.6),o,5,5);dc.DrawEllipse(accent,null,o,2,2);
+        text("O · polo di ribaltamento",o.X+8,o.Y-18,accent,10);
+        // Nocciolo centrale: la risultante entro il terzo medio della base dà pressioni tutte di compressione.
+        var core=new Pen(accent,2);foreach(var x in new[]{b/3,2*b/3}){var p=P(x,0);dc.DrawLine(core,new(p.X,p.Y-6),new(p.X,p.Y+6));}
+        text("nocciolo B/3",P(b/2,0).X-30,P(b/2,0).Y-16,accent,10);
     }
     private string? HitGrip(Point mouse)
     {
