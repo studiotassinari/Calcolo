@@ -4,6 +4,7 @@ using System.Text;
 using STA.Calcolo.Desktop.Infrastructure;
 using STA.Calcolo.Desktop.Services;
 using STA.MuroSostegno.Core;
+using STA.Calcolo.Application;
 namespace STA.Calcolo.Desktop.ViewModels;
 
 /// <summary>Editor numerico che conserva virgola/punto e segnala gli input incompleti senza sostituirli.</summary>
@@ -90,13 +91,30 @@ public sealed class RetainingWallViewModel : ObservableObject
     public RelayCommand WordReportCommand { get; }
     public RelayCommand PdfReportCommand { get; }
     private readonly IRetainingWallReportService reports;
+    private readonly IDialogService dialogs;
+    /// <summary>Apre il modulo spettri come finestra di selezione e importa amax/g dello stato limite scelto nel campo PGA.</summary>
+    public RelayCommand SeismicFromSpectraCommand { get; }
+    /// <summary>Ultimo sito scelto negli spettri: riproposto alla riapertura (non salvato nel progetto del muro).</summary>
+    public SeismicSiteSelection? SeismicSource { get; private set; }
+    public string SeismicSourceText => SeismicSource is { } s
+        ? $"{(s.Place.Length > 0 ? s.Place : $"lat {N(s.Input.Latitude,4)}°, lon {N(s.Input.Longitude,4)}°")} · {s.State.Name}: ag/g = {N(s.State.AgG,4)} ({N(s.State.Ag,3)} m/s²), S = {N(s.State.S,3)}, amax/g = {N(s.State.AmaxG,4)}"
+        : "Valori sismici inseriti manualmente.";
     private bool CanReport => Engine==WallEngine.Rivisto && Design is not null;
     private static readonly CultureInfo Italian = CultureInfo.GetCultureInfo("it-IT");
     private static string N(double value, int digits=2) => value.ToString("F"+digits,Italian);
 
-    public RetainingWallViewModel(IFileService files, IRetainingWallReportService? reportService = null)
+    public RetainingWallViewModel(IFileService files, IRetainingWallReportService? reportService = null, IDialogService? dialogService = null)
     {
-        this.files=files; reports=reportService ?? new RetainingWallReportService();
+        this.files=files; reports=reportService ?? new RetainingWallReportService(); dialogs=dialogService ?? new DialogService(files);
+        SeismicFromSpectraCommand = new(()=>Run(()=>
+        {
+            var selection=dialogs.PickSeismic(SeismicSource?.Input,SeismicSource?.Place??"",SeismicSource?.State.Name??"SLV");
+            if(selection is null)return;
+            // PGA del muro = amax/g = S·ag/g (Ss·ST·ag/g) dello stato limite scelto, arrotondata a 4 decimali.
+            SeismicSource=selection;Changed(nameof(SeismicSourceText));
+            ByKey["PGA"].Value=Math.Round(selection.State.AmaxG,4).ToString("G",Italian);
+            if(HasResults)Status="PGA aggiornata dagli spettri: "+SeismicSourceText;
+        }));
         ByKey = WallParameters.All.ToDictionary(p=>p.Key,p=>new WallNumberField(p));
         Groups = WallParameters.All.GroupBy(p=>p.Group).Select(g=>new WallFieldGroup(g.Key,g.Select(p=>ByKey[p.Key]).ToArray())).ToArray();
         foreach (var field in ByKey.Values) field.PropertyChanged += (_,e) => { if(e.PropertyName==nameof(WallNumberField.Value)) Invalidate(); };

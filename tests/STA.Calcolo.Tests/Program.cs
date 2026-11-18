@@ -47,6 +47,7 @@ ShearTests.Run(Test);
 ScientificTests.Run(Test);
 // Parità del muro con il programma consegnato nello ZIP e import MDST.
 RetainingWallTests.Run(Test);
+SeismicSpectraTests.Run(Test);
 Console.WriteLine($"{count} test superati");
 
 sealed class FakeHandler(string table) : HttpMessageHandler

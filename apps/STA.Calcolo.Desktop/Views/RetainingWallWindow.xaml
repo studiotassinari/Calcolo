@@ -39,6 +39,11 @@
    <!-- Colonna dati: gruppi richiudibili e righe compatte. -->
    <ScrollViewer x:Name="InputScroll" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled"><StackPanel Margin="0,0,4,0">
     <Border Style="{StaticResource Panel}" Padding="8" Margin="0,0,0,8"><Grid><Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition/></Grid.ColumnDefinitions><TextBlock Text="Progetto" VerticalAlignment="Center" FontWeight="SemiBold" Margin="4,0,10,0"/><TextBox Grid.Column="1" Text="{Binding Title,UpdateSourceTrigger=PropertyChanged}" MinHeight="26" Padding="5,2" AutomationProperties.Name="Nome del progetto"/></Grid></Border>
+    <!-- Parametri sismici dal modulo spettri: restituisce amax/g dello stato limite scelto nel campo PGA. -->
+    <Border Style="{StaticResource Panel}" Padding="8" Margin="0,0,0,8"><StackPanel>
+     <Button x:Name="SeismicFromSpectraButton" Content="Parametri sismici dagli spettri…" Command="{Binding SeismicFromSpectraCommand}" HorizontalAlignment="Stretch" Margin="0,0,0,4"/>
+     <TextBlock Text="{Binding SeismicSourceText}" TextWrapping="Wrap" FontSize="11" Foreground="#526778"/>
+    </StackPanel></Border>
     <ItemsControl ItemsSource="{Binding Groups}"><ItemsControl.ItemTemplate><DataTemplate>
      <Border Style="{StaticResource Panel}" Padding="0" Margin="0,0,0,8">
       <Expander IsExpanded="True" Padding="6,4,6,6">
