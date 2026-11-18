@@ -1,16 +1,18 @@
-TA-Calcolo 1.7.0: Muro di sostegno con forze e diagrammi nel disegno, pressione sul terreno di fondazione e relazione di calcolo.
+TA-Calcolo 1.8.0: Spettri sismici riorganizzati, scelta geografica con ricerca per indirizzo e valori sismici richiamabili dal Muro di sostegno.
 
-- **Relazione di calcolo Word e PDF** (13 pagine A4): inquadramento normativo (NTC 2018, Circolare 2019) e coefficienti parziali, dati, 19 formule numerate con sostituzione numerica, cinque figure generate dal disegno (sezione e schema di calcolo, azioni statiche, azioni rispetto al polo di ribaltamento, diagrammi delle pressioni, azioni sismiche) e riepilogo delle verifiche.
-- **Formule native di Word:** frazioni, radici, apici e pedici sono equazioni di Office modificabili; nel PDF le righe di frazione sono proporzionate al contenuto (anche nelle relazioni di Muratura).
-- **Forze e diagrammi nel disegno:** frecce proporzionali alle azioni della combinazione scelta (esercizio, EQU, A1, sisma), diagrammi della spinta attiva, dell'acqua, della resistenza passiva e della pressione sul terreno.
-- **Pressione sul terreno di fondazione:** distribuzione lineare con base parzializzata oltre il nocciolo centrale, in esercizio, allo SLU (A1) e in sisma; risultati nella sintesi e nella tabella.
-- **Grip H1:** abbassando la sommità sotto il terreno, le altezze del terreno a monte e a valle scendono insieme al muro.
+- **Nuova finestra Spettri sismici:** dati del sito, dell'opera e del terreno con ricalcolo a ogni modifica, tabella SLO–SLC (TR, ag/g, ag, F0, Tc*, S, amax/g, amax, TB, TC, TD) e valori dello stato limite scelto.
+- **Accelerazioni sempre in frazione di g** (ag/g, amax/g, Se/g) con il valore in m/s² accanto.
+- **Scelta geografica:** il pulsante apre la mappa con la ricerca per indirizzo (OpenStreetMap, Italia); la conferma restituisce latitudine, longitudine e nome del luogo. Le coordinate restano modificabili a mano.
+- **Grafico con cursore:** passando il mouse si leggono il periodo T e il valore di ogni curva in g e in m/s²; asse secondario in m/s²; curve orizzontali, verticali e di progetto selezionabili.
+- **Spettri NTC 2018 §3.2.3:** fattore topografico ST (T1–T4), smorzamento ξ, spettro verticale con i parametri NTC (corregge il programma storico), progetto SLV con limite Sd ≥ 0,2·ag. Con ST = 1 e ξ = 5 % l'orizzontale coincide con il programma storico.
+- **Muro di sostegno:** "Parametri sismici dagli spettri…" apre gli spettri e importa amax/g = S·ag/g dello stato limite scelto nel campo PGA.
+- Esportazione ZIP di tutte le curve con T, Se/g e Se in m/s².
 
 ## Verifiche
-64 test C# del core: pressione sul terreno in forma chiusa (trapezio, nocciolo, base parzializzata, risultante fuori base), coerenza fra forze, diagrammi e verifiche, grip. Relazioni su tre casi con controllo dell'impaginazione A4, delle figure e delle equazioni native di Word. Test WPF su relazione, figure, combinazione disegnata e livelli.
+68 test C#: parità con il motore storico, formule NTC indipendenti (plateau, ST, η, verticale, limite del progetto), domini, ZIP e lettura della ricerca indirizzi. Test WPF su finestra, cursore, ricerca simulata, selezione e import nel muro.
 
 ## Ambito e limiti
-La capacità portante non è verificata: le pressioni sul terreno vanno confrontate con la resistenza del terreno di fondazione. Esclusi stabilità globale, cedimenti e armature. Restano valide le ipotesi del motore rivisto descritte in docs/MURO-SOSTEGNO.md.
+ag, F0 e Tc* provengono dal reticolo e dall'interpolazione del programma storico (lon 6–19°, lat 36–48°). ST è il valore in sommità del rilievo. Mappa e ricerca richiedono Internet; senza connessione restano disponibili le coordinate manuali.
 
 ## Installazione e aggiornamento
-Installer Windows x64 con runtime incluso, pacchetto per l'aggiornamento automatico e file SHA256SUMS. I progetti JSON e .mdst esistenti restano compatibili.
+Installer Windows x64 con runtime incluso, pacchetto per l'aggiornamento automatico e file SHA256SUMS. I progetti esistenti restano compatibili.
