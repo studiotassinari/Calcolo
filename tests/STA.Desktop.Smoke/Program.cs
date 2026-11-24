@@ -154,7 +154,12 @@ internal static class Program
         compactWindow.Close();
 
         var footing = new FootingViewModel(files); footing.ExampleCommand.Execute(null); footing.CalculateCommand.Execute(null);
-        if (footing.Results.Length != 1 || !footing.ExportCommand.CanExecute(null)) throw new Exception(footing.Status);
+        if (footing.Results.Count != 1 || !footing.ExportCommand.CanExecute(null) || !footing.AllOk) throw new Exception(footing.Status);
+        // Reazioni modificabili con ricalcolo automatico; base parzializzata e ricerca della base minima.
+        footing.Reactions[0].MY = -700; if (footing.Results[0].Source.Pressure.ContactRatio >= 1) throw new Exception("Parzializzazione non ricalcolata");
+        footing.AddReactionCommand.Execute(null); if (footing.Results.Count != 2) throw new Exception("Riga non aggiunta");
+        footing.DesignCommand.Execute(null); if (!footing.AllOk || !footing.Status.StartsWith("Base minima")) throw new Exception("Base minima: " + footing.Status);
+        footing.Reactions[0].MY = 0; footing.SelectedReaction = footing.Reactions[1]; footing.RemoveReactionCommand.Execute(null); if (footing.Results.Count != 1) throw new Exception("Riga non rimossa");
         files.NextSave = "footing.json"; footing.SaveCommand.Execute(null); files.NextSave = "footing-results.json"; footing.ExportCommand.Execute(null);
         if (files.Content["footing-results.json"].Contains("ApiKey")) throw new Exception("Credential persisted");
         files.NextOpen = "footing.json"; footing.OpenCommand.Execute(null); footing.CalculateCommand.Execute(null);
@@ -163,9 +168,10 @@ internal static class Program
         files.NextSave = "beam.json"; beam.SaveCommand.Execute(null); beam.SelectedSection = beam.Sections[0]; beam.RemoveSectionCommand.Execute(null); if (beam.Sections.Count != 0) throw new Exception("Remove failed");
         files.NextOpen = "beam.json"; beam.OpenCommand.Execute(null); beam.CheckCommand.Execute(null); if (beam.Sections.Count != 1) throw new Exception(beam.Status);
         var bw = new BeamWindow { DataContext = beam }; Render(bw, "beam"); bw.Close();
-        var fw = new FootingWindow { DataContext = footing }; Render(fw, "plinti"); fw.Close();
-        footing.Parameters.Single(p => p.Key == "qRd").Value = "invalid"; if (footing.Results.Length != 0 || footing.ExportCommand.CanExecute(null)) throw new Exception("Stale footing results");
-        footing.CalculateCommand.Execute(null); if (footing.Results.Length != 0) throw new Exception("Invalid footing result");
+        var fw = new FootingWindow { DataContext = footing }; Render(fw, "plinti");
+        footing.Reactions[0].MY = -700; Render(fw, "plinti-parzializzato"); footing.Reactions[0].MY = 0; fw.Close();
+        footing.Parameters.Single(p => p.Key == "qRd").Value = "invalid"; if (footing.Results.Count != 0 || footing.ExportCommand.CanExecute(null) || footing.InputsValid) throw new Exception("Stale footing results");
+        footing.CalculateCommand.Execute(null); if (footing.Results.Count != 0) throw new Exception("Invalid footing result");
         Render(main, "desktop-smoke"); main.Show();
         ((System.Windows.Controls.ScrollViewer)main.FindName("HomeScroll")).ScrollToEnd();Render(main,"desktop-muro-sostegno");
         foreach (var card in mainVm.Modules) { card.OpenCommand.Execute(null); card.OpenCommand.Execute(null); }

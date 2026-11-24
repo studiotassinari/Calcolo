@@ -1,29 +1,103 @@
-<Window x:Class="STA.Calcolo.Desktop.Views.FootingWindow" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:local="clr-namespace:STA.Calcolo.Desktop.Views" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Title="TA-Calcolo · Plinti" Width="1240" Height="850" MinWidth="900" MinHeight="650" Background="#F3F5F7">
- <Window.Resources><Style TargetType="Button"><Setter Property="Margin" Value="4"/><Setter Property="Padding" Value="12,8"/></Style><Style TargetType="TextBox"><Setter Property="Margin" Value="3"/><Setter Property="Padding" Value="5"/></Style></Window.Resources>
- <DockPanel Margin="18" Background="#F3F5F7">
-  <StackPanel DockPanel.Dock="Top">
-   <TextBlock Text="TA-Calcolo · Plinti da reazioni vincolari" FontSize="25" FontWeight="SemiBold"/>
-   <TextBlock Text="kN / m / kPa · Controlli parziali: punzonamento preliminare, esclusi cedimenti e dettagli costruttivi." TextWrapping="Wrap" Margin="0,8"/>
-   <WrapPanel><Button Content="Apri progetto JSON" Command="{Binding OpenCommand}"/><Button Content="Salva progetto" Command="{Binding SaveCommand}"/><Button Content="Importa reazioni CSV" Command="{Binding ImportCommand}"/><Button Content="Carica esempio" Command="{Binding ExampleCommand}"/><Button Content="Calcola" Command="{Binding CalculateCommand}"/><Button Content="Esporta risultati" Command="{Binding ExportCommand}" x:Name="ExportButton"/></WrapPanel>
-  </StackPanel>
-  <TextBlock DockPanel.Dock="Bottom" x:Name="Status" Text="{Binding Status}" TextWrapping="Wrap" Margin="0,10"/>
-  <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="340"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
-   <ScrollViewer Grid.Column="0" VerticalScrollBarVisibility="Auto"><StackPanel Margin="0,8,12,0">
-    <TextBlock Text="Parametri di progetto" FontSize="18"/>
-    <TextBlock Text="Punto decimale. Resistenza e attrito del terreno sono dati del progetto." TextWrapping="Wrap" Margin="0,5"/>
-    <DataGrid x:Name="ParametersGrid" ItemsSource="{Binding Parameters}" AutoGenerateColumns="False" CanUserAddRows="False" HeadersVisibility="Column" Margin="0,5"><DataGrid.Columns><DataGridTextColumn Header="Parametro" Binding="{Binding Label}" IsReadOnly="True" Width="205"/><DataGridTextColumn Header="Valore" Binding="{Binding Value, UpdateSourceTrigger=PropertyChanged}" Width="95"/></DataGrid.Columns></DataGrid>
-    <TextBlock Text="MIDAS GEN NX" FontSize="18" Margin="0,15,0,5"/>
-    <TextBlock Text="Base URL da API Settings"/><TextBox x:Name="BaseUrl" Text="{Binding BaseUrl, UpdateSourceTrigger=PropertyChanged}"/>
-    <TextBlock Text="MAPI-Key (solo in memoria)"/><PasswordBox x:Name="ApiKey" local:PasswordBinding.Value="{Binding ApiKey}" Padding="5" Margin="3"/>
-    <TextBlock Text="ID nodi separati da spazi"/><TextBox x:Name="NodeIds" Text="{Binding NodeIds, UpdateSourceTrigger=PropertyChanged}"/>
-    <TextBlock Text="Combinazioni concomitanti, una per riga"/><TextBox x:Name="Cases" Text="{Binding Cases, UpdateSourceTrigger=PropertyChanged}" AcceptsReturn="True" Height="65"/>
-    <CheckBox x:Name="AnalysisReady" IsChecked="{Binding AnalysisReady}" Content="Risultati aggiornati e concomitanti" Margin="4,8"/>
-    <Button x:Name="ReadButton" Content="Leggi reazioni da MIDAS" Command="{Binding ReadMidasCommand}"/>
-   </StackPanel></ScrollViewer>
-   <Grid Grid.Column="1" Margin="6,8,0,0"><Grid.RowDefinitions><RowDefinition Height="2*"/><RowDefinition Height="3*"/></Grid.RowDefinitions>
-    <GroupBox Header="Reazioni: FZ positiva in compressione, momenti kN·m"><DataGrid x:Name="ReactionsGrid" ItemsSource="{Binding Reactions}" AutoGenerateColumns="True" CanUserAddRows="False" IsReadOnly="True"/></GroupBox>
-    <GroupBox Grid.Row="1" Header="Risultati delle verifiche implementate" Margin="0,10,0,0"><DataGrid x:Name="ResultsGrid" ItemsSource="{Binding Results}" AutoGenerateColumns="True" IsReadOnly="True" CanUserAddRows="False"/></GroupBox>
+<Window x:Class="STA.Calcolo.Desktop.Views.FootingWindow"
+ xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+ xmlns:local="clr-namespace:STA.Calcolo.Desktop.Views" xmlns:ui="clr-namespace:STA.Calcolo.Desktop.Controls"
+ Title="TA-Calcolo · Plinti" Width="1440" Height="900" MinWidth="1000" MinHeight="650"
+ Language="it-IT" FontFamily="/STA.Calcolo.Desktop;component/Assets/Brand/#Acherus Grotesque" FontSize="12.5"
+ Foreground="#192845" Background="#F3F6F6" UseLayoutRounding="True">
+ <Window.Resources><ResourceDictionary><ResourceDictionary.MergedDictionaries><ResourceDictionary Source="../Themes/Tassinari.xaml"/></ResourceDictionary.MergedDictionaries>
+  <BooleanToVisibilityConverter x:Key="Visible"/>
+  <Style x:Key="ToolButton" TargetType="Button" BasedOn="{StaticResource {x:Type Button}}"><Setter Property="Padding" Value="10,5"/><Setter Property="Margin" Value="0,0,6,0"/><Setter Property="FontSize" Value="12"/></Style>
+  <!-- Riga di parametro: etichetta, campo giallo (o elenco), unità. -->
+  <DataTemplate x:Key="FootingFieldTemplate">
+   <Grid Margin="0,2"><Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="120"/><ColumnDefinition Width="44"/></Grid.ColumnDefinitions>
+    <TextBlock Text="{Binding Label}" VerticalAlignment="Center" Foreground="#344A5C" TextTrimming="CharacterEllipsis" ToolTip="{Binding Label}"/>
+    <TextBox Grid.Column="1" Text="{Binding Value, UpdateSourceTrigger=PropertyChanged}" MinHeight="26" Padding="5,2" HorizontalContentAlignment="Right" AutomationProperties.Name="{Binding Label}">
+     <TextBox.Style><Style TargetType="TextBox" BasedOn="{StaticResource {x:Type TextBox}}"><Style.Triggers><DataTrigger Binding="{Binding IsChoice}" Value="True"><Setter Property="Visibility" Value="Collapsed"/></DataTrigger></Style.Triggers></Style></TextBox.Style>
+    </TextBox>
+    <ComboBox Grid.Column="1" ItemsSource="{Binding Options}" DisplayMemberPath="Label" SelectedValuePath="Value" SelectedValue="{Binding Value}" MinHeight="26" Visibility="{Binding IsChoice, Converter={StaticResource Visible}}"/>
+    <TextBlock Grid.Column="2" Text="{Binding Unit}" VerticalAlignment="Center" FontSize="11" Foreground="#526778" Margin="6,0,0,0"/>
    </Grid>
+  </DataTemplate>
+  <Style x:Key="OutcomeCell" TargetType="DataGridCell"><Style.Triggers><DataTrigger Binding="{Binding Ok}" Value="True"><Setter Property="Background" Value="#E3F1E6"/></DataTrigger><DataTrigger Binding="{Binding Ok}" Value="False"><Setter Property="Background" Value="#FBE9E7"/></DataTrigger></Style.Triggers><Setter Property="Foreground" Value="#192845"/></Style>
+ </ResourceDictionary></Window.Resources>
+ <!-- Vista solo dichiarativa: dati, ricalcolo, ricerca della base, file e MIDAS sono nel FootingViewModel. -->
+ <DockPanel Margin="12">
+  <Grid DockPanel.Dock="Top" Margin="0,0,0,10"><Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+   <StackPanel VerticalAlignment="Center" Margin="0,0,20,0"><TextBlock Text="Plinti da reazioni vincolari" FontSize="20" FontWeight="SemiBold"/><TextBlock Text="NTC 2018 · EC2 · EC7 · verifiche aggiornate a ogni modifica" Foreground="#526778" FontSize="11"/></StackPanel>
+   <WrapPanel Grid.Column="1" VerticalAlignment="Center">
+    <Button Style="{StaticResource ToolButton}" Content="Carica esempio" Command="{Binding ExampleCommand}"/><Button Style="{StaticResource ToolButton}" Content="Apri" Command="{Binding OpenCommand}"/><Button Style="{StaticResource ToolButton}" Content="Salva" Command="{Binding SaveCommand}"/>
+    <Button Style="{StaticResource ToolButton}" Content="Importa reazioni CSV" Command="{Binding ImportCommand}"/>
+    <Button x:Name="DesignButton" Style="{StaticResource ToolButton}" Content="Trova base minima" Command="{Binding DesignCommand}" Background="#192845" BorderBrush="#192845" ToolTip="Base quadrata minima (passo 5 cm) che verifica tutte le combinazioni"/>
+    <Button x:Name="ExportButton" Style="{StaticResource ToolButton}" Content="Esporta risultati" Command="{Binding ExportCommand}"/>
+   </WrapPanel>
+   <Image Grid.Column="2" Source="/STA.Calcolo.Desktop;component/Assets/Brand/Logo.png" Stretch="Uniform" Height="38" Margin="12,0,0,0"/>
+  </Grid>
+  <Border DockPanel.Dock="Bottom" Padding="10,5" Background="#EAF0F1" Margin="0,8,0,0"><TextBlock x:Name="Status" Text="{Binding Status}" Foreground="#526778" TextWrapping="Wrap" FontSize="11.5"/></Border>
+  <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="340" MinWidth="290"/><ColumnDefinition Width="8"/><ColumnDefinition Width="*" MinWidth="420"/><ColumnDefinition Width="8"/><ColumnDefinition Width="330" MinWidth="260"/></Grid.ColumnDefinitions>
+   <!-- Dati raggruppati e collegamento MIDAS. -->
+   <ScrollViewer VerticalScrollBarVisibility="Auto"><StackPanel Margin="0,0,4,0">
+    <ItemsControl x:Name="ParametersGrid" ItemsSource="{Binding Groups}"><ItemsControl.ItemTemplate><DataTemplate>
+     <Border Style="{StaticResource Panel}" Padding="0" Margin="0,0,0,8"><Expander IsExpanded="True" Padding="8,2,8,6">
+      <Expander.Header><TextBlock Text="{Binding Title}" FontSize="13" FontWeight="SemiBold" Margin="2,4"/></Expander.Header>
+      <ItemsControl ItemsSource="{Binding Fields}" ItemTemplate="{StaticResource FootingFieldTemplate}"/>
+     </Expander></Border>
+    </DataTemplate></ItemsControl.ItemTemplate></ItemsControl>
+    <Border Style="{StaticResource Panel}" Padding="0" Margin="0,0,0,8"><Expander IsExpanded="False" Padding="8,2,8,6">
+     <Expander.Header><TextBlock Text="Reazioni da MIDAS GEN NX" FontSize="13" FontWeight="SemiBold" Margin="2,4"/></Expander.Header>
+     <StackPanel>
+      <TextBlock Text="Base URL da API Settings" FontSize="11"/><TextBox x:Name="BaseUrl" Text="{Binding BaseUrl, UpdateSourceTrigger=PropertyChanged}" MinHeight="26" Padding="5,2"/>
+      <TextBlock Text="MAPI-Key (solo in memoria)" FontSize="11" Margin="0,4,0,0"/><PasswordBox x:Name="ApiKey" local:PasswordBinding.Value="{Binding ApiKey}" MinHeight="26" Padding="5,2"/>
+      <TextBlock Text="ID nodi separati da spazi" FontSize="11" Margin="0,4,0,0"/><TextBox x:Name="NodeIds" Text="{Binding NodeIds, UpdateSourceTrigger=PropertyChanged}" MinHeight="26" Padding="5,2"/>
+      <TextBlock Text="Combinazioni concomitanti, una per riga" FontSize="11" Margin="0,4,0,0"/><TextBox x:Name="Cases" Text="{Binding Cases, UpdateSourceTrigger=PropertyChanged}" AcceptsReturn="True" Height="60" Padding="5,2"/>
+      <CheckBox x:Name="AnalysisReady" IsChecked="{Binding AnalysisReady}" Content="Risultati aggiornati e concomitanti" Margin="0,6"/>
+      <Button x:Name="ReadButton" Content="Leggi reazioni da MIDAS" Command="{Binding ReadMidasCommand}"/>
+     </StackPanel>
+    </Expander></Border>
+   </StackPanel></ScrollViewer>
+   <GridSplitter Grid.Column="1" Width="8" HorizontalAlignment="Stretch" Background="Transparent" ResizeBehavior="PreviousAndNext"/>
+   <!-- Disegno, reazioni modificabili ed esiti per combinazione. -->
+   <Grid Grid.Column="2"><Grid.RowDefinitions><RowDefinition Height="*" MinHeight="230"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+    <Border Style="{StaticResource Panel}" Padding="4" Margin="0,0,0,8"><ui:FootingDrawing x:Name="FootingFigure" Parameters="{Binding CurrentParameters}" Result="{Binding SelectedDesign}" ClipToBounds="True"/></Border>
+    <Border Grid.Row="1" Style="{StaticResource Panel}" Padding="8" Margin="0,0,0,8"><DockPanel>
+     <DockPanel DockPanel.Dock="Top" Margin="0,0,0,4"><StackPanel DockPanel.Dock="Right" Orientation="Horizontal"><Button Style="{StaticResource ToolButton}" Content="+ Riga" Command="{Binding AddReactionCommand}"/><Button Style="{StaticResource ToolButton}" Content="− Riga" Command="{Binding RemoveReactionCommand}"/></StackPanel>
+      <TextBlock Text="Reazioni del vincolo sulla struttura · FZ positiva comprime · kN e kN·m" FontWeight="SemiBold" VerticalAlignment="Center"/></DockPanel>
+     <DataGrid x:Name="ReactionsGrid" ItemsSource="{Binding Reactions}" SelectedItem="{Binding SelectedReaction}" AutoGenerateColumns="False" CanUserAddRows="False" HeadersVisibility="Column" MaxHeight="170" MinRowHeight="24">
+      <DataGrid.Columns>
+       <DataGridTextColumn Header="Nodo" Binding="{Binding Node, UpdateSourceTrigger=LostFocus}" Width="55"/><DataGridTextColumn Header="Combinazione" Binding="{Binding Case, UpdateSourceTrigger=LostFocus}" Width="*"/>
+       <DataGridTextColumn Header="FX" Binding="{Binding FX, UpdateSourceTrigger=LostFocus}" Width="70"/><DataGridTextColumn Header="FY" Binding="{Binding FY, UpdateSourceTrigger=LostFocus}" Width="70"/><DataGridTextColumn Header="FZ" Binding="{Binding FZ, UpdateSourceTrigger=LostFocus}" Width="70"/>
+       <DataGridTextColumn Header="MX" Binding="{Binding MX, UpdateSourceTrigger=LostFocus}" Width="70"/><DataGridTextColumn Header="MY" Binding="{Binding MY, UpdateSourceTrigger=LostFocus}" Width="70"/><DataGridTextColumn Header="MZ" Binding="{Binding MZ, UpdateSourceTrigger=LostFocus}" Width="70"/>
+      </DataGrid.Columns>
+     </DataGrid></DockPanel></Border>
+    <Border Grid.Row="2" Style="{StaticResource Panel}" Padding="8" Margin="0"><DockPanel>
+     <TextBlock DockPanel.Dock="Top" Text="{Binding Summary}" FontWeight="SemiBold" Margin="0,0,0,4"/>
+     <DataGrid x:Name="ResultsGrid" ItemsSource="{Binding Results}" SelectedItem="{Binding SelectedResult}" AutoGenerateColumns="False" IsReadOnly="True" CanUserAddRows="False" HeadersVisibility="Column" MaxHeight="190" MinRowHeight="24" SelectionMode="Single">
+      <DataGrid.Columns>
+       <DataGridTextColumn Header="Nodo" Binding="{Binding Node}" Width="45"/><DataGridTextColumn Header="Combinazione" Binding="{Binding Case}" Width="*"/>
+       <DataGridTextColumn Header="N [kN]" Binding="{Binding N}" Width="70"/><DataGridTextColumn Header="σmax [kPa]" Binding="{Binding SigmaMax}" Width="75"/><DataGridTextColumn Header="Contatto" Binding="{Binding Contact}" Width="62"/>
+       <DataGridTextColumn Header="Portanza Rd/Ed" Binding="{Binding Bearing}" Width="80"/><DataGridTextColumn Header="Scorr. Rd/Ed" Binding="{Binding Sliding}" Width="72"/><DataGridTextColumn Header="Punz. Rd/Ed" Binding="{Binding Punching}" Width="72"/>
+       <DataGridTextColumn Header="Esito" Binding="{Binding Outcome}" Width="100" CellStyle="{StaticResource OutcomeCell}"/>
+      </DataGrid.Columns>
+     </DataGrid></DockPanel></Border>
+   </Grid>
+   <GridSplitter Grid.Column="3" Width="8" HorizontalAlignment="Stretch" Background="Transparent" ResizeBehavior="PreviousAndNext"/>
+   <!-- Dettaglio delle verifiche della combinazione selezionata. -->
+   <ScrollViewer Grid.Column="4" VerticalScrollBarVisibility="Auto"><StackPanel>
+    <Border Style="{StaticResource Panel}" Padding="10" Margin="0,0,0,8"><StackPanel>
+     <TextBlock Text="Verifiche della combinazione selezionata" FontSize="13" FontWeight="SemiBold" Margin="0,0,0,6"/>
+     <ItemsControl x:Name="ChecksList" ItemsSource="{Binding SelectedChecks}"><ItemsControl.ItemTemplate><DataTemplate>
+      <Border x:Name="Card" BorderThickness="3,0,0,0" BorderBrush="#2E7D4F" Background="#F3F9F4" Padding="8,4" Margin="0,0,0,5"><StackPanel>
+       <DockPanel><TextBlock DockPanel.Dock="Right" FontWeight="SemiBold"><Run Text="Rd/Ed "/><Run Text="{Binding Ratio, Mode=OneWay}"/></TextBlock><TextBlock Text="{Binding Name}" FontWeight="SemiBold"/></DockPanel>
+       <TextBlock FontSize="11" Foreground="#526778"><Run Text="Ed "/><Run Text="{Binding Demand, Mode=OneWay}"/><Run Text=" · Rd "/><Run Text="{Binding Capacity, Mode=OneWay}"/><Run Text=" "/><Run Text="{Binding Unit, Mode=OneWay}"/></TextBlock>
+       <TextBlock Text="{Binding Note}" FontSize="11" Foreground="#526778" TextWrapping="Wrap"/>
+      </StackPanel></Border>
+      <DataTemplate.Triggers><DataTrigger Binding="{Binding Ok}" Value="False"><Setter TargetName="Card" Property="BorderBrush" Value="#B3261E"/><Setter TargetName="Card" Property="Background" Value="#FBE9E7"/></DataTrigger></DataTemplate.Triggers>
+     </DataTemplate></ItemsControl.ItemTemplate></ItemsControl>
+     <ItemsControl ItemsSource="{Binding SelectedIssues}"><ItemsControl.ItemTemplate><DataTemplate>
+      <Border Background="#FFF5E5" BorderBrush="#BC8135" BorderThickness="3,0,0,0" Padding="8,4" Margin="0,0,0,4"><TextBlock Text="{Binding}" TextWrapping="Wrap" FontSize="11.5"/></Border>
+     </DataTemplate></ItemsControl.ItemTemplate></ItemsControl>
+    </StackPanel></Border>
+    <Border Background="#EAF0F1" Padding="10"><TextBlock Text="{Binding Scope}" TextWrapping="Wrap" FontSize="11" Foreground="#526778"/></Border>
+   </StackPanel></ScrollViewer>
   </Grid>
  </DockPanel>
 </Window>

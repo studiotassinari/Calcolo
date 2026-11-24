@@ -25,6 +25,25 @@ public sealed record FootingParameters
     [JsonPropertyName("nodeHeight"), JsonRequired] public double NodeHeight { get; init; }
     [JsonPropertyName("alphaCC"), JsonRequired] public double AlphaCC { get; init; }
     [JsonPropertyName("limitState"), JsonRequired] public string LimitState { get; init; } = "";
+
+    // ── Parametri facoltativi del motore rivisto (FootingDesignCalculator). Assenti nei progetti precedenti:
+    // i valori predefiniti riproducono le ipotesi del prototipo (qRd assegnata, nessun rinterro).
+    /// <summary>Profondità del piano di posa dal piano campagna [m]; 0 = uguale allo spessore h (nessun rinterro).</summary>
+    [JsonPropertyName("depth")] public double Depth { get; init; }
+    /// <summary>Peso dell'unità di volume del terreno di rinterro e di fondazione [kN/m³].</summary>
+    [JsonPropertyName("soilWeight")] public double SoilWeight { get; init; } = 19;
+    /// <summary>Angolo di attrito caratteristico φ′k [°] (capacità portante calcolata, condizioni drenate).</summary>
+    [JsonPropertyName("phi")] public double Phi { get; init; } = 30;
+    /// <summary>Coesione efficace caratteristica c′k [kPa].</summary>
+    [JsonPropertyName("cohesion")] public double Cohesion { get; init; }
+    /// <summary>"assigned": qRd assegnata dal progettista; "computed": capacità portante EC7 Annex D con γR.</summary>
+    [JsonPropertyName("bearing")] public string Bearing { get; init; } = "assigned";
+    /// <summary>γR capacità portante (NTC 2018 Tab. 6.4.I, Approccio 2: 2,3).</summary>
+    [JsonPropertyName("gammaRBearing")] public double GammaRBearing { get; init; } = 2.3;
+    /// <summary>γR scorrimento (NTC 2018 Tab. 6.4.I: 1,1).</summary>
+    [JsonPropertyName("gammaRSliding")] public double GammaRSliding { get; init; } = 1.1;
+    /// <summary>Coefficiente dei pesi propri quando favorevoli (scorrimento, sollevamento): 1,0.</summary>
+    [JsonPropertyName("gammaGFav")] public double GammaGFav { get; init; } = 1.0;
 }
 
 public sealed record FootingResult
