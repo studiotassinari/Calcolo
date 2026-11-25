@@ -404,13 +404,15 @@ applicato, così ogni risultato si può ricontrollare sulla Circolare. Per la vo
 | peso dell'interpolazione | `min(h/d; 0,5) / 0,5` |
 | `cpe,A` adottato, `cpe,B`, `cpe,C` | valori usati nella tabella dei risultati |
 
-Per le pareti è indicato `h/d` con l'altezza di sommità (per la volta `h + f`) e la quota di riferimento; per
+Per le pareti sono indicati `h/d` (per la volta con la quota di imposta `h`) e la quota di riferimento
+(per la volta `ze = h + f/2`); per
 le altre coperture l'inclinazione con il campo della tabella, la profondità della fascia sopravento e il passo
 dei tratti; per le tettoie il grado di bloccaggio e l'area della falda.
 
 Esempio, volta con `b = 90`, `d = 80`, `h = 5`, `f = 10` m: `h/d = 0,0625`, `f/d = 0,125`; la zona A vale `+0,20`
 sulla curva `h/d = 0` e `−1,20` su quella `h/d ≥ 0,5`; con peso `0,125` si ottiene
-`cpe,A = 0,20 + 0,125·(−1,20 − 0,20) = +0,025`; `cpe,B = −0,825`, `cpe,C = −0,40`.
+`cpe,A = 0,20 + 0,125·(−1,20 − 0,20) = +0,025`; `cpe,B = −0,825`, `cpe,C = −0,40`. Pareti: `ze = 5 + 10/2 = 10` m,
+`h/d = 0,0625`, `cpe = +0,71` sopravento, `−0,55` laterali, `−0,31` sottovento.
 
 ## Salvare e riaprire i dati
 
@@ -472,6 +474,7 @@ Le immagini di questa pagina sono prodotte dalla prova a video (`artifacts/vento
   (§ C3.3.8.6 – C3.3.8.7), attrito (§ C3.3.8.8). Il coefficiente dinamico `cd` è inserito a mano.
 - Fuori dal campo delle tabelle (h/d > 5, |α| > 75°, f/d > 0,5, tettoie oltre i limiti di α) il
   calcolo prosegue con i valori limite e mostra un'avvertenza.
-- Per le pareti di un edificio con volta `h/d` e la quota di riferimento usano l'altezza di sommità `h + f`:
-  la Circolare non lo precisa, la scelta è a favore di sicurezza ed è dichiarata nelle valutazioni.
+- Per le pareti di un edificio con volta la quota di riferimento è `ze = h + f/2`, la stessa della copertura
+  (§ C3.3.8.1.7), e il rapporto `h/d` della Tab. C3.3.I usa la quota di imposta `h` della Fig. C3.3.19.
+  La pressione interna resta riferita alla quota di sommità `h + f`.
 - La relazione è solo in Word; non è prevista l'esportazione PDF.

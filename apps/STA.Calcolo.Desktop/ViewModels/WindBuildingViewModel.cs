@@ -213,7 +213,8 @@ public sealed class WindBuildingViewModel : ObservableObject
     private void Recalculate()
     {
         if (loading) return;
-        var culture = CultureInfo.CurrentCulture;
+        // La finestra è in italiano (Language="it-IT"): anche i riepiloghi usano sempre la virgola decimale.
+        var culture = CultureInfo.GetCultureInfo("it-IT");
         try
         {
             var input = Input(); var outcome = WindBuildingProject.Calculate(input);

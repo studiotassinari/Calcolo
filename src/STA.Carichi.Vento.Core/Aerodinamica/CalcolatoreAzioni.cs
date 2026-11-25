@@ -118,7 +118,7 @@ namespace Vento.Aerodinamica
             double sommità = geometria.AltezzaSommità;
             esito.PressionePiccoSommità = PressionePicco(vento, sommità);
             esito.Valutazioni.AddRange(coefficienti.Valutazioni);
-            var cultura = CultureInfo.CurrentCulture;
+            var cultura = CultureInfo.GetCultureInfo("it-IT");
             esito.Valutazioni.Add(new Valutazione("Pressione cinetica di picco alla sommità", "qp = qr · ce(" + sommità.ToString("0.##", cultura) + " m) = " +
                 vento.Qr.ToString("0.0", cultura) + " · " + WindProfile.Exposure(vento.Categoria, sommità, vento.Ct).ToString("0.000", cultura),
                 esito.PressionePiccoSommità.ToString("#,0", cultura) + " N/m²", "categoria di esposizione " + vento.Categoria));
@@ -171,7 +171,7 @@ namespace Vento.Aerodinamica
         public static string DescriviEstensione(IReadOnlyList<TrattoSviluppo> tratti)
         {
             if (tratti == null || tratti.Count == 0) return "";
-            var cultura = CultureInfo.CurrentCulture;
+            var cultura = CultureInfo.GetCultureInfo("it-IT");
             string Intervallo(double a, double b) => a.ToString("0.00", cultura) + " ÷ " + b.ToString("0.00", cultura);
             bool inclinato = tratti.Any(t => Math.Abs(t.SInizio - t.XInizio) > 5e-3 || Math.Abs(t.SFine - t.XFine) > 5e-3);
             string testo = "x = " + string.Join("; ", tratti.Select(t => Intervallo(t.XInizio, t.XFine))) + " m";
@@ -182,7 +182,7 @@ namespace Vento.Aerodinamica
         /// <summary>Testo del coefficiente con segno esplicito, nella cultura corrente (es. "+0,20")</summary>
         public static string ConSegno(double valore)
         {
-            return valore.ToString("+0.00;-0.00", CultureInfo.CurrentCulture);
+            return valore.ToString("+0.00;-0.00", CultureInfo.GetCultureInfo("it-IT"));
         }
     }
 }

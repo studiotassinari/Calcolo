@@ -55,7 +55,7 @@ namespace Vento.Aerodinamica
         public static double CpeFaccia(GeometriaCostruzione g, FacciaEdificio faccia)
         {
             if (!(g.D > 0)) return 0;
-            double hSuD = g.AltezzaSommità / g.D;
+            double hSuD = AltezzaPareti(g) / g.D;
             switch (faccia)
             {
                 case FacciaEdificio.Sopravento: return CoefficientiPressione.PareteSopravento(hSuD);
@@ -83,17 +83,36 @@ namespace Vento.Aerodinamica
 
         #region pareti
 
+        /// <summary>
+        /// Altezza h da usare nel rapporto h/d delle pareti (Tab. C3.3.I): la quota massima della copertura;
+        /// per la volta cilindrica la quota di imposta, cioè la h della Fig. C3.3.19, la stessa del rapporto h/d della volta.
+        /// </summary>
+        private static double AltezzaPareti(GeometriaCostruzione g)
+        {
+            return g.Tipologia == TipologiaCostruzione.CoperturaVoltaCilindrica ? g.H : g.AltezzaSommità;
+        }
+
+        /// <summary>
+        /// Quota di riferimento ze delle pareti [m]: la quota di sommità; per la volta cilindrica ze = h + f/2,
+        /// la stessa quota di riferimento della copertura (§ C3.3.8.1.7).
+        /// </summary>
+        private static double QuotaPareti(GeometriaCostruzione g)
+        {
+            return g.Tipologia == TipologiaCostruzione.CoperturaVoltaCilindrica ? g.H + g.Freccia / 2 : g.AltezzaSommità;
+        }
+
         private static void AggiungiPareti(GeometriaCostruzione g, RisultatoCoefficienti r)
         {
             const string rif = "Tab. C3.3.I";
-            double h = g.AltezzaSommità;
-            double hSuD = h / g.D;
-            double sopravento = CoefficientiPressione.PareteSopravento(hSuD);
             bool volta = g.Tipologia == TipologiaCostruzione.CoperturaVoltaCilindrica;
-            Val(r, "h/d per le pareti", (volta ? "(h + f) / d = " : "h / d = ") + F(h) + " / " + F(g.D), F(hSuD, "0.000"),
-                (volta ? "Altezza di sommità h + f. " : "") + (hSuD <= 0.5 ? "h/d ≤ 0,5" : hSuD <= 1 ? "0,5 < h/d ≤ 1" : hSuD <= 5 ? "1 < h/d ≤ 5" : "h/d > 5, fuori campo") + " · Tab. C3.3.I");
-            Val(r, "Quota di riferimento delle pareti", h <= g.B ? "h ≤ b: ze = h" : "h > b: ze = b fino a z = b, poi ze = h", h <= g.B ? F(h) + " m" : F(g.B) + " m e " + F(h) + " m",
-                "§ C3.3.8.1.1.1; facce laterali e sottovento: ze = h");
+            double h = QuotaPareti(g);
+            double hSuD = AltezzaPareti(g) / g.D;
+            double sopravento = CoefficientiPressione.PareteSopravento(hSuD);
+            Val(r, "h/d per le pareti", "h / d = " + F(AltezzaPareti(g)) + " / " + F(g.D), F(hSuD, "0.000"),
+                (volta ? "h è la quota di imposta (Fig. C3.3.19). " : "") + (hSuD <= 0.5 ? "h/d ≤ 0,5" : hSuD <= 1 ? "0,5 < h/d ≤ 1" : hSuD <= 5 ? "1 < h/d ≤ 5" : "h/d > 5, fuori campo") + " · Tab. C3.3.I");
+            string quota = volta ? "ze = h + f/2 = " + F(g.H) + " + " + F(g.Freccia) + "/2" : "ze = h";
+            Val(r, "Quota di riferimento delle pareti", h <= g.B ? quota : "ze > b: ze = b fino a z = b, poi " + quota, h <= g.B ? F(h) + " m" : F(g.B) + " m e " + F(h) + " m",
+                (volta ? "§ C3.3.8.1.7: stessa quota di riferimento della volta. " : "§ C3.3.8.1.1.1. ") + "Facce laterali e sottovento: stessa ze");
 
             if (h <= g.B)
             {
@@ -542,13 +561,13 @@ namespace Vento.Aerodinamica
         /// <summary>Numero nella cultura corrente, senza zeri superflui</summary>
         private static string F(double valore, string formato = "0.###")
         {
-            return valore.ToString(formato, CultureInfo.CurrentCulture);
+            return valore.ToString(formato, CultureInfo.GetCultureInfo("it-IT"));
         }
 
         /// <summary>Coefficiente con segno esplicito</summary>
         private static string S(double valore)
         {
-            return valore.ToString("+0.00;-0.00;0.00", CultureInfo.CurrentCulture);
+            return valore.ToString("+0.00;-0.00;0.00", CultureInfo.GetCultureInfo("it-IT"));
         }
 
         private static void Val(RisultatoCoefficienti r, string grandezza, string espressione, string valore, string nota)
@@ -558,7 +577,7 @@ namespace Vento.Aerodinamica
 
         private static string FasciaSopravento(GeometriaCostruzione g)
         {
-            return "fascia sopravento (" + ProfonditàFascia(g).ToString("0.##", CultureInfo.CurrentCulture) + " m)";
+            return "fascia sopravento (" + ProfonditàFascia(g).ToString("0.##", CultureInfo.GetCultureInfo("it-IT")) + " m)";
         }
 
         private static void Cpe(RisultatoCoefficienti r, string superficie, string condizione, double valore, double ze, string riferimento,

@@ -146,7 +146,7 @@ namespace STA.Calcolo.Desktop.Controls
                 double px = P(x, 0).X;
                 dc.DrawLine(Quota, new Point(px, yQuota - 5), new Point(px, yQuota + 5));
                 if (px - ultimaEtichetta < 34) continue;
-                Scrivi(dc, x.ToString("0.##", CultureInfo.CurrentCulture), new Point(px, yQuota + 6), TestoQuota, 10.5, false, 0.5, 0);
+                Scrivi(dc, x.ToString("0.##", CultureInfo.GetCultureInfo("it-IT")), new Point(px, yQuota + 6), TestoQuota, 10.5, false, 0.5, 0);
                 ultimaEtichetta = px;
             }
             Scrivi(dc, "x [m]", new Point(x1 + 12, yQuota), TestoQuota, 10.5, false, 0, 0.5);
@@ -161,7 +161,7 @@ namespace STA.Calcolo.Desktop.Controls
             Scrivi(dc, "vento", new Point(41, yVento + 9), ColoreVento, 11, false, 0.5, 0);
         }
 
-        private static string Valore(double pressione) => pressione.ToString("+#,0;-#,0;0", CultureInfo.CurrentCulture);
+        private static string Valore(double pressione) => pressione.ToString("+#,0;-#,0;0", CultureInfo.GetCultureInfo("it-IT"));
 
         /// <summary>Lettera della zona quando la Circolare la identifica (A, B, C); altrimenti nessuna</summary>
         private static string Zona(AzioneSuperficie riga)
@@ -247,7 +247,7 @@ namespace STA.Calcolo.Desktop.Controls
             Point ancora = P(centro, QuotaProfilo(profilo, centro)) + Normale(profilo, P, centro) * (spessore + 5);
             string zona = Zona(riga);
             string testo = (zona.Length > 0 ? zona + "   " : "") + Valore(riga.Pressione);
-            if (riga.Forza.HasValue) testo += "   F = " + riga.Forza.Value.ToString("0.0", CultureInfo.CurrentCulture) + " kN";
+            if (riga.Forza.HasValue) testo += "   F = " + riga.Forza.Value.ToString("0.0", CultureInfo.GetCultureInfo("it-IT")) + " kN";
             Scrivi(dc, testo, ancora, positivo ? TestoPressione : TestoDepressione, 11, true, 0.5, 1);
         }
 

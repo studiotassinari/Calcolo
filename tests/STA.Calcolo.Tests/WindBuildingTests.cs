@@ -91,7 +91,9 @@ internal static class WindBuildingTests
             // volta: ze = h + f/2
             var volta = CalcolatoreCoefficienti.Calcola(Geometry(TipologiaCostruzione.CoperturaVoltaCilindrica, d: 16, h: 6));
             Near(volta.Coefficienti.Single(c => c.Superficie.StartsWith("Volta, zone B")).QuotaRiferimento, 8, "ze volta");
-            Near(volta.Coefficienti[0].QuotaRiferimento, 10, "ze pareti = h + f");
+            // pareti della volta: ze = h + f/2 come la copertura, h/d con la quota di imposta (6/16 = 0,375)
+            Near(volta.Coefficienti[0].QuotaRiferimento, 8, "ze pareti = h + f/2"); Near(Value(volta, "Parete sopravento"), .7 + .1 * .375, "cpe sopravento volta");
+            Near(Value(volta, "Pareti laterali"), -.5 - .8 * .375, "cpe laterali volta"); Near(Value(volta, "Parete sottovento"), -.3 - .2 * .375, "cpe sottovento volta");
             // dati non validi: nessun coefficiente e messaggio
             var vuoto = CalcolatoreCoefficienti.Calcola(Geometry(TipologiaCostruzione.CoperturaPiana, b: 0));
             Assert(!vuoto.Valido && vuoto.Coefficienti.Count == 0 && vuoto.Avvertenze.Count == 1, "geometria non valida");
@@ -152,8 +154,13 @@ internal static class WindBuildingTests
                 CasoPressioneInterna.NonConsiderata, FacciaEdificio.Sopravento);
             string Valore(string nome) => azioni.Valutazioni.Single(v => v.Grandezza == nome).Valore;
             Assert(Valore("h, quota di imposta") == "5 m" && Valore("d, corda della volta") == "80 m" && Valore("f, freccia") == "10 m", "dati h, d, f");
-            Assert(Valore("h/d") == 0.0625.ToString("0.000") && Valore("f/d") == 0.125.ToString("0.000"), "rapporti h/d e f/d");
-            Assert(Valore("Quota di riferimento della copertura") == "10 m" && Valore("Peso dell'interpolazione su h/d") == 0.125.ToString("0.000"), "ze e peso");
+            Assert(Valore("h/d") == "0,063" && Valore("f/d") == "0,125", "rapporti h/d e f/d");
+            Assert(Valore("Quota di riferimento della copertura") == "10 m" && Valore("Peso dell'interpolazione su h/d") == "0,125", "ze e peso");
+            // pareti: ze = h + f/2 = 10 m, h/d = 5/80; categoria III: ce(10) = 0,2²·ln(100)·[7 + ln(100)]
+            Assert(Valore("Quota di riferimento delle pareti") == "10 m" && Valore("h/d per le pareti") == "0,063", "valutazioni delle pareti");
+            double ce10 = .04 * Math.Log(100) * (7 + Math.Log(100)); var parete = azioni.Azioni[0];
+            Near(parete.Ze, 10, "ze parete"); Near(parete.Coefficiente, .7 + .1 * .0625, "cpe parete"); Near(parete.Pressione, 390.625 * ce10 * (.7 + .1 * .0625), "pressione parete", 1e-9);
+            Near(azioni.Azioni[1].Coefficiente, -.5 - .8 * .0625, "cpe laterali"); Near(azioni.Azioni[2].Coefficiente, -.3 - .2 * .0625, "cpe sottovento");
             Assert(azioni.Valutazioni.Single(v => v.Grandezza == "f/d").Nota.StartsWith("0,05 < f/d < 0,2") && azioni.Valutazioni.Single(v => v.Grandezza == "h/d").Nota.Contains("interpolazione"), "campo applicato");
             Assert(azioni.Condizioni.Count == 0 && azioni.PerCondizione("").Count == azioni.Azioni.Count, "una sola condizione di carico");
             Assert(azioni.Azioni.Single(r => r.Superficie.StartsWith("Volta, zona A")).Estensione.StartsWith("x = "), "estensione leggibile");
