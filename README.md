@@ -64,4 +64,4 @@ Il modulo TaglioClsRect è integrato nella schermata iniziale: travi e pareti, q
 
 Il modulo **Muro di sostegno** (introdotto nella 1.5.1, motore rivisto NTC 2018 dalla 1.6.0, relazione di calcolo dalla 1.7.0) verifica ribaltamento e scorrimento, si modifica anche trascinando i grip del disegno e legge i progetti `.mdst` originali. [Guida e limiti del motore](docs/MURO-SOSTEGNO.md).
 
-Il modulo **Vento sulle costruzioni** (introdotto nella **1.9.0**) calcola coefficienti aerodinamici e pressioni su edifici, coperture e tettoie secondo la Circolare 2019 § C3.3.8, con disegno quotato e ricalcolo a ogni modifica. [Guida](docs/VENTO-COSTRUZIONE.md).
+Il modulo **Vento sulle costruzioni** (introdotto nella **1.9.0**) calcola coefficienti aerodinamici e pressioni su edifici, coperture e tettoie secondo la Circolare 2019 § C3.3.8, con disegno quotato e ricalcolo a ogni modifica; dalla **1.10.0** figura dei risultati, valutazioni, salvataggio dei dati e capitolo Word sul modello aziendale. [Guida](docs/VENTO-COSTRUZIONE.md).
