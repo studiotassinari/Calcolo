@@ -17,7 +17,7 @@ dotnet run --project apps/STA.Calcolo.Cli -- plinti examples/plinti-example.json
 dotnet run --project apps/STA.Calcolo.Cli -- modulo examples/sezione.json sezione-risultati.json
 ```
 
-Dalla finestra principale scegli uno dei 14 moduli. Materiali, carichi, sezioni e trefolature hanno parametri, calcolo, salvataggio e riapertura; sezioni, trefolature e sisma hanno grafici WPF. Il progetto travi importa i documenti salvati dagli editor di sezioni e trefolature. I plinti storici comprendono basi superficiali e pali rettangolari/triangolari, per singolo nodo o più nodi. Gli **spettri sismici** (dalla 1.8.0) hanno una finestra dedicata con scelta geografica e ricerca per indirizzo, accelerazioni in g e in m/s², cursore sul grafico e restituzione dei valori ad altri moduli come il muro di sostegno ([guida](docs/CLIMA-SISMA-FORMULE.md)).
+Dalla finestra principale scegli uno dei 15 moduli. Materiali, carichi, sezioni e trefolature hanno parametri, calcolo, salvataggio e riapertura; sezioni, trefolature e sisma hanno grafici WPF. Il progetto travi importa i documenti salvati dagli editor di sezioni e trefolature. I plinti storici comprendono basi superficiali e pali rettangolari/triangolari, per singolo nodo o più nodi. Gli **spettri sismici** (dalla 1.8.0) hanno una finestra dedicata con scelta geografica e ricerca per indirizzo, accelerazioni in g e in m/s², cursore sul grafico e restituzione dei valori ad altri moduli come il muro di sostegno ([guida](docs/CLIMA-SISMA-FORMULE.md)).
 
 Nel modulo **Plinti · reazioni e MIDAS**: **Carica esempio**, modifica i parametri, importa le reazioni oppure leggile da MIDAS, quindi **Calcola**. L'esempio contiene dati sintetici, inclusi resistenza e attrito del terreno. Le reazioni importate devono essere in kN e kN·m, con Z globale verso l'alto. I parametri hanno unità esplicite. Salva progetto e risultati in JSON per riutilizzarli da altri programmi.
 
@@ -63,3 +63,5 @@ La versione **1.3.0** aggiunge relazioni Word/PDF A4 con margini e risultati rag
 Il modulo TaglioClsRect è integrato nella schermata iniziale: travi e pareti, quote H/b editabili direttamente sulla sezione vettoriale, input .tgl e JSON, risultati e relazione Word con grafica TA. Motore portabile separato dalla UI MVVM. [Guida, compatibilità e limiti delle formule migrate](docs/TAGLIO-CLS.md).
 
 Il modulo **Muro di sostegno** (introdotto nella 1.5.1, motore rivisto NTC 2018 dalla 1.6.0, relazione di calcolo dalla 1.7.0) verifica ribaltamento e scorrimento, si modifica anche trascinando i grip del disegno e legge i progetti `.mdst` originali. [Guida e limiti del motore](docs/MURO-SOSTEGNO.md).
+
+Il modulo **Vento sulle costruzioni** calcola coefficienti aerodinamici e pressioni su edifici, coperture e tettoie secondo la Circolare 2019 § C3.3.8, con disegno quotato e ricalcolo a ogni modifica. [Guida](docs/VENTO-COSTRUZIONE.md).

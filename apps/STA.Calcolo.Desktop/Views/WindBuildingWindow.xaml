@@ -1,0 +1,99 @@
+<Window x:Class="STA.Calcolo.Desktop.Views.WindBuildingWindow"
+ xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+ xmlns:ui="clr-namespace:STA.Calcolo.Desktop.Controls"
+ Title="TA-Calcolo · Vento sulle costruzioni" Width="1400" Height="880" MinWidth="1040" MinHeight="640"
+ Language="it-IT" FontFamily="/STA.Calcolo.Desktop;component/Assets/Brand/#Acherus Grotesque" FontSize="12.5"
+ Foreground="#192845" Background="#F3F6F6" UseLayoutRounding="True">
+ <Window.Resources><ResourceDictionary><ResourceDictionary.MergedDictionaries><ResourceDictionary Source="../Themes/Tassinari.xaml"/></ResourceDictionary.MergedDictionaries>
+  <BooleanToVisibilityConverter x:Key="Visible"/>
+  <!-- Le colonne del DataGrid non ereditano il DataContext: il proxy lo rende disponibile per intestazioni e visibilità. -->
+  <ui:BindingProxy x:Key="Context" Data="{Binding}"/>
+  <Style x:Key="FieldLabel" TargetType="TextBlock"><Setter Property="VerticalAlignment" Value="Center"/><Setter Property="Foreground" Value="#344A5C"/><Setter Property="Margin" Value="0,3,8,3"/><Setter Property="TextWrapping" Value="Wrap"/></Style>
+  <Style x:Key="PanelTitle" TargetType="TextBlock"><Setter Property="FontSize" Value="15"/><Setter Property="FontWeight" Value="SemiBold"/><Setter Property="Margin" Value="0,0,0,8"/></Style>
+  <Style x:Key="Note" TargetType="TextBlock"><Setter Property="FontSize" Value="11.5"/><Setter Property="Foreground" Value="#526778"/><Setter Property="TextWrapping" Value="Wrap"/></Style>
+  <Style TargetType="TextBox" BasedOn="{StaticResource {x:Type TextBox}}"><Setter Property="MinHeight" Value="26"/><Setter Property="Padding" Value="5,2"/><Setter Property="HorizontalContentAlignment" Value="Right"/><Setter Property="Margin" Value="0,2"/></Style>
+  <Style TargetType="ComboBox" BasedOn="{StaticResource {x:Type ComboBox}}"><Setter Property="MinHeight" Value="26"/><Setter Property="Margin" Value="0,2"/></Style>
+  <Style x:Key="Number" TargetType="TextBlock"><Setter Property="TextAlignment" Value="Right"/><Setter Property="Padding" Value="8,0"/><Setter Property="VerticalAlignment" Value="Center"/></Style>
+  <Style x:Key="Text" TargetType="TextBlock"><Setter Property="Padding" Value="8,0"/><Setter Property="VerticalAlignment" Value="Center"/></Style>
+ </ResourceDictionary></Window.Resources>
+ <!-- Vista solo dichiarativa: ogni casella è legata al ViewModel con aggiornamento a ogni carattere, senza comando di calcolo. -->
+ <DockPanel Margin="12">
+  <Grid DockPanel.Dock="Top" Margin="0,0,0,10"><Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+   <StackPanel VerticalAlignment="Center"><TextBlock Text="Vento sulle costruzioni" FontSize="20" FontWeight="SemiBold"/><TextBlock Text="Circolare 21/01/2019 n. 7 §C3.3.8 · coefficienti aerodinamici globali di edifici, coperture e tettoie · pressioni in N/m²" Foreground="#526778" FontSize="11"/></StackPanel>
+   <Image Grid.Column="1" Source="/STA.Calcolo.Desktop;component/Assets/Brand/Logo.png" Stretch="Uniform" Height="38" Margin="12,0,0,0"/>
+  </Grid>
+  <Border DockPanel.Dock="Bottom" Padding="10,5" Background="#EAF0F1" Margin="0,8,0,0"><TextBlock Text="{Binding Status}" Foreground="#526778" TextWrapping="Wrap" FontSize="11.5"/></Border>
+  <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="350" MinWidth="320"/><ColumnDefinition Width="12"/><ColumnDefinition/></Grid.ColumnDefinitions>
+
+   <!-- Dati: vento del sito e costruzione. I simboli b, d, h, α, f coincidono con le quote del disegno. -->
+   <ScrollViewer VerticalScrollBarVisibility="Auto"><StackPanel Margin="0,0,4,0">
+    <Border Style="{StaticResource Panel}"><StackPanel>
+     <TextBlock Text="Vento del sito" Style="{StaticResource PanelTitle}"/>
+     <ItemsControl ItemsSource="{Binding SiteFields}" Focusable="False"><ItemsControl.ItemTemplate><DataTemplate>
+      <Grid><Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="140"/></Grid.ColumnDefinitions>
+       <TextBlock Text="{Binding Label}" Style="{StaticResource FieldLabel}"/>
+       <ComboBox Grid.Column="1" VerticalAlignment="Center" ItemsSource="{Binding Choices}" SelectedItem="{Binding Value}"><ComboBox.Style><Style TargetType="ComboBox" BasedOn="{StaticResource {x:Type ComboBox}}"><Style.Triggers><DataTrigger Binding="{Binding HasChoices}" Value="False"><Setter Property="Visibility" Value="Collapsed"/></DataTrigger></Style.Triggers></Style></ComboBox.Style></ComboBox>
+       <TextBox Grid.Column="1" VerticalAlignment="Center" Text="{Binding Value, UpdateSourceTrigger=PropertyChanged}"><TextBox.Style><Style TargetType="TextBox" BasedOn="{StaticResource {x:Type TextBox}}"><Style.Triggers><DataTrigger Binding="{Binding HasChoices}" Value="True"><Setter Property="Visibility" Value="Collapsed"/></DataTrigger></Style.Triggers></Style></TextBox.Style></TextBox>
+      </Grid></DataTemplate></ItemsControl.ItemTemplate></ItemsControl>
+     <TextBlock Text="{Binding SiteSummary}" FontWeight="SemiBold" Foreground="#135F6E" Margin="0,8,0,0" TextWrapping="Wrap"/>
+    </StackPanel></Border>
+
+    <Border Style="{StaticResource Panel}"><StackPanel>
+     <TextBlock Text="Costruzione" Style="{StaticResource PanelTitle}"/>
+     <ComboBox ItemsSource="{Binding Types}" DisplayMemberPath="Label" SelectedValuePath="Value" SelectedValue="{Binding Type}"/>
+     <StackPanel Visibility="{Binding ShowMultiScheme, Converter={StaticResource Visible}}"><TextBlock Text="TIPO COSTRUTTIVO · FIG. C3.3.18" Style="{StaticResource SectionLabel}"/>
+      <ComboBox ItemsSource="{Binding MultiSchemes}" DisplayMemberPath="Label" SelectedValuePath="Value" SelectedValue="{Binding MultiScheme}"/></StackPanel>
+     <StackPanel Visibility="{Binding ShowDirection, Converter={StaticResource Visible}}"><TextBlock Text="DIREZIONE DEL VENTO" Style="{StaticResource SectionLabel}"/>
+      <ComboBox ItemsSource="{Binding Directions}" DisplayMemberPath="Label" SelectedValuePath="Value" SelectedValue="{Binding Direction}"/></StackPanel>
+
+     <TextBlock Text="GEOMETRIA · VEDI DISEGNO" Style="{StaticResource SectionLabel}"/>
+     <Grid><Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="90"/></Grid.ColumnDefinitions>
+      <TextBlock Text="b · dimensione ortogonale al vento [m]" Style="{StaticResource FieldLabel}"/><TextBox Grid.Column="1" VerticalAlignment="Center" Text="{Binding B, UpdateSourceTrigger=PropertyChanged}"/></Grid>
+     <Grid><Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="90"/></Grid.ColumnDefinitions>
+      <TextBlock Text="d · dimensione parallela al vento [m]" Style="{StaticResource FieldLabel}"/><TextBox Grid.Column="1" VerticalAlignment="Center" Text="{Binding D, UpdateSourceTrigger=PropertyChanged}"/></Grid>
+     <Grid><Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="90"/></Grid.ColumnDefinitions>
+      <TextBlock Text="{Binding HeightLabel}" Style="{StaticResource FieldLabel}"/><TextBox Grid.Column="1" VerticalAlignment="Center" Text="{Binding H, UpdateSourceTrigger=PropertyChanged}"/></Grid>
+     <Grid Visibility="{Binding ShowAlpha, Converter={StaticResource Visible}}"><Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="90"/></Grid.ColumnDefinitions>
+      <TextBlock Text="{Binding AlphaLabel}" Style="{StaticResource FieldLabel}"/><TextBox Grid.Column="1" VerticalAlignment="Center" Text="{Binding Alpha, UpdateSourceTrigger=PropertyChanged}"/></Grid>
+     <Grid Visibility="{Binding ShowRise, Converter={StaticResource Visible}}"><Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="90"/></Grid.ColumnDefinitions>
+      <TextBlock Text="f · freccia della volta [m]" Style="{StaticResource FieldLabel}"/><TextBox Grid.Column="1" VerticalAlignment="Center" Text="{Binding Rise, UpdateSourceTrigger=PropertyChanged}"/></Grid>
+     <Grid Visibility="{Binding ShowSpans, Converter={StaticResource Visible}}"><Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="90"/></Grid.ColumnDefinitions>
+      <TextBlock Text="n · numero di tratti (campi)" Style="{StaticResource FieldLabel}"/><TextBox Grid.Column="1" VerticalAlignment="Center" Text="{Binding Spans, UpdateSourceTrigger=PropertyChanged}"/></Grid>
+     <Grid Visibility="{Binding ShowBlockage, Converter={StaticResource Visible}}"><Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="90"/></Grid.ColumnDefinitions>
+      <TextBlock Text="φ · grado di bloccaggio (0 libera, 1 ostruita)" Style="{StaticResource FieldLabel}"/><TextBox Grid.Column="1" VerticalAlignment="Center" Text="{Binding Blockage, UpdateSourceTrigger=PropertyChanged}"/></Grid>
+
+     <StackPanel Visibility="{Binding ShowInternal, Converter={StaticResource Visible}}"><TextBlock Text="PRESSIONE INTERNA · §C3.3.8.5" Style="{StaticResource SectionLabel}"/>
+      <ComboBox ItemsSource="{Binding InternalCases}" DisplayMemberPath="Label" SelectedValuePath="Value" SelectedValue="{Binding InternalCase}"/>
+      <ComboBox ItemsSource="{Binding Faces}" DisplayMemberPath="Label" SelectedValuePath="Value" SelectedValue="{Binding DominantFace}" Visibility="{Binding ShowDominantFace, Converter={StaticResource Visible}}"/></StackPanel>
+    </StackPanel></Border>
+   </StackPanel></ScrollViewer>
+
+   <!-- Disegno quotato e risultati -->
+   <Grid Grid.Column="2"><Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+    <ui:WindBuildingDrawing x:Name="Drawing" Height="330" Type="{Binding Type}" Direction="{Binding Direction}" MultiScheme="{Binding MultiScheme}"
+       B="{Binding B}" D="{Binding D}" H="{Binding H}" Alpha="{Binding Alpha}" Rise="{Binding Rise}" Spans="{Binding Spans}"/>
+    <StackPanel Grid.Row="1" Margin="0,10,0,8">
+     <TextBlock Text="{Binding PeakSummary}" FontSize="15" FontWeight="SemiBold"/>
+     <TextBlock Text="{Binding InternalSummary}" Style="{StaticResource Note}" Margin="0,2,0,0" Visibility="{Binding HasInternal, Converter={StaticResource Visible}}"/>
+    </StackPanel>
+    <DataGrid x:Name="ResultsGrid" Grid.Row="2" ItemsSource="{Binding Rows}" AutoGenerateColumns="False" IsReadOnly="True" CanUserAddRows="False" CanUserDeleteRows="False" CanUserSortColumns="False" SelectionMode="Single" Background="White">
+     <DataGrid.Columns>
+      <DataGridTextColumn Header="Superficie" Binding="{Binding Superficie}" Width="*" MinWidth="170" ElementStyle="{StaticResource Text}"/>
+      <DataGridTextColumn Header="Condizione" Width="140" Binding="{Binding Condizione}" ElementStyle="{StaticResource Text}"/>
+      <DataGridTextColumn Header="ze [m]" Width="64" Binding="{Binding Ze, StringFormat=N2}" ElementStyle="{StaticResource Number}"/>
+      <DataGridTextColumn Header="ce(ze)" Width="64" Binding="{Binding Ce, StringFormat=N3}" ElementStyle="{StaticResource Number}"/>
+      <DataGridTextColumn Header="Tipo" Width="48" Binding="{Binding Simbolo}" ElementStyle="{StaticResource Text}"/>
+      <DataGridTextColumn Header="Valore" Width="70" Binding="{Binding Coefficiente, StringFormat=+0.00;-0.00;0.00}" ElementStyle="{StaticResource Number}" FontWeight="SemiBold"/>
+      <DataGridTextColumn Header="p [N/m²]" Width="88" Binding="{Binding Pressione, StringFormat=N0}" ElementStyle="{StaticResource Number}" FontWeight="SemiBold" Foreground="#135F6E"/>
+      <DataGridTextColumn Header="{Binding Data.NetTitle1, Source={StaticResource Context}}" Width="112" Binding="{Binding PressioneNetta1, StringFormat=N0}" ElementStyle="{StaticResource Number}" Visibility="{Binding Data.ShowNet1, Source={StaticResource Context}, Converter={StaticResource Visible}}"/>
+      <DataGridTextColumn Header="{Binding Data.NetTitle2, Source={StaticResource Context}}" Width="112" Binding="{Binding PressioneNetta2, StringFormat=N0}" ElementStyle="{StaticResource Number}" Visibility="{Binding Data.ShowNet2, Source={StaticResource Context}, Converter={StaticResource Visible}}"/>
+      <DataGridTextColumn Header="F [kN]" Width="90" Binding="{Binding Forza, StringFormat=N2}" ElementStyle="{StaticResource Number}" FontWeight="SemiBold" Visibility="{Binding Data.ShowForce, Source={StaticResource Context}, Converter={StaticResource Visible}}"/>
+      <DataGridTextColumn Header="Riferimento" Width="130" Binding="{Binding Riferimento}" ElementStyle="{StaticResource Text}" Foreground="#526778"/>
+     </DataGrid.Columns>
+    </DataGrid>
+    <Border Grid.Row="3" Margin="0,8,0,0" Padding="10,7" Background="#FBF3E4" BorderBrush="#C3872A" BorderThickness="1" CornerRadius="3" Visibility="{Binding HasWarnings, Converter={StaticResource Visible}}">
+     <TextBlock x:Name="WarningsText" Text="{Binding Warnings}" TextWrapping="Wrap" Foreground="#6B4A12"/></Border>
+   </Grid>
+  </Grid>
+ </DockPanel>
+</Window>

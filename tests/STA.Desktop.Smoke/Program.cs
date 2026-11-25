@@ -47,6 +47,8 @@ internal static class Program
         // Verifica il nuovo modulo integrato e i suoi formati di progetto.
         RetainingWallSmoke.Run(Render);
         SeismicSpectraSmoke.Run(Render);
+        // Finestra MVVM del vento sulle costruzioni: ricalcolo a ogni modifica.
+        WindBuildingSmoke.Run(Render);
         // Verifica le nuove interfacce senza richieste cartografiche di rete.
         ScientificSmoke.Run(Render);
         var masonry=new MasonryViewModel(files);masonry.ExampleCommand.Execute(null);masonry.CalculateCommand.Execute(null);
