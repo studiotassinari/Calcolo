@@ -138,20 +138,11 @@ namespace Vento.Aerodinamica
         /// </summary>
         public static double[] VoltaZonaA(double hSuD, double fSuD)
         {
-            // curva h/d = 0
-            double basso = Math.Min(1.6 * fSuD, 0.8);
+            VoltaZonaACurve(fSuD, out double basso, out double? negativo, out double? positivo);
 
             // peso della curva h/d >= 0,5
-            double k = Math.Clamp(hSuD / 0.5, 0, 1);
+            double k = VoltaPesoAltezza(hSuD);
             if (k == 0) return new[] { basso };
-
-            // curve h/d >= 0,5
-            double? negativo = null;
-            double? positivo = null;
-            if (fSuD <= 0.1) negativo = -0.7 - 5 * fSuD;
-            else if (fSuD <= 0.2) negativo = -1.2;
-            else if (fSuD <= 0.3) negativo = -1.2 + 9 * (fSuD - 0.2);
-            if (fSuD >= 0.2) positivo = Math.Min(0.8 * (fSuD - 0.2) / 0.3, 0.8);
 
             if (negativo.HasValue && positivo.HasValue)
             {
@@ -164,6 +155,29 @@ namespace Vento.Aerodinamica
 
             double alto = negativo ?? positivo ?? basso;
             return new[] { basso + k * (alto - basso) };
+        }
+
+        /// <summary>
+        /// Valori della zona A letti sulle curve della Fig. C3.3.19 (c) per il rapporto f/d assegnato:
+        /// curva h/d = 0 e, per h/d ≥ 0,5, ramo negativo (fino a f/d = 0,3) e ramo positivo (da f/d = 0,2).
+        /// </summary>
+        public static void VoltaZonaACurve(double fSuD, out double altezzaNulla, out double? negativo, out double? positivo)
+        {
+            altezzaNulla = Math.Min(1.6 * fSuD, 0.8);
+            negativo = null;
+            positivo = null;
+            if (fSuD <= 0.1) negativo = -0.7 - 5 * fSuD;
+            else if (fSuD <= 0.2) negativo = -1.2;
+            else if (fSuD <= 0.3) negativo = -1.2 + 9 * (fSuD - 0.2);
+            if (fSuD >= 0.2) positivo = Math.Min(0.8 * (fSuD - 0.2) / 0.3, 0.8);
+        }
+
+        /// <summary>
+        /// Peso dell'interpolazione lineare su h/d per la zona A: 0 per h/d = 0, 1 per h/d ≥ 0,5
+        /// </summary>
+        public static double VoltaPesoAltezza(double hSuD)
+        {
+            return Math.Clamp(hSuD / 0.5, 0, 1);
         }
 
         /// <summary>Zone B (intermedie)</summary>

@@ -37,7 +37,20 @@ namespace Vento.Aerodinamica
         double? PressioneNetta1,
         double? PressioneNetta2,
         double? Forza,
-        string Riferimento);
+        string Riferimento)
+    {
+        /// <summary>Parte della costruzione a cui appartiene la superficie</summary>
+        public ParteCostruzione Parte { get; init; } = ParteCostruzione.Copertura;
+
+        /// <summary>Tratti della copertura occupati dalla zona, dal bordo sopravento [m]; vuoto per le pareti</summary>
+        public IReadOnlyList<TrattoSviluppo> Tratti { get; init; } = Array.Empty<TrattoSviluppo>();
+
+        /// <summary>
+        /// Estensione della zona in forma leggibile: ascissa orizzontale x e ascissa s sullo sviluppo,
+        /// entrambe dal bordo sopravento. Vuota per le pareti e dove non è definita con esattezza.
+        /// </summary>
+        public string Estensione { get; init; } = "";
+    }
 
     /// <summary>
     /// Esito completo: azioni per superficie, pressione interna adottata e avvertenze.
@@ -58,8 +71,26 @@ namespace Vento.Aerodinamica
         /// <summary>Avvertenze sui limiti di applicabilità delle tabelle</summary>
         public List<string> Avvertenze { get; } = new List<string>();
 
+        /// <summary>Valutazioni intermedie: rapporti geometrici, quote, campi applicati, letture e pressione di picco</summary>
+        public List<Valutazione> Valutazioni { get; } = new List<Valutazione>();
+
         /// <summary>Falso se la geometria non consente il calcolo</summary>
         public bool Valido { get; set; } = true;
+
+        /// <summary>
+        /// Condizioni di carico alternative presenti (ad esempio "valori negativi" e "valori positivi").
+        /// Vuoto se ogni superficie ha un solo valore.
+        /// </summary>
+        public IReadOnlyList<string> Condizioni => Azioni.Select(a => a.Condizione).Where(c => c != CondizioneUnica).Distinct().ToList();
+
+        /// <summary>Azioni di una condizione di carico: quelle a valore unico più quelle della condizione indicata</summary>
+        public IReadOnlyList<AzioneSuperficie> PerCondizione(string condizione)
+        {
+            return Azioni.Where(a => a.Condizione == CondizioneUnica || a.Condizione == condizione).ToList();
+        }
+
+        /// <summary>Testo della colonna Condizione per le superfici con un solo valore</summary>
+        public const string CondizioneUnica = "-";
     }
 
     /// <summary>
@@ -86,6 +117,11 @@ namespace Vento.Aerodinamica
 
             double sommità = geometria.AltezzaSommità;
             esito.PressionePiccoSommità = PressionePicco(vento, sommità);
+            esito.Valutazioni.AddRange(coefficienti.Valutazioni);
+            var cultura = CultureInfo.GetCultureInfo("it-IT");
+            esito.Valutazioni.Add(new Valutazione("Pressione cinetica di picco alla sommità", "qp = qr · ce(" + sommità.ToString("0.##", cultura) + " m) = " +
+                vento.Qr.ToString("0.0", cultura) + " · " + WindProfile.Exposure(vento.Categoria, sommità, vento.Ct).ToString("0.000", cultura),
+                esito.PressionePiccoSommità.ToString("#,0", cultura) + " N/m²", "categoria di esposizione " + vento.Categoria));
 
             // pressione interna: solo per gli edifici, riferita alla quota di sommità
             double pressioneInternaBase = 0;
@@ -113,7 +149,10 @@ namespace Vento.Aerodinamica
                     esito.Cpi.Length > 0 ? pressione - pressioneInternaBase * esito.Cpi[0] : null,
                     esito.Cpi.Length > 1 ? pressione - pressioneInternaBase * esito.Cpi[1] : null,
                     forza ? pressione * c.AreaRiferimento / 1000 : null,
-                    c.Riferimento));
+                    c.Riferimento)
+                {
+                    Parte = c.Parte, Tratti = c.Tratti, Estensione = c.EstensioneEsatta ? DescriviEstensione(c.Tratti) : ""
+                });
             }
 
             return esito;
@@ -125,10 +164,25 @@ namespace Vento.Aerodinamica
             return vento.Qr * WindProfile.Exposure(vento.Categoria, z, vento.Ct);
         }
 
+        /// <summary>
+        /// Descrive i tratti di una zona, ad esempio "x = 0,00 ÷ 18,31 m (s = 0,00 ÷ 21,64 m)".
+        /// Lo sviluppo s è indicato solo quando differisce dall'ascissa orizzontale; più tratti sono separati da ";".
+        /// </summary>
+        public static string DescriviEstensione(IReadOnlyList<TrattoSviluppo> tratti)
+        {
+            if (tratti == null || tratti.Count == 0) return "";
+            var cultura = CultureInfo.GetCultureInfo("it-IT");
+            string Intervallo(double a, double b) => a.ToString("0.00", cultura) + " ÷ " + b.ToString("0.00", cultura);
+            bool inclinato = tratti.Any(t => Math.Abs(t.SInizio - t.XInizio) > 5e-3 || Math.Abs(t.SFine - t.XFine) > 5e-3);
+            string testo = "x = " + string.Join("; ", tratti.Select(t => Intervallo(t.XInizio, t.XFine))) + " m";
+            if (inclinato) testo += " (s = " + string.Join("; ", tratti.Select(t => Intervallo(t.SInizio, t.SFine))) + " m)";
+            return testo;
+        }
+
         /// <summary>Testo del coefficiente con segno esplicito, nella cultura corrente (es. "+0,20")</summary>
         public static string ConSegno(double valore)
         {
-            return valore.ToString("+0.00;-0.00", CultureInfo.CurrentCulture);
+            return valore.ToString("+0.00;-0.00", CultureInfo.GetCultureInfo("it-IT"));
         }
     }
 }

@@ -11,6 +11,10 @@ edifici, coperture e tettoie secondo la **Circolare 21 gennaio 2019 n. 7 C.S.LL.
 - [Percorso di calcolo](#percorso-di-calcolo)
 - [Metodi e tabelle della Circolare](#metodi-e-tabelle-della-circolare)
 - [Dati richiesti per tipologia](#dati-richiesti-per-tipologia)
+- [Figura dei risultati ed estensione delle zone](#figura-dei-risultati-ed-estensione-delle-zone)
+- [Valutazioni](#valutazioni)
+- [Salvare e riaprire i dati](#salvare-e-riaprire-i-dati)
+- [Capitolo Word](#capitolo-word)
 - [Verifiche](#verifiche)
 - [Convenzioni e limiti](#convenzioni-e-limiti)
 
@@ -32,11 +36,19 @@ a destra un **disegno quotato** (sezione e pianta) mostra a quali dimensioni cor
 
 Non c'è un pulsante di calcolo: disegno e tabella si aggiornano a ogni carattere digitato.
 
+Sopra la tabella tre schede mostrano lo **schema quotato**, la **figura dei risultati** con le pressioni
+disegnate sulla sezione e le **valutazioni** intermedie (h/d, f/d, quote di riferimento, letture). In alto
+**Apri** e **Salva** conservano i dati in un file di progetto e **Capitolo Word** esporta la relazione.
+
 ![Edificio con copertura a falda doppia e pressione interna](img/vento-costruzione-falda-doppia.png)
 
 ![Edificio con copertura a volta cilindrica](img/vento-costruzione-volta.png)
 
 ![Tettoia a falde multiple](img/vento-costruzione-tettoia.png)
+
+![Figura dei risultati di una volta ribassata](img/vento-costruzione-figura-risultati.png)
+
+![Valutazioni di una volta ribassata](img/vento-costruzione-valutazioni.png)
 
 ## Architettura (MVVM)
 
@@ -79,10 +91,17 @@ flowchart LR
 | Motore | `src/STA.Carichi.Vento.Core/Aerodinamica/CoefficientiPressione.cs` | una funzione pura per ogni tabella della Circolare |
 | Motore | `src/STA.Carichi.Vento.Core/Aerodinamica/CalcolatoreCoefficienti.cs` | sceglie le tabelle in base alla tipologia e compone l'elenco delle superfici |
 | Motore | `src/STA.Carichi.Vento.Core/Aerodinamica/CalcolatoreAzioni.cs` | pressioni, pressione interna e forze a partire dal vento del sito |
+| Motore | `src/STA.Carichi.Vento.Core/Aerodinamica/Descrizioni.cs` | testi delle enumerazioni, comuni a finestra e relazione |
 | Servizi | `src/STA.Calcolo.Application/WindWorkspace.cs` | già esistente: campi, validazione e lettura del vento del sito |
+| Servizi | `src/STA.Calcolo.Application/WindBuildingProject.cs` | file di progetto JSON (scrittura, lettura con validazione) e calcolo |
+| Relazione | `src/STA.Calcolo.Reporting/WindBuildingReportBuilder.cs` | contenuto del capitolo: testo, tabelle, figure |
+| Relazione | `src/STA.Calcolo.Reporting/TemplateChapterWriter.cs`, `ReportChapter.cs` | scrive un capitolo sul modello Word aziendale incorporato (`WordTemplate/TA-Template.dotx`) |
 | ViewModel | `apps/STA.Calcolo.Desktop/ViewModels/WindBuildingViewModel.cs` | dati inseriti, ricalcolo a ogni modifica, righe e messaggi |
 | Vista | `apps/STA.Calcolo.Desktop/Views/WindBuildingWindow.xaml` | caselle e tabella; il code-behind contiene solo `InitializeComponent` |
 | Vista | `apps/STA.Calcolo.Desktop/Controls/WindBuildingDrawing.cs` | disegno di sezione e pianta |
+| Vista | `apps/STA.Calcolo.Desktop/Controls/WindPressureDrawing.cs` | figura dei risultati: pressioni sulla sezione e ascisse dei confini fra le zone |
+| Servizi | `apps/STA.Calcolo.Desktop/Services/WindBuildingReportService.cs` | rende le figure fuori schermo e produce il .docx |
+| Identità | `apps/STA.Calcolo.Desktop/Assets/Brand/VentoCostruzioni.ico` | icona del modulo, dal pittogramma aziendale |
 | Vista | `apps/STA.Calcolo.Desktop/Controls/BindingProxy.cs` | porta il ViewModel alle colonne della tabella (intestazioni e visibilità) |
 | Avvio | `Services/WindowService.cs`, `ViewModels/MainViewModel.cs` | scheda `vento-costruzione` nella schermata iniziale |
 
@@ -348,12 +367,88 @@ Le caselle compaiono solo quando servono (proprietà `Show…` del ViewModel).
 | Tettoia a falda doppia | ● | ● | | | | ● | ● | |
 | Tettoia a falde multiple | ● | ● | | ● | | ● | ● | |
 
+## Figura dei risultati ed estensione delle zone
+
+La scheda **Figura dei risultati** disegna la sezione nella direzione del vento con una fascia per ogni zona:
+lo spessore è proporzionale a |p|, il colore distingue pressione (ocra, frecce verso la superficie) e
+depressione (petrolio, frecce verso l'esterno), e accanto a ogni fascia è scritto il valore in N/m². Sotto la
+sezione una linea di quota riporta le ascisse `x` dei confini fra le zone, dal bordo sopravento. Le pareti
+laterali, che non stanno nella sezione, sono riportate in una riga di testo. Se la Circolare fornisce due
+valori, un elenco sceglie la condizione di carico rappresentata.
+
+Nella tabella, sotto il nome di ogni zona della copertura, compare la sua estensione: `x` è l'ascissa
+orizzontale e `s` quella misurata sullo sviluppo della copertura, entrambe dal bordo sopravento.
+
+| Tipologia | Come sono divise le zone |
+|---|---|
+| Copertura piana, vento parallelo al colmo | fascia sopravento di profondità `min(b/2; h)` (zona A), poi le restanti zone (B) |
+| Falda singola e doppia, vento perpendicolare | una zona per falda; `s = x / cos α` |
+| Falde multiple | tratti di passo `d/n`; nelle falde con colmi il primo tratto è la sola prima falda |
+| Volta cilindrica | quattro zone di uguale sviluppo `L/4`: A, B, B, C, con `L = 2·R·θ`, `R = (d²/4 + f²)/(2f)`, `θ = asin(d/2R)` |
+| Tettoie | una zona per falda; la risultante `F` è applicata a `d/4` dal bordo sopravento della falda |
+| Padiglione | l'estensione dipende dalla pianta e non è indicata; la figura mostra la sezione di mezzeria |
+
+## Valutazioni
+
+La scheda **Valutazioni** elenca i passaggi che portano ai coefficienti, con la formula o la lettura e il campo
+applicato, così ogni risultato si può ricontrollare sulla Circolare. Per la volta cilindrica (§ C3.3.8.1.7):
+
+| Grandezza | Come è ottenuta |
+|---|---|
+| `h`, `d`, `f` | dati |
+| `h/d` | rapporto fra quota di imposta e corda; decide fra curva `h/d = 0`, curve `h/d ≥ 0,5` o interpolazione |
+| `f/d` | decide il campo: `≤ 0,05` copertura piana; fino a `0,2` un valore; fra `0,2` e `0,3` due valori; oltre `0,5` fuori grafico |
+| `ze` | `h + f/2` |
+| `R`, `L`, `L/4` | raggio, sviluppo della volta e sviluppo di ciascuna zona |
+| `cpe,A` per `h/d = 0` e per `h/d ≥ 0,5` | letture sulla Fig. C3.3.19 (c) al valore di `f/d` |
+| peso dell'interpolazione | `min(h/d; 0,5) / 0,5` |
+| `cpe,A` adottato, `cpe,B`, `cpe,C` | valori usati nella tabella dei risultati |
+
+Per le pareti sono indicati `h/d` (per la volta con la quota di imposta `h`) e la quota di riferimento
+(per la volta `ze = h + f/2`); per
+le altre coperture l'inclinazione con il campo della tabella, la profondità della fascia sopravento e il passo
+dei tratti; per le tettoie il grado di bloccaggio e l'area della falda.
+
+Esempio, volta con `b = 90`, `d = 80`, `h = 5`, `f = 10` m: `h/d = 0,0625`, `f/d = 0,125`; la zona A vale `+0,20`
+sulla curva `h/d = 0` e `−1,20` su quella `h/d ≥ 0,5`; con peso `0,125` si ottiene
+`cpe,A = 0,20 + 0,125·(−1,20 − 0,20) = +0,025`; `cpe,B = −0,825`, `cpe,C = −0,40`. Pareti: `ze = 5 + 10/2 = 10` m,
+`h/d = 0,0625`, `cpe = +0,71` sopravento, `−0,55` laterali, `−0,31` sottovento.
+
+## Salvare e riaprire i dati
+
+**Salva** scrive un file `.json` nel formato comune dei moduli (`ModuleDocument`, schema 1, modulo
+`vento-costruzione`) con i campi del vento del sito e quelli della costruzione: `tipologia`, `direzione`,
+`schema`, `b`, `d`, `h`, `alfa`, `freccia`, `tratti`, `bloccaggio`, `pressioneInterna`, `facciaDominante`.
+I numeri sono scritti con il punto decimale. **Apri** valida il file per intero prima di modificare i campi:
+un file di un altro modulo, incompleto o con valori fuori campo viene rifiutato con un messaggio nella barra
+di stato e il lavoro aperto resta com'era. I risultati non sono salvati: vengono ricalcolati all'apertura.
+
+## Capitolo Word
+
+**Capitolo Word** crea un `.docx` costruito sul modello Word aziendale (copia in
+`src/STA.Calcolo.Reporting/WordTemplate/TA-Template.dotx`): usa i suoi stili (Normale, Titolo 1-3 con la
+numerazione automatica, Paragrafo elenco, Griglia tabella), l'intestazione con commessa, committente, progetto
+e documento e il piè di pagina. Contiene **solo il capitolo** "Azione del vento", senza frontespizio né
+sommario, per essere incollato o accodato a una relazione:
+
+1. Normativa e metodo, con le formule come equazioni di Word;
+2. Vento del sito;
+3. Geometria della costruzione, con lo schema quotato;
+4. Coefficienti aerodinamici e pressioni, con la tabella delle valutazioni e quella dei risultati;
+5. Distribuzione longitudinale delle zone (`x`, `s`, sviluppo e pressione di ogni tratto);
+6. Figura delle pressioni, una per ogni condizione di carico;
+7. Avvertenze e limiti.
+
+Il capitolo riporta i risultati mostrati in finestra; le modifiche fatte a mano nel Word non cambiano il
+progetto. Se il modello aziendale viene aggiornato va sostituita la copia incorporata.
+
 ## Verifiche
 
 | Suite | File | Cosa controlla |
 |---|---|---|
-| `STA.Calcolo.Tests` | `tests/STA.Calcolo.Tests/WindBuildingTests.cs` | valori letti da tabelle e figure della Circolare e calcolati a mano: pareti, falde, padiglione, volta, tettoie, pressione interna, quote di riferimento, pressioni e forze |
-| `STA.Desktop.Smoke` | `tests/STA.Desktop.Smoke/WindBuildingSmoke.cs` | finestra reale: ricalcolo a ogni modifica, colonne dinamiche, disegno, avvertenze, dati non validi, assenza di errori di binding |
+| `STA.Calcolo.Tests` | `tests/STA.Calcolo.Tests/WindBuildingTests.cs` | valori letti da tabelle e figure della Circolare e calcolati a mano: pareti, falde, padiglione, volta, tettoie, pressione interna, quote di riferimento, pressioni e forze; estensione delle zone, valutazioni h/d e f/d, file di progetto |
+| `STA.Reporting.Tests` | `tests/STA.Reporting.Tests/WindChapterChecks.cs` | capitolo Word: stili del modello, nessun frontespizio o sommario, valutazioni, zone, figure, XML ben formato |
+| `STA.Desktop.Smoke` | `tests/STA.Desktop.Smoke/WindBuildingSmoke.cs` | finestra reale: ricalcolo a ogni modifica, colonne dinamiche, disegni, valutazioni, salva e apri, capitolo Word, avvertenze, dati non validi, assenza di errori di binding |
 
 Le immagini di questa pagina sono prodotte dalla prova a video (`artifacts/vento-costruzione*.png`).
 
@@ -379,4 +474,7 @@ Le immagini di questa pagina sono prodotte dalla prova a video (`artifacts/vento
   (§ C3.3.8.6 – C3.3.8.7), attrito (§ C3.3.8.8). Il coefficiente dinamico `cd` è inserito a mano.
 - Fuori dal campo delle tabelle (h/d > 5, |α| > 75°, f/d > 0,5, tettoie oltre i limiti di α) il
   calcolo prosegue con i valori limite e mostra un'avvertenza.
-- Il modulo non salva né riapre progetti e non produce una relazione: i dati restano per la sessione.
+- Per le pareti di un edificio con volta la quota di riferimento è `ze = h + f/2`, la stessa della copertura
+  (§ C3.3.8.1.7), e il rapporto `h/d` della Tab. C3.3.I usa la quota di imposta `h` della Fig. C3.3.19.
+  La pressione interna resta riferita alla quota di sommità `h + f`.
+- La relazione è solo in Word; non è prevista l'esportazione PDF.

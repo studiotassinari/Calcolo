@@ -168,7 +168,54 @@ namespace Vento.Aerodinamica
         double QuotaRiferimento,
         TipoCoefficiente Tipo,
         double AreaRiferimento,
-        string Riferimento);
+        string Riferimento)
+    {
+        /// <summary>Parte della costruzione a cui appartiene la superficie</summary>
+        public ParteCostruzione Parte { get; init; } = ParteCostruzione.Copertura;
+
+        /// <summary>
+        /// Tratti della copertura occupati dalla zona, misurati dal bordo sopravento nella direzione del vento.
+        /// Vuoto per le pareti e per le falde non rappresentabili nella sezione (falde laterali del padiglione).
+        /// </summary>
+        public IReadOnlyList<TrattoSviluppo> Tratti { get; init; } = System.Array.Empty<TrattoSviluppo>();
+
+        /// <summary>Falso se i tratti servono solo al disegno e non descrivono con esattezza la zona (padiglione)</summary>
+        public bool EstensioneEsatta { get; init; } = true;
+    }
+
+    /// <summary>
+    /// Passaggio intermedio del calcolo, mostrato all'utente e riportato nella relazione
+    /// </summary>
+    /// <param name="Grandezza">Nome della grandezza valutata</param>
+    /// <param name="Espressione">Come è ottenuta (formula o lettura), con i numeri sostituiti</param>
+    /// <param name="Valore">Risultato, con unità di misura</param>
+    /// <param name="Nota">Significato per il calcolo: campo di validità, tabella o figura di riferimento</param>
+    public sealed record Valutazione(string Grandezza, string Espressione, string Valore, string Nota);
+
+    /// <summary>
+    /// Parte della costruzione: serve a collocare l'azione nella figura dei risultati
+    /// </summary>
+    public enum ParteCostruzione
+    {
+        PareteSopravento,
+        PareteLaterale,
+        PareteSottovento,
+        Copertura,
+        FaldaLaterale
+    }
+
+    /// <summary>
+    /// Tratto di copertura lungo la direzione del vento. Tutte le lunghezze sono in metri e partono dal bordo sopravento.
+    /// </summary>
+    /// <param name="XInizio">Ascissa orizzontale di inizio [m]</param>
+    /// <param name="XFine">Ascissa orizzontale di fine [m]</param>
+    /// <param name="SInizio">Ascissa di inizio misurata sullo sviluppo della copertura [m]</param>
+    /// <param name="SFine">Ascissa di fine misurata sullo sviluppo della copertura [m]</param>
+    public sealed record TrattoSviluppo(double XInizio, double XFine, double SInizio, double SFine)
+    {
+        /// <summary>Lunghezza del tratto misurata sullo sviluppo [m]</summary>
+        public double Lunghezza => SFine - SInizio;
+    }
 
     /// <summary>
     /// Esito del calcolo dei coefficienti aerodinamici
@@ -179,6 +226,12 @@ namespace Vento.Aerodinamica
 
         /// <summary>Avvertenze sui limiti di applicabilità</summary>
         public List<string> Avvertenze { get; } = new List<string>();
+
+        /// <summary>
+        /// Valutazioni intermedie che portano ai coefficienti: rapporti geometrici (h/d, f/d), quote di
+        /// riferimento, campo della tabella o del grafico applicato, valori letti e interpolazioni.
+        /// </summary>
+        public List<Valutazione> Valutazioni { get; } = new List<Valutazione>();
 
         /// <summary>Vero se i dati in ingresso consentono il calcolo</summary>
         public bool Valido { get; set; } = true;
