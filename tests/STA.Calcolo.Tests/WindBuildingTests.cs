@@ -1,3 +1,4 @@
+using STA.Calcolo.Application;
 using Vento.Aerodinamica;
 using CP = Vento.Aerodinamica.CoefficientiPressione;
 
@@ -118,6 +119,64 @@ internal static class WindBuildingTests
             try { CalcolatoreAzioni.Calcola(sito, Geometry(TipologiaCostruzione.CoperturaPiana, h: 250), CasoPressioneInterna.NonConsiderata, FacciaEdificio.Sopravento); }
             catch (ArgumentException) { return; }
             throw new Exception("Vento costruzioni: quota oltre 200 m accettata.");
+        });
+        test("vento costruzioni: estensione delle zone lungo la direzione del vento", () => {
+            // Volta b = 90, d = 80, h = 5, f = 10 m: R = (40² + 10²)/(2·10) = 85 m, θ = asin(40/85), L = 2·R·θ.
+            double theta = Math.Asin(40d / 85), sviluppo = 2 * 85 * theta;
+            Near(CalcolatoreCoefficienti.SviluppoVolta(80, 10, out double raggio, out double semiAngolo), sviluppo, "sviluppo"); Near(raggio, 85, "raggio"); Near(semiAngolo, theta, "semiangolo");
+            var volta = CalcolatoreCoefficienti.Calcola(new() { Tipologia = TipologiaCostruzione.CoperturaVoltaCilindrica, B = 90, D = 80, H = 5, Freccia = 10 });
+            var a = volta.Coefficienti.Single(c => c.Superficie.StartsWith("Volta, zona A")).Tratti.Single();
+            var b = volta.Coefficienti.Single(c => c.Superficie.StartsWith("Volta, zone B")).Tratti.Single();
+            var c2 = volta.Coefficienti.Single(c => c.Superficie.StartsWith("Volta, zona C")).Tratti.Single();
+            // quattro zone di uguale sviluppo: A = L/4, B = L/2, C = L/4; il confine A/B è a x = d/2 − R·sin(θ/2)
+            Near(a.Lunghezza, sviluppo / 4, "sviluppo A"); Near(b.Lunghezza, sviluppo / 2, "sviluppo B"); Near(c2.Lunghezza, sviluppo / 4, "sviluppo C");
+            Near(a.XInizio, 0, "x inizio A"); Near(a.XFine, 40 - 85 * Math.Sin(theta / 2), "x fine A"); Near(b.XFine, 40 + 85 * Math.Sin(theta / 2), "x fine B"); Near(c2.XFine, 80, "x fine C");
+            Near(volta.Coefficienti.Single(c => c.Superficie.StartsWith("Volta, zona A")).Valore, .2 + .125 * (-1.2 - .2), "cpe,A interpolato");
+            // falda doppia a 30°: s = x / cos α
+            var doppia = CalcolatoreCoefficienti.Calcola(Geometry(TipologiaCostruzione.CoperturaFaldaDoppia, alfa: 30));
+            var sottovento = doppia.Coefficienti.Single(c => c.Superficie == "Falda sottovento").Tratti.Single();
+            Near(sottovento.XInizio, 6, "x sottovento"); Near(sottovento.SFine, 12 / Math.Cos(Math.PI / 6), "s sottovento");
+            // copertura piana: fascia sopravento min(b/2; h) = 8 m, poi le restanti zone fino a d
+            var piana = CalcolatoreCoefficienti.Calcola(Geometry(TipologiaCostruzione.CoperturaPiana));
+            Near(piana.Coefficienti.Single(c => c.Superficie.StartsWith("Copertura, fascia")).Tratti.Single().XFine, 8, "fascia"); Near(piana.Coefficienti.Last().Tratti.Single().XInizio, 8, "restanti zone");
+            // falde con colmi, n = 2: prima falda, un impluvio e la falda discendente finale; le mezze falde coprono tutta d senza sovrapporsi
+            var colmi = Geometry(TipologiaCostruzione.CoperturaFaldeMultiple, d: 24, alfa: 20); colmi.NumeroTratti = 2; colmi.SchemaMultiplo = SchemaFaldeMultiple.FaldeDoppieConColmi;
+            var multiple = CalcolatoreCoefficienti.Calcola(colmi).Coefficienti.Where(c => c.Parte == ParteCostruzione.Copertura && c.Condizione != "valori positivi").ToList();
+            Near(multiple.SelectMany(c => c.Tratti).Sum(t => t.XFine - t.XInizio), 24, "copertura completa di d");
+            Assert(multiple.Any(c => c.Superficie == "Tratto 3, falda discendente") && !multiple.Any(c => c.Superficie == "Tratto 3, falda ascendente"), "ultima falda discendente");
+            // pareti e falde laterali non hanno estensione lungo il vento
+            Assert(doppia.Coefficienti.Where(c => c.Parte != ParteCostruzione.Copertura).All(c => c.Tratti.Count == 0), "pareti senza tratti");
+        });
+        test("vento costruzioni: valutazioni h/d e f/d della volta", () => {
+            var azioni = CalcolatoreAzioni.Calcola(new(390.625, "III", 1, 1), new() { Tipologia = TipologiaCostruzione.CoperturaVoltaCilindrica, B = 90, D = 80, H = 5, Freccia = 10 },
+                CasoPressioneInterna.NonConsiderata, FacciaEdificio.Sopravento);
+            string Valore(string nome) => azioni.Valutazioni.Single(v => v.Grandezza == nome).Valore;
+            Assert(Valore("h, quota di imposta") == "5 m" && Valore("d, corda della volta") == "80 m" && Valore("f, freccia") == "10 m", "dati h, d, f");
+            Assert(Valore("h/d") == 0.0625.ToString("0.000") && Valore("f/d") == 0.125.ToString("0.000"), "rapporti h/d e f/d");
+            Assert(Valore("Quota di riferimento della copertura") == "10 m" && Valore("Peso dell'interpolazione su h/d") == 0.125.ToString("0.000"), "ze e peso");
+            Assert(azioni.Valutazioni.Single(v => v.Grandezza == "f/d").Nota.StartsWith("0,05 < f/d < 0,2") && azioni.Valutazioni.Single(v => v.Grandezza == "h/d").Nota.Contains("interpolazione"), "campo applicato");
+            Assert(azioni.Condizioni.Count == 0 && azioni.PerCondizione("").Count == azioni.Azioni.Count, "una sola condizione di carico");
+            Assert(azioni.Azioni.Single(r => r.Superficie.StartsWith("Volta, zona A")).Estensione.StartsWith("x = "), "estensione leggibile");
+        });
+        test("vento costruzioni: progetto JSON, andata e ritorno e file non validi", () => {
+            var sito = WindBuildingProject.SiteFields.ToDictionary(f => f.Key, f => f.Default); sito["quota"] = "350";
+            var geometria = Geometry(TipologiaCostruzione.CoperturaFaldeMultiple, alfa: -12.5); geometria.SchemaMultiplo = SchemaFaldeMultiple.ShedInclinazionePositiva; geometria.GradoBloccaggio = .25;
+            var dati = new WindBuildingInput(sito, geometria, CasoPressioneInterna.AperturaDominanteDoppia, FacciaEdificio.Sottovento);
+            var documento = ModuleFiles.Read<ModuleDocument>(ModuleFiles.Write(WindBuildingProject.Write(dati)));
+            var letto = WindBuildingProject.Read(documento);
+            Assert(documento.Module == "vento-costruzione" && letto.Geometry.Tipologia == geometria.Tipologia && letto.Geometry.SchemaMultiplo == geometria.SchemaMultiplo, "tipologia e schema");
+            Near(letto.Geometry.Alfa, -12.5, "alfa"); Near(letto.Geometry.GradoBloccaggio, .25, "bloccaggio"); Assert(letto.Geometry.NumeroTratti == 4 && letto.Site["quota"] == "350", "tratti e sito");
+            Assert(letto.InternalCase == CasoPressioneInterna.AperturaDominanteDoppia && letto.DominantFace == FacciaEdificio.Sottovento, "pressione interna");
+            Near(WindBuildingProject.Calculate(letto).Actions.Azioni[0].Pressione, WindBuildingProject.Calculate(dati).Actions.Azioni[0].Pressione, "stesso risultato dopo la rilettura");
+            void Rifiuta(Action<Dictionary<string, string>> modifica)
+            {
+                var campi = new Dictionary<string, string>(documento.Fields); modifica(campi);
+                try { WindBuildingProject.Read(documento with { Fields = campi }); } catch (ArgumentException) { return; }
+                throw new Exception("Vento costruzioni: progetto non valido accettato.");
+            }
+            Rifiuta(f => f["tipologia"] = "Inesistente"); Rifiuta(f => f.Remove("b")); Rifiuta(f => f["estraneo"] = "1"); Rifiuta(f => f["tratti"] = "0"); Rifiuta(f => f["quota"] = "5000"); Rifiuta(f => f["d"] = "abc");
+            try { WindBuildingProject.Read(documento with { Module = "neve" }); } catch (ArgumentException) { return; }
+            throw new Exception("Vento costruzioni: progetto di un altro modulo accettato.");
         });
     }
 }

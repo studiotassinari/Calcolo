@@ -47,3 +47,5 @@ foreach(var (name,p) in new[]{("piu-cerchiature",multi),("esempio",example),("20
 }
 // Relazione del muro di sostegno (motore rivisto NTC 2018).
 RetainingWallReportChecks.Run(logo,regular,bold);
+// Capitolo del vento sulle costruzioni scritto sul modello Word aziendale.
+WindChapterChecks.Run(logo);

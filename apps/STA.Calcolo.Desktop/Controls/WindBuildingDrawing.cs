@@ -91,32 +91,32 @@ namespace STA.Calcolo.Desktop.Controls
         #region risorse grafiche
 
         // Colori dell'identità Tassinari Associati, gli stessi del tema Themes/Tassinari.xaml e degli altri disegni dell'app.
-        private static readonly Color Navy = Color.FromRgb(0x19, 0x28, 0x45);
-        private static readonly Color Petrolio = Color.FromRgb(0x13, 0x5F, 0x6E);
-        private static readonly Color Ocra = Color.FromRgb(0xC3, 0x87, 0x2A);
+        protected static readonly Color Navy = Color.FromRgb(0x19, 0x28, 0x45);
+        protected static readonly Color Petrolio = Color.FromRgb(0x13, 0x5F, 0x6E);
+        protected static readonly Color Ocra = Color.FromRgb(0xC3, 0x87, 0x2A);
 
-        private static readonly Brush Sfondo = Brushes.White;
-        private static readonly Brush Riempimento = Congela(new SolidColorBrush(Color.FromRgb(0xEA, 0xF0, 0xF1)));
-        private static readonly Brush RiempimentoFascia = Congela(new SolidColorBrush(Color.FromArgb(0x66, Ocra.R, Ocra.G, Ocra.B)));
-        private static readonly Brush Testo = Congela(new SolidColorBrush(Color.FromRgb(0x52, 0x67, 0x78)));
-        private static readonly Brush TestoTitolo = Congela(new SolidColorBrush(Navy));
-        private static readonly Brush TestoQuota = Congela(new SolidColorBrush(Ocra));
-        private static readonly Brush ColoreVento = Congela(new SolidColorBrush(Petrolio));
-        private static readonly Pen Contorno = Congela(new Pen(new SolidColorBrush(Navy), 2));
-        private static readonly Pen Sottile = Congela(new Pen(new SolidColorBrush(Navy), 0.8));
-        private static readonly Pen Terreno = Congela(new Pen(new SolidColorBrush(Color.FromRgb(0x52, 0x67, 0x78)), 2.5));
-        private static readonly Pen TerrenoSotto = Congela(new Pen(new SolidColorBrush(Color.FromRgb(0xB8, 0xCD, 0xD1)), 2));
-        private static readonly Pen Bordo = Congela(new Pen(new SolidColorBrush(Color.FromRgb(0xD6, 0xE0, 0xE2)), 1));
-        private static readonly Pen Quota = Congela(new Pen(TestoQuota, 1.2));
-        private static readonly Pen Tratteggio = Congela(new Pen(new SolidColorBrush(Navy), 1) { DashStyle = new DashStyle(new double[] { 4, 3 }, 0) });
-        private static readonly Pen TratteggioQuota = Congela(new Pen(TestoQuota, 1) { DashStyle = new DashStyle(new double[] { 3, 3 }, 0) });
-        private static readonly Pen PennaVento = Congela(new Pen(ColoreVento, 3) { StartLineCap = PenLineCap.Round, EndLineCap = PenLineCap.Round });
+        protected static readonly Brush Sfondo = Brushes.White;
+        protected static readonly Brush Riempimento = Congela(new SolidColorBrush(Color.FromRgb(0xEA, 0xF0, 0xF1)));
+        protected static readonly Brush RiempimentoFascia = Congela(new SolidColorBrush(Color.FromArgb(0x66, Ocra.R, Ocra.G, Ocra.B)));
+        protected static readonly Brush Testo = Congela(new SolidColorBrush(Color.FromRgb(0x52, 0x67, 0x78)));
+        protected static readonly Brush TestoTitolo = Congela(new SolidColorBrush(Navy));
+        protected static readonly Brush TestoQuota = Congela(new SolidColorBrush(Ocra));
+        protected static readonly Brush ColoreVento = Congela(new SolidColorBrush(Petrolio));
+        protected static readonly Pen Contorno = Congela(new Pen(new SolidColorBrush(Navy), 2));
+        protected static readonly Pen Sottile = Congela(new Pen(new SolidColorBrush(Navy), 0.8));
+        protected static readonly Pen Terreno = Congela(new Pen(new SolidColorBrush(Color.FromRgb(0x52, 0x67, 0x78)), 2.5));
+        protected static readonly Pen TerrenoSotto = Congela(new Pen(new SolidColorBrush(Color.FromRgb(0xB8, 0xCD, 0xD1)), 2));
+        protected static readonly Pen Bordo = Congela(new Pen(new SolidColorBrush(Color.FromRgb(0xD6, 0xE0, 0xE2)), 1));
+        protected static readonly Pen Quota = Congela(new Pen(TestoQuota, 1.2));
+        protected static readonly Pen Tratteggio = Congela(new Pen(new SolidColorBrush(Navy), 1) { DashStyle = new DashStyle(new double[] { 4, 3 }, 0) });
+        protected static readonly Pen TratteggioQuota = Congela(new Pen(TestoQuota, 1) { DashStyle = new DashStyle(new double[] { 3, 3 }, 0) });
+        protected static readonly Pen PennaVento = Congela(new Pen(ColoreVento, 3) { StartLineCap = PenLineCap.Round, EndLineCap = PenLineCap.Round });
         // Carattere aziendale incorporato nell'app.
-        private static readonly FontFamily Acherus = new FontFamily(new Uri("pack://application:,,,/STA.Calcolo.Desktop;component/Assets/Brand/"), "./#Acherus Grotesque");
-        private static readonly Typeface Carattere = new Typeface(Acherus, FontStyles.Normal, FontWeights.Normal, FontStretches.Normal);
-        private static readonly Typeface CarattereCorsivo = new Typeface(Acherus, FontStyles.Normal, FontWeights.Bold, FontStretches.Normal);
+        protected static readonly FontFamily Acherus = new FontFamily(new Uri("pack://application:,,,/STA.Calcolo.Desktop;component/Assets/Brand/"), "./#Acherus Grotesque");
+        protected static readonly Typeface Carattere = new Typeface(Acherus, FontStyles.Normal, FontWeights.Normal, FontStretches.Normal);
+        protected static readonly Typeface CarattereCorsivo = new Typeface(Acherus, FontStyles.Normal, FontWeights.Bold, FontStretches.Normal);
 
-        private static T Congela<T>(T risorsa) where T : Freezable
+        protected static T Congela<T>(T risorsa) where T : Freezable
         {
             risorsa.Freeze();
             return risorsa;
@@ -153,15 +153,15 @@ namespace STA.Calcolo.Desktop.Controls
 
         #region geometria del profilo
 
-        private bool ÈTettoia =>
+        protected bool ÈTettoia =>
             Type == TipologiaCostruzione.TettoiaFaldaSingola ||
             Type == TipologiaCostruzione.TettoiaFaldaDoppia ||
             Type == TipologiaCostruzione.TettoiaFaldeMultiple;
 
-        private bool ÈVolta => Type == TipologiaCostruzione.CoperturaVoltaCilindrica;
+        protected bool ÈVolta => Type == TipologiaCostruzione.CoperturaVoltaCilindrica;
 
         /// <summary>La direzione del vento è rilevante solo per le tipologie con colmo o generatrici</summary>
-        private bool VentoParallelo =>
+        protected bool VentoParallelo =>
             Direction == DirezioneVento.ParalleloAlColmo &&
             Type != TipologiaCostruzione.CoperturaPiana &&
             Type != TipologiaCostruzione.CoperturaPadiglione;
@@ -169,7 +169,7 @@ namespace STA.Calcolo.Desktop.Controls
         /// <summary>
         /// Profilo della copertura in coordinate reali (x lungo la sezione, y quota), da sinistra a destra
         /// </summary>
-        private List<Point> ProfiloCopertura(double larghezza, out double quotaMassima)
+        protected List<Point> ProfiloCopertura(double larghezza, out double quotaMassima)
         {
             var punti = new List<Point>();
             double tangente = Math.Tan(Math.Min(Math.Abs(Alpha), 80) * Math.PI / 180);
@@ -543,7 +543,7 @@ namespace STA.Calcolo.Desktop.Controls
 
         #region primitive
 
-        private void QuotaOrizzontale(DrawingContext dc, double x1, double x2, double y, string simbolo)
+        protected void QuotaOrizzontale(DrawingContext dc, double x1, double x2, double y, string simbolo)
         {
             dc.DrawLine(Quota, new Point(x1, y), new Point(x2, y));
             dc.DrawLine(Quota, new Point(x1, y - 5), new Point(x1, y + 5));
@@ -551,7 +551,7 @@ namespace STA.Calcolo.Desktop.Controls
             Scrivi(dc, simbolo, new Point((x1 + x2) / 2, y + 2), TestoQuota, 13, true, 0.5, 0);
         }
 
-        private void QuotaVerticale(DrawingContext dc, double x, double yBasso, double yAlto, string simbolo)
+        protected void QuotaVerticale(DrawingContext dc, double x, double yBasso, double yAlto, string simbolo)
         {
             dc.DrawLine(Quota, new Point(x, yBasso), new Point(x, yAlto));
             dc.DrawLine(Quota, new Point(x - 5, yBasso), new Point(x + 5, yBasso));
@@ -559,7 +559,7 @@ namespace STA.Calcolo.Desktop.Controls
             Scrivi(dc, simbolo, new Point(x + 6, (yBasso + yAlto) / 2), TestoQuota, 13, true, 0, 0.5);
         }
 
-        private static void FrecciaVento(DrawingContext dc, Point da, Point a)
+        protected static void FrecciaVento(DrawingContext dc, Point da, Point a)
         {
             dc.DrawLine(PennaVento, da, new Point(a.X - 6, a.Y));
             var punta = new StreamGeometry();
@@ -576,7 +576,7 @@ namespace STA.Calcolo.Desktop.Controls
         /// <summary>
         /// Scrive un testo; ancoraX e ancoraY (0 ÷ 1) indicano quale punto del testo coincide con la posizione
         /// </summary>
-        private void Scrivi(DrawingContext dc, string testo, Point posizione, Brush colore, double dimensione, bool corsivo, double ancoraX, double ancoraY)
+        protected void Scrivi(DrawingContext dc, string testo, Point posizione, Brush colore, double dimensione, bool corsivo, double ancoraX, double ancoraY)
         {
             var formattato = new FormattedText(testo, CultureInfo.CurrentUICulture, FlowDirection.LeftToRight,
                 corsivo ? CarattereCorsivo : Carattere, dimensione, colore, VisualTreeHelper.GetDpi(this).PixelsPerDip);
