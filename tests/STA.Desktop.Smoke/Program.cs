@@ -30,6 +30,8 @@ internal static class Program
     static int Main()
     {
         CheckSaveDirectories();
+        // Nome visibile del programma: collegamenti delle vecchie installazioni e descrizione dell'eseguibile.
+        ShortcutSmoke.Run();
         var app = new System.Windows.Application { ShutdownMode = ShutdownMode.OnExplicitShutdown }; app.Resources.MergedDictionaries.Add(new ResourceDictionary {Source=new Uri("/STA.Calcolo.Desktop;component/Themes/Tassinari.xaml",UriKind.Relative)}); var files = new MemoryFileService(); var windows = new WindowService(files); var mainVm = new MainViewModel(windows); var main = new MainWindow { DataContext = mainVm }; app.MainWindow = main;
         foreach (var module in WorkspaceCatalog.Create())
         {

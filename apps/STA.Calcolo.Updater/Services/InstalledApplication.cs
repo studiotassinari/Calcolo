@@ -24,6 +24,42 @@ public static class InstalledApplication
         key?.SetValue("DisplayName","TA-Calcolo");
         key?.SetValue("Publisher","Tassinari Associati");
     }
+    /// <summary>
+    /// Rinomina i collegamenti creati dalle installazioni precedenti alla 1.2.0, quando il programma si chiamava "STA Calcolo".
+    /// Gli aggiornamenti automatici sostituiscono soltanto i file dell'applicazione e non rieseguono l'installatore, che è
+    /// l'unico a rinominarli: senza questo passaggio menu Start e desktop conservano il vecchio nome.
+    /// Sposta i file .lnk senza modificarli, quindi continuano a puntare alla stessa cartella di installazione.
+    /// Non solleva eccezioni: un collegamento bloccato o protetto resta com'è e l'avvio prosegue.
+    /// </summary>
+    /// <param name="programs">Cartella Programmi del menu Start dell'utente</param>
+    /// <param name="desktop">Cartella Desktop dell'utente</param>
+    /// <returns>Numero di collegamenti rinominati o rimossi</returns>
+    public static int RenameLegacyShortcuts(string programs,string desktop)
+    {
+        const string Old="STA Calcolo",New="TA-Calcolo";
+        int changed=0;
+        void Move(string source,string destination)
+        {
+            try
+            {
+                if(!File.Exists(source))return;
+                // Se il collegamento nuovo esiste già (installatore rieseguito) quello vecchio è un doppione e va solo tolto.
+                if(File.Exists(destination))File.Delete(source);
+                else{Directory.CreateDirectory(Path.GetDirectoryName(destination)!);File.Move(source,destination);}
+                changed++;
+            }
+            catch(Exception ex) when(ex is IOException or UnauthorizedAccessException){}
+        }
+        Move(Path.Combine(programs,Old,Old+".lnk"),Path.Combine(programs,New,New+".lnk"));
+        Move(Path.Combine(programs,Old,"Ripristina "+Old+".lnk"),Path.Combine(programs,New,"Ripristina "+New+".lnk"));
+        Move(Path.Combine(desktop,Old+".lnk"),Path.Combine(desktop,New+".lnk"));
+        try{var folder=Path.Combine(programs,Old);if(Directory.Exists(folder)&&!Directory.EnumerateFileSystemEntries(folder).Any())Directory.Delete(folder);}
+        catch(Exception ex) when(ex is IOException or UnauthorizedAccessException){}
+        return changed;
+    }
+    /// <summary>Rinomina i collegamenti dell'utente corrente, solo per un'installazione registrata nella cartella indicata.</summary>
+    public static int RenameLegacyShortcuts(string root)=>IsInstalled(root)
+        ?RenameLegacyShortcuts(Environment.GetFolderPath(Environment.SpecialFolder.Programs),Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory)):0;
     public static void Launch(string root)
     {
         var start=new ProcessStartInfo(Path.Combine(root,ExeName)){UseShellExecute=false,WorkingDirectory=root};
