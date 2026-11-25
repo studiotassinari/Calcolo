@@ -1,18 +1,18 @@
-TA-Calcolo 1.8.0: Spettri sismici riorganizzati, scelta geografica con ricerca per indirizzo e valori sismici richiamabili dal Muro di sostegno.
+TA-Calcolo 1.9.0: nuovo modulo Vento sulle costruzioni, con i coefficienti aerodinamici della Circolare 2019 per edifici, coperture e tettoie.
 
-- **Nuova finestra Spettri sismici:** dati del sito, dell'opera e del terreno con ricalcolo a ogni modifica, tabella SLO–SLC (TR, ag/g, ag, F0, Tc*, S, amax/g, amax, TB, TC, TD) e valori dello stato limite scelto.
-- **Accelerazioni sempre in frazione di g** (ag/g, amax/g, Se/g) con il valore in m/s² accanto.
-- **Scelta geografica:** il pulsante apre la mappa con la ricerca per indirizzo (OpenStreetMap, Italia); la conferma restituisce latitudine, longitudine e nome del luogo. Le coordinate restano modificabili a mano.
-- **Grafico con cursore:** passando il mouse si leggono il periodo T e il valore di ogni curva in g e in m/s²; asse secondario in m/s²; curve orizzontali, verticali e di progetto selezionabili.
-- **Spettri NTC 2018 §3.2.3:** fattore topografico ST (T1–T4), smorzamento ξ, spettro verticale con i parametri NTC (corregge il programma storico), progetto SLV con limite Sd ≥ 0,2·ag. Con ST = 1 e ξ = 5 % l'orizzontale coincide con il programma storico.
-- **Muro di sostegno:** "Parametri sismici dagli spettri…" apre gli spettri e importa amax/g = S·ag/g dello stato limite scelto nel campo PGA.
-- Esportazione ZIP di tutte le curve con T, Se/g e Se in m/s².
+- **Nuovo modulo Vento sulle costruzioni:** dalla schermata iniziale, calcola per ogni superficie il coefficiente aerodinamico, la quota di riferimento ze, ce(ze) e la pressione p = qr · ce(ze) · c · cd in N/m², secondo la Circolare 21/01/2019 n. 7, §C3.3.8.
+- **Edifici a pianta rettangolare:** pareti sopravento, laterali e sottovento; coperture piane, a falda singola, a falda doppia, a padiglione, a falde multiple (i quattro tipi della Fig. C3.3.18) e a volta cilindrica. Vento perpendicolare o parallelo al colmo.
+- **Tettoie:** a falda singola, doppia e multipla, con grado di bloccaggio φ e forza risultante sulla falda in kN.
+- **Pressione interna (§C3.3.8.5):** porosità uniforme (cpi = +0,2 e −0,3) oppure apertura dominante (0,75 o 0,90 cpe), con le colonne di pressione netta.
+- **Disegno quotato:** sezione e pianta con gli stessi simboli delle caselle (b, d, h, α, f), ridisegnate mentre si scrive.
+- **Ricalcolo a ogni modifica:** non c'è un pulsante di calcolo; con dati non validi la tabella si svuota e la barra di stato ne indica il motivo.
+- **Vento del sito:** stessi campi e stessa validazione del modulo Carico vento, che resta invariato.
 
 ## Verifiche
-68 test C#: parità con il motore storico, formule NTC indipendenti (plateau, ST, η, verticale, limite del progetto), domini, ZIP e lettura della ricerca indirizzi. Test WPF su finestra, cursore, ricerca simulata, selezione e import nel muro.
+76 test C#, di cui 8 nuovi sul vento: i valori attesi sono letti da tabelle e figure della Circolare e calcolati a mano (pareti, falde, padiglione, volta, tettoie, pressione interna, quote di riferimento, pressioni e forze). Test WPF sulla finestra reale: ricalcolo, colonne dinamiche, disegno, avvertenze, dati non validi e assenza di errori di binding.
 
 ## Ambito e limiti
-ag, F0 e Tc* provengono dal reticolo e dall'interpolazione del programma storico (lon 6–19°, lat 36–48°). ST è il valore in sommità del rilievo. Mappa e ricerca richiedono Internet; senza connessione restano disponibili le coordinate manuali.
+Sono implementati i coefficienti globali; i coefficienti locali per zone (cpe,10 e cpe,1) non sono tabellati. Non sono trattati edifici a pianta circolare, cupole, travi e tralicci. Le curve della volta cilindrica sono lette per punti dalla Fig. C3.3.19 (c). b è sempre la dimensione ortogonale al vento e d quella parallela: cambiando direzione vanno scambiate. Fuori dal campo delle tabelle il calcolo prosegue con i valori limite e mostra un'avvertenza; quote oltre 200 m sono rifiutate. Il modulo non salva né riapre progetti e non produce una relazione.
 
 ## Installazione e aggiornamento
 Installer Windows x64 con runtime incluso, pacchetto per l'aggiornamento automatico e file SHA256SUMS. I progetti esistenti restano compatibili.
